@@ -1,4 +1,5 @@
 import React from "react";
+import GameCard from "../../../common/components/GameCard";
 
 export type ExperienceItem = {
   primaryExperience: Experience;
@@ -28,8 +29,8 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   onBack,
 }) => {
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
-      <div className="border rounded-xl p-6 flex flex-col gap-4 w-full max-w-md bg-white shadow-lg">
+    <div className="flex justify-center items-start min-h-screen pt-10 p-4">
+      <GameCard hover={false}>
         {/* Primary Experience */}
         <h2 className="text-xl font-bold mb-4 text-center">Primary Experience</h2>
 
@@ -46,7 +47,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           }
         />
 
-        <label className="font-semibold text-gray-700">Description</label>
+        <label className="font-semibold text-gray-700 mt-2">Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"
@@ -75,7 +76,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           }
         />
 
-        <label className="font-semibold text-gray-700">Description</label>
+        <label className="font-semibold text-gray-700 mt-2">Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"
@@ -114,7 +115,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
             ) : <div className="w-24" />}
           </div>
         )}
-      </div>
+      </GameCard>
     </div>
   );
 };

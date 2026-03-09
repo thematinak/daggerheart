@@ -6,7 +6,7 @@ import CommunityCard, { CommunityItem } from "./components/CommunityCard";
 import InfoCard from "./components/InfoCard";
 import ExperienceCard, { Experience } from "./components/ExperiencesCard";
 import DomainCard, { DomainCardItem } from "./components/DomainCard";
-import GearCard from "./components/GearCard";
+import GearCard, { SelectedWeapons } from "./components/GearCard";
 import { GridSelector } from "../../common/components/GridSelector";
 import { AttributeItem, Attributes, AttributesGrid } from "./components/AttributeGrid";
 import StepIndicator from "./components/StepIndicator";
@@ -24,13 +24,13 @@ type CardItem = {
 
 
 
-type Character = {
+export type Character = {
   class: ClassItem | null;
   specialization: SpecializationsItem | null;
   ancestry: AncestriesItem | null;
   community: CommunityItem | null;
   attributes: Attributes;
-  weapon: WeaponItem | null;
+  weapons: SelectedWeapons;
   armor: ArmorItem | null;
   name: string;
   description: string;
@@ -132,7 +132,7 @@ const CharacterCreatorPage: React.FC = () => {
     primaryExperience: { name: "", description: "" },
     secondaryExperience: { name: "", description: "" },
     domainCards: [],
-    weapon: null,
+    weapons: {primary: null, secondary: null},
     armor: null,
   });
 
@@ -263,12 +263,10 @@ const CharacterCreatorPage: React.FC = () => {
       {step === 6 && (
         <>
           <GearCard 
-            weaponItems={weapons}
-            armorItems={armors}
-            selected={{weapon: character.weapon, armor: character.armor}}
+            selected={{weapons: character.weapons, armor: character.armor}}
             showBack={true}
             onBack={back}
-            showNext={character.weapon !== null && character.armor !== null}
+            showNext={!!character.weapons?.primary && character.armor !== null}
             onNext={next}
             onSelect={item => {
               setCharacter({...character, ...item });
@@ -332,7 +330,7 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 10 SUMMARY */}
       {step === 10 && (
         <>
-          <SummaryCard character={character}  />
+          <SummaryCard character={character} onBack={back} />
         </>
       )}
     </div>

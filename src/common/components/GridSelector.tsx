@@ -1,4 +1,5 @@
 import React from "react";
+import { NextPreviousButton } from "../../pages/create_character/components/NextButton";
 
 type GridSelectorProps<T> = {
   items: T[];
@@ -38,26 +39,7 @@ export function GridSelector<T extends { id: string | number }>({
       </div>
 
       {/* Tlačidlá Späť a Pokračovať */}
-      {(showBack || showNext) && (
-        <div className="flex justify-between mt-4">
-          {showBack ? (
-            <button
-              onClick={onBack}
-              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
-            >
-              Previous
-            </button>
-          ) : <div />}
-
-          {showNext ? (
-            <button
-              onClick={onNext}
-              className="px-4 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-white font-semibold"
-            >
-              Next
-            </button>
-          ) : <div />}
-        </div>
+      {(showBack || showNext) && (<NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
       )}
     </div>
   );

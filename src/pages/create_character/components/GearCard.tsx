@@ -1,16 +1,25 @@
 import React from "react";
-import WeaponCard, { WeaponItem } from "../../../common/components/WeaponCard";
-import ArmorCard, { ArmorItem } from "../../../common/components/ArmorCard";
+import { WeaponItem } from "../../../common/components/WeaponCard";
+import { ArmorItem } from "../../../common/components/ArmorCard";
+import WeaponFilterList from "../../../common/components/WeaponFilterList";
+import ArmorFilterList from "../../../common/components/ArmorFilterList";
+import { NextPreviousButton } from "./NextButton";
 
+export type SelectedWeapons = {
+  primary: WeaponItem | null;
+  secondary: WeaponItem | null;
+};
 
 type GearCardProps = {
-  weaponItems: WeaponItem[];
-  armorItems: ArmorItem[];
   selected: {
-    weapon: WeaponItem | null;
+    weapons: SelectedWeapons;
     armor: ArmorItem | null;
   };
-  onSelect: (selected: { weapon: WeaponItem | null; armor: ArmorItem | null }) => void;
+
+  onSelect: (selected: {
+    weapons: SelectedWeapons;
+    armor: ArmorItem | null;
+  }) => void;
 
   showNext?: boolean;
   showBack?: boolean;
@@ -19,8 +28,6 @@ type GearCardProps = {
 };
 
 const GearCard: React.FC<GearCardProps> = ({
-  weaponItems,
-  armorItems,
   selected,
   onSelect,
   showNext = false,
@@ -28,75 +35,99 @@ const GearCard: React.FC<GearCardProps> = ({
   onNext,
   onBack,
 }) => {
+  const { weapons, armor } = selected;
+
+  const primary = weapons.primary;
+  const secondary = weapons.secondary;
+
+  const isTwoHanded = primary?.burden === "two-handed";
+
+  const setPrimary = (weapon: WeaponItem | null) => {
+    if (!weapon) {
+      onSelect({
+        ...selected,
+        weapons: { primary: null, secondary: null },
+      });
+      return;
+    }
+
+    if (weapon.burden === "two-handed") {
+      onSelect({
+        ...selected,
+        weapons: { primary: weapon, secondary: null },
+      });
+    } else {
+      onSelect({
+        ...selected,
+        weapons: { ...weapons, primary: weapon },
+      });
+    }
+  };
+
+  const setSecondary = (weapon: WeaponItem | null) => {
+    onSelect({
+      ...selected,
+      weapons: { ...weapons, secondary: weapon },
+    });
+  };
+
+  const canUseSecondary = primary && primary.burden === "one-handed";
+
+  const canContinue = primary && armor;
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
 
-      {/* Weapons */}
-      <div>
-        <h2 className="text-center text-2xl font-bold mb-4">Select Weapon</h2>
+      {/* PRIMARY WEAPON */}
+      <div className="flex flex-col gap-4">
+        <h2 className="text-center text-2xl font-bold">
+          Select Primary Weapon
+        </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {weaponItems.map((w) => (
-            <WeaponCard
-              key={w.id}
-              weapon={w}
-              selected={selected.weapon?.id === w.id}
-              onSelect={() => onSelect({ ...selected, weapon: w })}
-              onDeselect={() => onSelect({ ...selected, weapon: null })}
-            />
-          ))}
-        </div>
+        <WeaponFilterList
+          selected={primary}
+          onSelect={setPrimary}
+          forcedSlot="primary"
+        />
       </div>
 
-      {/* Armors */}
-      <div>
-        <h2 className="text-center text-2xl font-bold mb-4">Select Armor</h2>
+      {canUseSecondary && (
+      <div className="flex flex-col gap-4">
+        <h2 className="text-center text-2xl font-bold">
+          Optional Secondary Weapon
+        </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {armorItems.map((a) => (
-            <ArmorCard
-              key={a.id}
-              armor={a}
-              selected={selected.armor?.id === a.id}
-              onSelect={() => onSelect({ ...selected, armor: a })}
-              onDeselect={() => onSelect({ ...selected, armor: null })}
-            />
-          ))}
-        </div>
+        <WeaponFilterList
+          selected={secondary}
+          onSelect={setSecondary}
+          forcedSlot="secondary"
+        />
+    </div>
+    )}
+
+      {/* ARMOR */}
+      <div className="flex flex-col gap-4">
+        <h2 className="text-center text-2xl font-bold">
+          Select Armor
+        </h2>
+
+        <ArmorFilterList
+          selected={armor}
+          onSelect={(a) =>
+            onSelect({
+              ...selected,
+              armor: a,
+            })
+          }
+        />
       </div>
 
+      {/* NAVIGATION */}
       {(showBack || showNext) && (
-        <div className="flex justify-between mt-4">
-
-          {showBack ? (
-            <button
-              onClick={onBack}
-              className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
-            >
-              Previous
-            </button>
-          ) : <div />}
-
-          {showNext ? (
-            <button
-              onClick={onNext}
-              disabled={!selected.weapon || !selected.armor}
-              className={`px-4 py-2 rounded-lg font-semibold 
-                ${!selected.weapon || !selected.armor
-                  ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-                  : "bg-yellow-400 text-white hover:bg-yellow-500"}
-              `}
-            >
-              Next
-            </button>
-          ) : <div />}
-
-        </div>
+        <NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
       )}
     </div>
   );
 };
 
 export default GearCard;
-
-

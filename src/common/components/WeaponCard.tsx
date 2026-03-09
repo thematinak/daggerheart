@@ -1,5 +1,7 @@
 import React from "react";
 import { Sword, Zap } from "lucide-react";
+import { Badge } from "./Badge"; // rovnaký Badge ako pri ArmorCard
+import GameCard from "./GameCard"; // nový jednotný wrapper
 
 export type WeaponItem = {
   id: string;
@@ -25,18 +27,6 @@ type WeaponCardProps = {
   onDeselect: () => void;
 };
 
-const tierColors: Record<number, string> = {
-  1: "bg-green-200 border-green-700 text-green-900 border",
-  2: "bg-blue-200 border-blue-700 text-blue-900 border",
-  3: "bg-purple-200 border-purple-700 text-purple-900 border",
-  4: "bg-yellow-200 border-yellow-700 text-yellow-900 border",
-};
-
-const slotColors = {
-  primary: "bg-red-200 border-red-700 text-red-900 border",
-  secondary: "bg-gray-200 border-gray-700 text-gray-900 border",
-};
-
 // render damage ako text
 function renderDamage(damage: WeaponItem["damage"]) {
   const parts: string[] = [];
@@ -54,33 +44,27 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
   onSelect,
   onDeselect,
 }) => (
-  <div
-    onClick={selected ? onDeselect : onSelect}
-    className={`
-      relative cursor-pointer rounded-xl border p-4 flex flex-col gap-3
-      bg-white shadow-sm transition-all
-      hover:shadow-lg hover:scale-[1.02]
-      ${selected ? "border-yellow-400 ring-2 ring-yellow-300" : "border-gray-200"}
-    `}
-  >
+  <GameCard selected={selected} onClick={selected ? onDeselect : onSelect}>
     {/* Header */}
-    <div className="flex justify-between items-start">
+    <div className="flex justify-between items-start gap-2">
       <div>
         <h3 className="font-bold text-lg">{weapon.name}</h3>
-
-        {/* inline atribut + burden + range */}
         <p className="text-sm text-gray-600 mt-1">
           {weapon.attribute} • {weapon.burden === "two-handed" ? "Two Handed" : "One Handed"} • {weapon.range}
         </p>
       </div>
 
-      <div className="flex gap-1">
-        <span className={`text-xs px-2 py-1 rounded font-semibold ${tierColors[weapon.tier]}`}>
-          T{weapon.tier}
-        </span>
-        <span className={`text-xs px-2 py-1 rounded font-semibold ${slotColors[weapon.slot]}`}>
-          {weapon.slot}
-        </span>
+      <div className="flex gap-2 items-center">
+        <Badge
+          label={`T${weapon.tier}`}
+          color={
+            weapon.tier === 1 ? "green" :
+            weapon.tier === 2 ? "blue" :
+            weapon.tier === 3 ? "purple" :
+            "yellow"
+          }
+        />
+        <Badge label={weapon.slot} color="gray" />
       </div>
     </div>
 
@@ -106,7 +90,7 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
     {weapon.description && (
       <p className="text-xs text-gray-500 mt-1">{weapon.description}</p>
     )}
-  </div>
+  </GameCard>
 );
 
 export default WeaponCard;

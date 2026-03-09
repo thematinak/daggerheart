@@ -1,4 +1,6 @@
 import React from "react";
+import GameCard from "../../../common/components/GameCard";
+import { NextPreviousButton } from "./NextButton";
 
 export type InfoItem = {
   name: string;
@@ -23,8 +25,8 @@ const InfoCard: React.FC<InfoCardProps> = ({
   onBack,
 }) => {
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
-      <div className="border rounded-xl p-6 flex flex-col gap-4 w-full max-w-md bg-white shadow-lg">
+    <div className="flex justify-center items-start min-h-screen pt-10 p-4">
+      <GameCard hover={false}>
         {/* Header */}
         <h2 className="text-xl font-bold mb-4 text-center">Basic Character Details</h2>
 
@@ -38,7 +40,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         />
 
         {/* Description Textarea */}
-        <label className="font-semibold text-gray-700">Physical Description</label>
+        <label className="font-semibold text-gray-700 mt-2">Physical Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"
@@ -47,28 +49,9 @@ const InfoCard: React.FC<InfoCardProps> = ({
         />
 
         {/* Next / Back Buttons */}
-        {(showBack || showNext) && (
-          <div className="flex justify-between mt-4">
-            {showBack ? (
-              <button
-                onClick={onBack}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
-              >
-                Previous
-              </button>
-            ) : <div className="w-24" />}
-
-            {showNext ? (
-              <button
-                onClick={onNext}
-                className="px-4 py-2 rounded-lg bg-yellow-400 text-white hover:bg-yellow-500 font-semibold"
-              >
-                Next
-              </button>
-            ) : <div className="w-24" />}
-          </div>
+        {(showBack || showNext) && (<NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
         )}
-      </div>
+      </GameCard>
     </div>
   );
 };

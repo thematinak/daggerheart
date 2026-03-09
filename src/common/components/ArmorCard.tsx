@@ -1,5 +1,7 @@
 import React from "react";
 import { Shield, Zap } from "lucide-react";
+import { Badge } from "./Badge";
+import GameCard from "./GameCard"; // jednotný wrapper
 
 export type ArmorItem = {
   id: string;
@@ -31,13 +33,6 @@ type ArmorCardProps = {
   onDeselect: () => void;
 };
 
-const tierColors: Record<number, string> = {
-  1: "bg-green-200 border-green-700 text-green-900 border",
-  2: "bg-blue-200 border-blue-700 text-blue-900 border",
-  3: "bg-purple-200 border-purple-700 text-purple-900 border",
-  4: "bg-yellow-200 border-yellow-700 text-yellow-900 border",
-};
-
 function getBaseScoreLabel(score: number) {
   if (score <= 2) return "Light";
   if (score <= 4) return "Medium";
@@ -63,25 +58,21 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
   onSelect,
   onDeselect,
 }) => (
-  <div
-    onClick={selected ? onDeselect : onSelect}
-    className={`
-      relative cursor-pointer rounded-xl border p-4 flex flex-col gap-3
-      bg-white shadow-sm transition-all
-      hover:shadow-lg hover:scale-[1.02]
-      ${selected ? "border-yellow-400 ring-2 ring-yellow-300" : "border-gray-200"}
-    `}
-  >
+  <GameCard selected={selected} onClick={selected ? onDeselect : onSelect}>
     {/* Header: name, tier, base score */}
     <div className="flex justify-between items-start gap-2">
       <h3 className="font-bold text-lg">{armor.name}</h3>
       <div className="flex gap-2 items-center">
-        <span className={`text-xs px-2 py-1 rounded font-semibold ${tierColors[armor.tier]}`}>
-          T{armor.tier}
-        </span>
-        <span className="text-xs px-2 py-1 rounded bg-gray-200 font-semibold">
-          {getBaseScoreLabel(armor.baseScore)}
-        </span>
+        <Badge
+          label={`T${armor.tier}`}
+          color={
+            armor.tier === 1 ? "green" :
+            armor.tier === 2 ? "blue" :
+            armor.tier === 3 ? "purple" :
+            "yellow"
+          }
+        />
+        <Badge label={getBaseScoreLabel(armor.baseScore)} color="gray" />
       </div>
     </div>
 
@@ -90,7 +81,7 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
       <Shield size={14} /> {armor.threshold1}/{armor.threshold2}
     </div>
 
-    {/* Modifiers as text */}
+    {/* Modifiers */}
     <div className="flex flex-col gap-1">
       {MODIFIER_KEYS.map((key) => {
         const value = armor.modifiers[key];
@@ -114,7 +105,7 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
         )}
       </div>
     )}
-  </div>
+  </GameCard>
 );
 
 export default ArmorCard;

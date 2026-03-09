@@ -1,4 +1,5 @@
 import React from "react";
+import GameCard from "../../../common/components/GameCard";
 
 export type SpecialModifications = {
   id: string;
@@ -16,38 +17,36 @@ export type SpecializationsItem = {
 type SpecializationsCardProps = {
   item: SpecializationsItem;
   selected?: boolean;
+  onClick?: () => void;
 };
 
 const SpecializationsCard: React.FC<SpecializationsCardProps> = ({
   item,
   selected,
+  onClick,
 }) => (
-  <div
-    className={`
-      rounded-xl border p-4 cursor-pointer
-      transition-all duration-200
-      hover:shadow-lg hover:scale-[1.02]
-      ${selected ? "border-amber-400 bg-amber-50" : "border-gray-300"}
-    `}
-  >
-    <h3 className="text-lg font-bold mb-2">{item.name}</h3>
+  <GameCard selected={!!selected} onClick={onClick}>
+    {/* Header */}
+    <h3 className="text-lg font-bold">{item.name}</h3>
 
-    <p className="text-sm text-gray-600 mb-3">
-      {item.description}
-    </p>
+    {/* Description */}
+    <p className="text-sm text-gray-600">{item.description}</p>
 
-    <div className="space-y-2">
-      {item.modifications.map((mod) => (
-        <div
-          key={mod.id}
-          className="p-2 rounded-lg bg-gray-100"
-        >
-          <div className="font-semibold text-sm">{mod.name}</div>
-          <div className="text-xs text-gray-600">{mod.description}</div>
-        </div>
-      ))}
-    </div>
-  </div>
+    {/* Modifications */}
+    {item.modifications.length > 0 && (
+      <div className="space-y-2 mt-2">
+        {item.modifications.map((mod) => (
+          <div
+            key={mod.id}
+            className="p-2 rounded-lg bg-gray-100"
+          >
+            <div className="font-semibold text-sm">{mod.name}</div>
+            <div className="text-xs text-gray-600">{mod.description}</div>
+          </div>
+        ))}
+      </div>
+    )}
+  </GameCard>
 );
 
 export default SpecializationsCard;
