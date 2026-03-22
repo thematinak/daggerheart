@@ -1,18 +1,11 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Badge } from "../../../common/components/Badge";
+import { CharacterClass } from "../../../common/types/CharacterClass";
 
-export type ClassItem = {
-  id: string;
-  name: string;
-  description: string;
-  baseHp: number;
-  baseEvasion: number;
-  domains: string[];
-};
 
 type ClassCardProps = {
-  item: ClassItem;
+  item: CharacterClass;
   selected: boolean;
   onClick?: () => void;
 };

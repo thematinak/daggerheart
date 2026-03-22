@@ -1,18 +1,7 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
+import { SpecializationsItem } from "../../../common/types/Specializations";
 
-export type SpecialModifications = {
-  id: string;
-  name: string;
-  description: string;
-};
-
-export type SpecializationsItem = {
-  id: string;
-  name: string;
-  description: string;
-  modifications: SpecialModifications[];
-};
 
 type SpecializationsCardProps = {
   item: SpecializationsItem;

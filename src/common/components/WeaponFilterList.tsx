@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import WeaponCard, { WeaponItem } from "./WeaponCard";
+import WeaponCard from "./WeaponCard";
+import { WeaponItem } from "../types/Weapon";
 
 type WeaponFilters = {
   attribute?: string;
@@ -33,6 +34,7 @@ const WeaponFilterList: React.FC<Props> = ({ selected, forcedSlot, onSelect }) =
         tier: 1,
         slot: "primary",
         damage: { 6: 1, flat: 2 },
+        modifiers: {}
       },
       {
         id: "bow",
@@ -43,6 +45,7 @@ const WeaponFilterList: React.FC<Props> = ({ selected, forcedSlot, onSelect }) =
         tier: 2,
         slot: "primary",
         damage: { 6: 1 },
+        modifiers: {}
       },
     ];
 

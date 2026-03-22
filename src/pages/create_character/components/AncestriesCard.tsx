@@ -1,21 +1,11 @@
 import React from "react";
-import GameCard from "../../../common/components/GameCard"; // jednotný wrapper
+import GameCard from "../../../common/components/GameCard";
+import { Ancestries } from "../../../common/types/Ancestries";
 
-export type AncestrieModifications = {
-  id: string;
-  name: string;
-  description: string;
-};
 
-export type AncestriesItem = {
-  id: string;
-  name: string;
-  description: string;
-  modifications: AncestrieModifications[];
-};
 
 type AncestriesCardProps = {
-  item: AncestriesItem;
+  item: Ancestries;
   selected?: boolean;
   onClick?: () => void;
 };

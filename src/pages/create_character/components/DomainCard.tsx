@@ -1,13 +1,8 @@
 import React from "react";
-
-export type DomainCardItem = {
-  id: string;
-  name: string;
-  description?: string;
-};
+import { Domain } from "../../../common/types/Domain";
 
 type DomainCardProps = {
-  item: DomainCardItem;
+  item: Domain;
   selected?: boolean;
   onSelect: () => void;
 };

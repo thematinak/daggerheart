@@ -1,14 +1,10 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
+import { Experience } from "../../../common/types/Experience";
 
 export type ExperienceItem = {
   primaryExperience: Experience;
   secondaryExperience: Experience;
-};
-
-export type Experience = {
-  name: string;
-  description: string;
 };
 
 type ExperienceCardProps = {

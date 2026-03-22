@@ -1,20 +1,8 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard"; 
 import { Badge } from "../../../common/components/Badge";
+import { CommunityItem } from "../../../common/types/Community";
 
-export type CommunityModifications = {
-  id: string;
-  name: string;
-  description: string;
-};
-
-export type CommunityItem = {
-  id: string;
-  name: string;
-  description: string;
-  modifications: CommunityModifications;
-  traits: string[];
-};
 
 type CommunityCardProps = {
   item: CommunityItem;

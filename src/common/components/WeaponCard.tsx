@@ -1,24 +1,8 @@
 import React from "react";
 import { Sword, Zap } from "lucide-react";
-import { Badge } from "./Badge"; // rovnaký Badge ako pri ArmorCard
-import GameCard from "./GameCard"; // nový jednotný wrapper
-
-export type WeaponItem = {
-  id: string;
-  name: string;
-  description?: string;
-
-  attribute: string;
-  range: string;
-  damage: Record<number, number> & { flat?: number };
-  burden: "one-handed" | "two-handed";
-
-  tier: 1 | 2 | 3 | 4;
-  slot: "primary" | "secondary";
-
-  ability?: string;
-  abilityDescription?: string;
-};
+import { Badge } from "./Badge";
+import GameCard from "./GameCard";
+import { WeaponItem } from "../types/Weapon";
 
 type WeaponCardProps = {
   weapon: WeaponItem;

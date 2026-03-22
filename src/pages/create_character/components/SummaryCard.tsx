@@ -1,5 +1,6 @@
 import React from "react";
-import { Character } from "../create_character_page";
+import StatsBar, { buildStatsFromCharacter } from "../../../common/components/StatsBar";
+import { Character } from "../../../common/types/Character";
 
 type SummaryCardProps = {
   character: Character;
@@ -16,8 +17,8 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
           Character Summary
         </h1>
 
+        <StatsBar stats={buildStatsFromCharacter(character)} />
         <div className="flex flex-wrap gap-4">
-
           {/* BASIC INFO */}
           <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
             <h2 className="font-semibold mb-2">Basic Info</h2>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ArmorCard, { ArmorItem } from "./ArmorCard";
+import ArmorCard from "./ArmorCard";
+import { ArmorItem } from "../types/Armor";
 
 type ArmorFilters = {
   name?: string;
@@ -36,7 +37,7 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
         threshold1: 3,
         threshold2: 6,
         baseScore: 5,
-        modifiers: { armor: 2 }
+        modifiers: { maxArmor: 2 }
       }
     ];
 

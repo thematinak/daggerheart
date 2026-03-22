@@ -1,14 +1,9 @@
 import React from "react";
-import { WeaponItem } from "../../../common/components/WeaponCard";
-import { ArmorItem } from "../../../common/components/ArmorCard";
 import WeaponFilterList from "../../../common/components/WeaponFilterList";
 import ArmorFilterList from "../../../common/components/ArmorFilterList";
 import { NextPreviousButton } from "./NextButton";
-
-export type SelectedWeapons = {
-  primary: WeaponItem | null;
-  secondary: WeaponItem | null;
-};
+import { SelectedWeapons, WeaponItem } from "../../../common/types/Weapon";
+import { ArmorItem } from "../../../common/types/Armor";
 
 type GearCardProps = {
   selected: {

@@ -2,29 +2,8 @@ import React from "react";
 import { Shield, Zap } from "lucide-react";
 import { Badge } from "./Badge";
 import GameCard from "./GameCard"; // jednotný wrapper
+import { ArmorItem } from "../types/Armor";
 
-export type ArmorItem = {
-  id: string;
-  name: string;
-  tier: 1 | 2 | 3 | 4;
-  threshold1: number;
-  threshold2: number;
-  baseScore: number; // 0-2 light, 3-4 medium, 5+ heavy
-  modifiers: Partial<{
-    agility: number;
-    strength: number;
-    finesse: number;
-    instinct: number;
-    presence: number;
-    knowledge: number;
-    evasion: number;
-    armor: number;
-    hp: number;
-    stress: number;
-  }>;
-  ability?: string;
-  abilityDescription?: string;
-};
 
 type ArmorCardProps = {
   armor: ArmorItem;
@@ -47,9 +26,9 @@ const MODIFIER_KEYS = [
   "presence",
   "knowledge",
   "evasion",
-  "armor",
-  "hp",
-  "stress",
+  "maxArmor",
+  "maxHp",
+  "maxStress",
 ] as const;
 
 export const ArmorCard: React.FC<ArmorCardProps> = ({

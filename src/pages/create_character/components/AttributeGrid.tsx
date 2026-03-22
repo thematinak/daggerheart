@@ -1,7 +1,6 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Badge } from "../../../common/components/Badge";
-import PreviousButton from "./PreviousButton";
 import { NextPreviousButton } from "./NextButton";
 
 export type Attributes = {
@@ -21,7 +20,6 @@ export type AttributeItem = {
 
 type AttributesGridProps = {
   attributes: AttributeItem[];
-  attributeOptions: { value: number; id: number }[];
   selected: Attributes;
   onSelect: (selectedAttributes: Attributes) => void;
   showBack?: boolean;
@@ -30,9 +28,17 @@ type AttributesGridProps = {
   onNext?: () => void;
 };
 
+  const attributeOptions = [
+    {value:  2, id: 0}, 
+    {value:  1, id: 1},
+    {value:  1, id: 2},
+    {value:  0, id: 3},
+    {value:  0, id: 4},
+    {value: -1, id: 5}
+  ];
+
 export const AttributesGrid: React.FC<AttributesGridProps> = ({
   attributes,
-  attributeOptions,
   selected,
   onSelect,
   showBack = false,
