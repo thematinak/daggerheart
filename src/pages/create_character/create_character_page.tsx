@@ -31,12 +31,6 @@ type CardItem = {
 
 /* ---------- SAMPLE DATA ---------- */
 
-const classes: CharacterClass[] = [
-  { id: "guardian", name: "Guardian", description: "A stalwart protector who stands between allies and danger, using defensive magic and martial prowess to shield others.", baseHp: 7, baseEvasion: 9, domains: ["blade", "valor"], modifiers:{} },
-  { id: "ranger", name: "Ranger", description: "A skilled tracker and hunter who excels in wilderness survival and can form bonds with animal companions.", baseHp: 6, baseEvasion: 12, domains: ["bone", "sage"], modifiers:{} },
-  { id: "sorcerer", name: "Sorcerer", description: "A wielder of innate magical power who shapes reality through pure will and channels raw arcane energy.", baseHp: 6, baseEvasion: 10, domains: ["arcana", "midnight"], modifiers:{}  },
-];
-
 const specializations: SpecializationsItem[] = [
   { id: "stalwart", 
     name: "Stalwart", 
@@ -94,9 +88,9 @@ const armors: ArmorItem[] = [
 
 
 const domainCards: Domain[] = [
-  { id: "valor", name: "Valor", modifiers: {} },
-  { id: "midnight", name: "Midnight", modifiers: {} },
-  { id: "grace", name: "Grace", modifiers: {} },
+  { id: "valor", name: "Valor", description: "", modifiers: {} },
+  { id: "midnight", name: "Midnight", description: "", modifiers: {} },
+  { id: "grace", name: "Grace", description: "", modifiers: {} },
 ];
 
 /* ---------- MAIN COMPONENT ---------- */
@@ -194,11 +188,12 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 1 */}
       {step === 1 && (
         <>
-          <GridSelector
+          <GridSelector<CharacterClass>
             title="Select Class"
-            items={classes}
+            endpoint="http://pecen.eu/daggerheart/api1/classes.php"
+            // items={classes}
             selectedId={character.class?.id}
-            onSelect={(id, pos) => select("class", classes[pos])}
+            onSelect={(selected, pos) => select("class", selected)}
             renderItem={(cls, selected) => <ClassCard item={cls} selected={selected} />}
             showNext={character.class !== null}
             onNext={next}
@@ -209,11 +204,11 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 2 */}
       {step === 2 && (
         <>
-          <GridSelector
+          <GridSelector<SpecializationsItem>
             title="Select Specialization"
-            items={specializations}
+            endpoint={`http://pecen.eu/daggerheart/api1/specializations.php?class_id=${character.class?.id}`}
             selectedId={character.specialization?.id}
-            onSelect={(id, pos) => select("specialization", specializations[pos])}
+            onSelect={(id, pos) => select("specialization", id)}
             renderItem={(spec, selected) => <SpecializationsCard item={spec} selected={selected} />}
             showBack={true}
             showNext={character.specialization !== null}
@@ -226,11 +221,11 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <GridSelector
+          <GridSelector<Ancestries>
             title="Select Ancestry"
-            items={ancestries}
+            endpoint="http://pecen.eu/daggerheart/api1/ancestries.php"
             selectedId={character.ancestry?.id}
-            onSelect={(id, pos) => select("ancestry", ancestries[pos])}
+            onSelect={(selected, pos) => select("ancestry", selected)}
             renderItem={(ans, selected) => <AncestriesCard item={ans} selected={selected} />}
             showBack={true}
             onBack={back}
@@ -244,11 +239,11 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 4 */}
       {step === 4 && (
         <>
-          <GridSelector
+          <GridSelector<CommunityItem>
             title="Select Community"
-            items={communities}
+            endpoint="http://pecen.eu/daggerheart/api1/communities.php"
             selectedId={character.community?.id}
-            onSelect={(id, pos) => select("community", communities[pos])}
+            onSelect={(selected, pos) => select("community", selected)}
             renderItem={(ans, selected) => <CommunityCard item={ans} selected={selected} />}
             showBack={true}
             onBack={back}
@@ -306,7 +301,7 @@ const CharacterCreatorPage: React.FC = () => {
       )}
 
       {/* STEP 8 */}
-      {step === 8 && (
+      { step === 8 && (
         <>
           <ExperienceCard 
             item={{primaryExperience: character.primaryExperience, secondaryExperience: character.secondaryExperience}} 
@@ -320,11 +315,12 @@ const CharacterCreatorPage: React.FC = () => {
       )}
 
       {/* STEP 9 */}
-      {step === 9 && (
+      { step === 9 && (
         <>
-          <GridSelector
+          <GridSelector<Domain>
             title="Select 2 Domain Cards"
-            items={domainCards}
+            endpoint=""
+            // items={domainCards}
             onSelect={(id, pos) => select("community", communities[pos])}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}
@@ -337,8 +333,6 @@ const CharacterCreatorPage: React.FC = () => {
             showNext={character.community !== null}
             onNext={next}
           />
-
-          <button onClick={next}>Continue</button>
         </>
       )}
 
