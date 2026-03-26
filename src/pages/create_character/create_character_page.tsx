@@ -321,7 +321,7 @@ const CharacterCreatorPage: React.FC = () => {
             title="Select 2 Domain Cards"
             endpoint=""
             // items={domainCards}
-            onSelect={(id, pos) => select("community", communities[pos])}
+            onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}
                 item={domain}
@@ -330,7 +330,7 @@ const CharacterCreatorPage: React.FC = () => {
               />}
             showBack={true}
             onBack={back}
-            showNext={character.community !== null}
+            showNext={character.domainCards.length == 2}
             onNext={next}
           />
         </>
