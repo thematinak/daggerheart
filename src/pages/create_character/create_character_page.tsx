@@ -16,55 +16,26 @@ import { CharacterClass } from "../../common/types/CharacterClass";
 import { SpecializationsItem } from "../../common/types/Specializations";
 import { Ancestries } from "../../common/types/Ancestries";
 import { CommunityItem } from "../../common/types/Community";
-import { WeaponItem } from "../../common/types/Weapon";
-import { ArmorItem } from "../../common/types/Armor";
 import { Domain } from "../../common/types/Domain";
 
 /* ---------- TYPES ---------- */
 
-type CardItem = {
-  id: string;
-  name: string;
-  description?: string;
-};
-
 
 /* ---------- SAMPLE DATA ---------- */
 
-const specializations: SpecializationsItem[] = [
-  { id: "stalwart", 
-    name: "Stalwart", 
-    description: "Unwavering defenders who excel at protecting allies, using their presence and determination to shield others from harm.",
-    modifications: [
-        {id: "Unwavering", name: "Unwavering", description: "Gain a permanent +1 bonus to your damage thresholds.", modifiers:{}},
-        {id: "Iron Will", name: "Iron Will", description: "When you take physical damage, you can mark an additional Armor Slot to reduce the severity.", modifiers:{}}]
- },
-  { id: "vengeance", 
-    name: "Vengeance", 
-    description: "Fierce protectors driven by righteous fury, pursuing those who would harm the innocent with relentless determination.",
-    modifications: [
-        {id: "At Ease", name: "At Ease", description: "Gain an additional Stress slot.", modifiers:{}},
-        {id: "Revenge", name: "Revenge", description: "When an adversary within Melee range succeeds on an attack against you, you can mark 2 Stress to force the attacker to mark a Hit Point.", modifiers:{}}]
- }
-];
 
-const ancestries: Ancestries[] = [
-  { id: "human", name: "Human", description: "Humans are most easily recognized by their dexterous hands, rounded ears, and bodies built for endurance. Their average height ranges from just under 5 feet to about 6 ½ feet. They have a wide variety of builds and are physically adaptable, adjusting to harsh climates with relative ease.", modifiers:{},
-    modifications: [{id: "High Stamina" ,name: "High Stamina", description: "Gain an additional Stress slot at character creation." },{id: "Adaptability" ,name: "Adaptability", description: "When you fail a roll that utilized one of your Experiences, you can mark a Stress to reroll." }] },
-  { id: "elf", name: "Elf", description: "Elves are typically tall humanoids with pointed ears and acutely attuned senses. Their ears vary in size and pointed shape, and as they age, the tips begin to droop. While elves come in a wide range of body types, they are all fairly tall, with heights ranging from about 6 to 6 ½ feet.", modifiers:{},
-    modifications: [{id: "Quick Reactions" ,name: "Quick Reactions", description: "Mark a Stress to gain advantage on a reaction roll." },{id: "Celestial Trance" ,name: "Celestial Trance", description: "During a rest, you can drop into a trance to choose an additional downtime move." }] },
-  { id: "dwarf", name: "Dwarf", description: "Dwarves are most easily recognized as short humanoids with square frames, dense musculature, and thick hair. Their average height ranges from 4 to 5 ½ feet, and they are often broad in proportion to their stature. Their skin and nails contain a high amount of keratin, making them naturally resilient.", modifiers:{},
-    modifications: [{id: "Thick Skin" ,name: "Thick Skin", description: "When you take Minor damage, you can mark 2 Stress instead of marking a Hit Point." },{id: "Increased Fortitude" ,name: "Thick Skin", description: "Spend 3 Hope to halve incoming physical damage." }] },
-];
+function generateQueryParams(level: number, domains: string[]): string {
+  // Odstráni duplicitné hodnoty
+  const uniqueDomains = Array.from(new Set(domains));
 
-const communities: CommunityItem[] = [
-  { id: "highborn", name: "Highborn", description: "Being part of a highborne community means you're accustomed to a life of elegance, opulence, and prestige within the upper echelons of society. Traditionally, members of a highborne community possess incredible material wealth. While this can take a variety of forms depending on the community—including gold and other minerals, land, or controlling the means of production—this status always comes with power and influence", modifiers:{}, 
-    modifications: { id: "Privilege", name:"Privilege", description: "You have advantage on rolls to consort with nobles, negotiate prices, or leverage your reputation to get what you want."}, traits: ["amiable", "candid", "conniving", "enterprising", "ostentatious", "unflappable"] },
-  { id: "Wildborne", name: "Wildborne", description: "Being part of a wildborne community means you lived deep within the forest. Wildborne communities are defined by their dedication to the conservation of their homelands, and many have strong religious or cultural ties to the fauna they live among. This results in unique architectural and technological advancements that favor sustainability over short-term, high-yield results.", modifiers:{}, 
-    modifications: { id: "Lightfoot", name:"Lightfoot", description: "Your movement is naturally silent. You have advantage on rolls to move without being heard."}, traits: ["hardy","loyal","nurturing","reclusive","sagacious","vibrant"]  },
-  { id: "Wanderborne", name: "Wanderborne", description: "Being part of a wanderborne community means you've lived as a nomad, forgoing a permanent home and experiencing a wide variety of cultures. Unlike many communities that are defined by their locale, wanderborne are defined by their traveling lifestyle. Because of their frequent migration, wanderborne put less value on the accumulation of material possessions in favor of acquiring information, skills, and connections.", modifiers:{}, 
-    modifications: { id: "Nomadic Pack", name:"Nomadic Pack", description: "Add a Nomadic Pack to your inventory. Once per session, you can spend a Hope to reach into this pack and pull out a mundane item that's useful to your situation. Work with the GM to figure out what item you take out."}, traits: ["inscrutable","magnanimous","mirthful","reliable","savvy","unorthodox"]  },
-];
+  // Vytvorí query parametre pre každý domain_id
+  const domainParams = uniqueDomains.map(domain => `domain_id=${encodeURIComponent(domain)}`).join('&');
+
+  // Pridá level
+  const query = `level=${level}&${domainParams}`;
+
+  return query;
+}
 
 const attributes: AttributeItem[] = [
   { id: "Agility", name: "agility", skills: ["Leap", "Maneuver"] },
@@ -75,23 +46,6 @@ const attributes: AttributeItem[] = [
   { id: "Knowledge", name: "knowledge", skills: ["Recall", "Analyze"] },
 ]
 
-const weapons: WeaponItem[] = [
-  { id: "Returning Blade", name: "Returning Blade", attribute: "Finesse", range: "Close", damage: {6: 2, flat: 4}, burden: "one-handed", tier: 1, slot: "primary", ability: "Returning", abilityDescription: "When this weapon is thrown within its range, it appears in your hand immediately after the attack", modifiers:{}  }
-  ,{ id: "Returning Blade2", name: "Returning Blade2", attribute: "Finesse", range: "Close", damage: {6: 2, 8: 5, 12:1, flat: 4}, burden: "one-handed", tier: 2, slot: "primary", ability: "Returning", abilityDescription: "When this weapon is thrown within its range, it appears in your hand immediately after the attack", modifiers:{}  }
-  ,{ id: "Returning Blade3", name: "Returning Blade3", attribute: "Finesse", range: "Close", damage: {6: 2, flat: 4}, burden: "one-handed", tier: 3, slot: "primary", ability: "Returning", abilityDescription: "When this weapon is thrown within its range, it appears in your hand immediately after the attack", modifiers:{}  }
-];
-
-const armors: ArmorItem[] = [
-  { id: "light", name: "Light Armor", tier: 1, baseScore: 1, threshold1: 5, threshold2: 9, modifiers: {evasion: 1, agility: 1}, ability: "Flexible", abilityDescription: "+1 to Evasion" },
-  { id: "heavy", name: "Heavy Armor", tier: 3, baseScore: 5, threshold1: 5, threshold2: 9, modifiers: {strength: 1}, ability: "Flexible", abilityDescription: "+1 to Evasion"  },
-];
-
-
-const domainCards: Domain[] = [
-  { id: "valor", name: "Valor", description: "", modifiers: {} },
-  { id: "midnight", name: "Midnight", description: "", modifiers: {} },
-  { id: "grace", name: "Grace", description: "", modifiers: {} },
-];
 
 /* ---------- MAIN COMPONENT ---------- */
 
@@ -319,7 +273,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Domain>
             title="Select 2 Domain Cards"
-            endpoint=""
+            endpoint={`http://pecen.eu/daggerheart/api1/domain_cards.php?${generateQueryParams(1, character.class?.domains || [])}`}
             // items={domainCards}
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
