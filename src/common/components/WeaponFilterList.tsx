@@ -16,51 +16,45 @@ type Props = {
   onSelect: (w: WeaponItem | null) => void;
 };
 
-const WeaponFilterList: React.FC<Props> = ({ selected, forcedSlot, onSelect }) => {
+const WeaponFilterList: React.FC<Props> = ({
+  selected,
+  forcedSlot,
+  onSelect,
+}) => {
   const [filters, setFilters] = useState<WeaponFilters>({});
   const [items, setItems] = useState<WeaponItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch zbrane (tu dummy data)
   const fetchWeapons = async (f: WeaponFilters) => {
-    console.log("fetch weapons with filters", f);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const dummy: WeaponItem[] = [
-      {
-        id: "sword",
-        name: "Sword",
-        attribute: "strength",
-        range: "melee",
-        burden: "one-handed",
-        tier: 1,
-        slot: "primary",
-        damage: { 6: 1, flat: 2 },
-        modifiers: {}
-      },
-      {
-        id: "bow",
-        name: "Bow",
-        attribute: "agility",
-        range: "far",
-        burden: "two-handed",
-        tier: 2,
-        slot: "primary",
-        damage: { 6: 1 },
-        modifiers: {}
-      },
-    ];
+      const cleaned: Record<string, string> = {};
+      Object.entries(f).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") {
+          cleaned[key] = String(value);
+        }
+      });
 
-    // filtrovanie podľa filterov
-    const filtered = dummy.filter((w) => {
-      if (forcedSlot && w.slot !== forcedSlot) return false;
-      if (filters.attribute && w.attribute !== filters.attribute) return false;
-      if (filters.range && w.range !== filters.range) return false;
-      if (filters.burden && w.burden !== filters.burden) return false;
-      if (filters.tier && w.tier !== filters.tier) return false;
-      if (filters.slot && w.slot !== filters.slot) return false;
-      return true;
-    });
+      const queryString = new URLSearchParams(cleaned).toString();
 
-    setItems(filtered);
+      const response = await fetch(`http://pecen.eu/daggerheart/api1/weapons.php?${queryString}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch weapons");
+      }
+
+      const data: WeaponItem[] = await response.json();
+      setItems(data);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Unknown error");
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -68,6 +62,7 @@ const WeaponFilterList: React.FC<Props> = ({ selected, forcedSlot, onSelect }) =
       ...filters,
       ...(forcedSlot ? { slot: forcedSlot } : {}),
     };
+
     fetchWeapons(f);
   }, [filters, forcedSlot]);
 
@@ -123,29 +118,39 @@ const WeaponFilterList: React.FC<Props> = ({ selected, forcedSlot, onSelect }) =
           <option value="4">T4</option>
         </select>
 
-        <select
+        {!forcedSlot && (
+          <select
           onChange={(e) => setFilters({ ...filters, slot: e.target.value })}
-          className="border rounded-lg px-3 py-2"
-          value={filters.slot || ""}
-        >
-          <option value="">Slot</option>
-          <option value="primary">Primary</option>
-          <option value="secondary">Secondary</option>
-        </select>
+            className="border rounded-lg px-3 py-2"
+            value={filters.slot || ""}
+          >
+            <option value="">Slot</option>
+            <option value="primary">Primary</option>
+            <option value="secondary">Secondary</option>
+          </select>
+        )}
       </div>
 
+      {/* STATES */}
+      {loading && <p>Loading weapons...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
       {/* CARDS */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((w) => (
-          <WeaponCard
-            key={w.id}
-            weapon={w}
-            selected={selected?.id === w.id}
-            onSelect={() => onSelect(w)}
-            onDeselect={() => onSelect(null)}
-          />
-        ))}
-      </div>
+      {!loading && !error && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.length === 0 && <p>No weapons found</p>}
+
+          {items.map((w) => (
+            <WeaponCard
+              key={w.id}
+              weapon={w}
+              selected={selected?.id === w.id}
+              onSelect={() => onSelect(w)}
+              onDeselect={() => onSelect(null)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -16,32 +16,39 @@ type Props = {
 const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
   const [filters, setFilters] = useState<ArmorFilters>({});
   const [items, setItems] = useState<ArmorItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchArmor = async (f: ArmorFilters) => {
-    console.log("fetch armor with filters", f);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const dummy: ArmorItem[] = [
-      {
-        id: "leather",
-        name: "Leather Armor",
-        tier: 1,
-        threshold1: 2,
-        threshold2: 4,
-        baseScore: 1,
-        modifiers: { evasion: 1 }
-      },
-      {
-        id: "plate",
-        name: "Plate Armor",
-        tier: 3,
-        threshold1: 3,
-        threshold2: 6,
-        baseScore: 5,
-        modifiers: { maxArmor: 2 }
+      const cleaned: Record<string, string> = {};
+
+      Object.entries(f).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") {
+          cleaned[key] = String(value);
+        }
+      });
+
+      const queryString = new URLSearchParams(cleaned).toString();
+
+      const response = await fetch(`http://pecen.eu/daggerheart/api1/armor.php?${queryString}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch armor");
       }
-    ];
 
-    setItems(dummy);
+      const data: ArmorItem[] = await response.json();
+      setItems(data);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Unknown error");
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -61,15 +68,14 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
         />
 
         <select
-          onChange={(e) =>
-            setFilters({ ...filters, tier: Number(e.target.value) })
-          }
+          onChange={(e) => setFilters({ ...filters, tier: e.target.value ? Number(e.target.value) : undefined })}
           className="border rounded-lg px-3 py-2"
         >
           <option value="">Tier</option>
           <option value="1">T1</option>
           <option value="2">T2</option>
           <option value="3">T3</option>
+          <option value="4">T4</option>
         </select>
 
         <select
@@ -86,18 +92,26 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
 
       </div>
 
+      {/* STATES */}
+      {loading && <p>Loading armor...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
       {/* CARDS */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((a) => (
-          <ArmorCard
-            key={a.id}
-            armor={a}
-            selected={selected?.id === a.id}
-            onSelect={() => onSelect(a)}
-            onDeselect={() => onSelect(null)}
-          />
-        ))}
-      </div>
+      {!loading && !error && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.length === 0 && <p>No armor found</p>}
+
+          {items.map((a) => (
+            <ArmorCard
+              key={a.id}
+              armor={a}
+              selected={selected?.id === a.id}
+              onSelect={() => onSelect(a)}
+              onDeselect={() => onSelect(null)}
+            />
+          ))}
+        </div>
+      )}
 
     </div>
   );
