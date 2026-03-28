@@ -17,6 +17,8 @@ import { SpecializationsItem } from "../../common/types/Specializations";
 import { Ancestries } from "../../common/types/Ancestries";
 import { CommunityItem } from "../../common/types/Community";
 import { Domain } from "../../common/types/Domain";
+import { BackpackItem } from "../../common/types/BackpackItem";
+import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
 
 /* ---------- TYPES ---------- */
 
@@ -56,6 +58,7 @@ const CharacterCreatorPage: React.FC = () => {
   const [character, setCharacter] = useState<Character>({
     level: 1,
     class: null,
+    backpack: [],
     ancestry: null,
     community: null,
     specialization: null,
@@ -112,7 +115,7 @@ const CharacterCreatorPage: React.FC = () => {
       fetchData();
     }, []);
 
-  const next = () => setStep((s) => Math.min(10, s + 1));
+  const next = () => setStep((s) => Math.min(11, s + 1));
   const back = () => setStep((s) => Math.max(1, s - 1));
   const select = useCallback((field: keyof Character, value: any) => setCharacter((stateCharacter) => ({ ...stateCharacter, [field]: value })), []);
 
@@ -138,7 +141,7 @@ const CharacterCreatorPage: React.FC = () => {
 
   return (
     <div style={{ padding: 40 }}>
-      <StepIndicator currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Summary"]} />
+      <StepIndicator onStepSelect={(stepIndex: number) => setStep(stepIndex + 1)} currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Backpack", "Summary" ]} />
       {/* STEP 1 */}
       {step === 1 && (
         <>
@@ -290,8 +293,15 @@ const CharacterCreatorPage: React.FC = () => {
         </>
       )}
 
-      {/* STEP 10 SUMMARY */}
+      {/* STEP 10 BACKPACK */}
       {step === 10 && (
+        <>
+          <BackpackSelectorCard character={character} onBack={back} showNext={true} onNext={next} onSelect={(item: BackpackItem[]) => setCharacter({...character, backpack: item })} />
+        </>
+      )}
+
+      {/* STEP 11 SUMMARY */}
+      {step === 11 && (
         <>
           <SummaryCard character={character} onBack={back} />
         </>

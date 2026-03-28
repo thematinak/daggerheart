@@ -1,3 +1,4 @@
+import { BackpackItem } from "./BackpackItem";
 import { StatModifiers } from "./StatModifiers";
 
 export type CharacterClass = {
@@ -8,6 +9,9 @@ export type CharacterClass = {
   baseEvasion: number;
   domains: string[];
   modifiers: StatModifiers;
+  classItem: BackpackItem;
+  hopeFeature: string;
+  hopeFeatureDescription: string;
 };
 
 

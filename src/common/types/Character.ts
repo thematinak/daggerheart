@@ -1,6 +1,7 @@
 import { Attributes } from "../../pages/create_character/components/AttributeGrid";
 import { Ancestries } from "./Ancestries";
 import { ArmorItem } from "./Armor";
+import { BackpackItem } from "./BackpackItem";
 import { CharacterClass } from "./CharacterClass";
 import { CommunityItem } from "./Community";
 import { Domain } from "./Domain";
@@ -12,6 +13,7 @@ import { SelectedWeapons } from "./Weapon";
 export type Character = {
   level: number;
   class: CharacterClass | null;
+  backpack: BackpackItem[];
   specialization: SpecializationsItem | null;
   ancestry: Ancestries | null;
   community: CommunityItem | null;

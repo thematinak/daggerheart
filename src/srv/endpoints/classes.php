@@ -1,21 +1,27 @@
 <?php
-header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
 
-// --- Database connection ---
-$host = '86.110.243.71';
-$db   = 'kd037800db';
-$user = 'kd037800';
-$pass = 'PhfDHdtcKBQIPkH6RfajkR';
-$charset = 'utf8mb4';
+// CORS
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Headers: Content-Type");
+
 
 require_once 'db.php';
 
 // --- Fetch classes with their domains ---
 $sql = "
-    SELECT c.id AS class_id, c.name AS class_name, c.description AS class_description, 
-           c.base_hp, c.base_evasion, c.modifiers,
-           d.name AS domain_name
+    SELECT 
+        c.id AS class_id, 
+        c.name AS class_name, 
+        c.description AS class_description, 
+        c.base_hp, 
+        c.base_evasion, 
+        c.modifiers,
+        c.hope_feature,
+        c.hope_feature_description,
+        c.class_item,
+        d.name AS domain_name
     FROM dh_classes c
     LEFT JOIN dh_class_domains cd ON cd.class_id = c.id
     LEFT JOIN dh_domains d ON d.id = cd.domain_id
@@ -28,7 +34,7 @@ $classes = [];
 while ($row = $stmt->fetch()) {
     $classId = $row['class_id'];
 
-    // Parse JSON modifiers as object
+    // Parse JSON modifiers
     $modifiers = !empty($row['modifiers']) ? json_decode($row['modifiers']) : new stdClass();
 
     // Initialize class entry
@@ -40,6 +46,9 @@ while ($row = $stmt->fetch()) {
             'baseHp' => (int)$row['base_hp'],
             'baseEvasion' => (int)$row['base_evasion'],
             'baseArmor' => isset($modifiers->maxArmor) ? (int)$modifiers->maxArmor : 0,
+            'hopeFeature' => $row['hope_feature'],
+            'hopeFeatureDescription' => $row['hope_feature_description'],
+            'classItem' => $row['class_item'],
             'domains' => [],
             'modifiers' => $modifiers
         ];

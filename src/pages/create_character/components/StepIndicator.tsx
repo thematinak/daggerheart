@@ -2,10 +2,11 @@ import React from "react";
 
 type StepIndicatorProps = {
   steps: string[];       // Názvy krokov
+  onStepSelect: (stepIndex: number) => void;
   currentStep: number;   // index aktuálneho kroku (0-based)
 };
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => {
+const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep, onStepSelect }) => {
   const progressPercent = ((currentStep) / (steps.length - 1)) * 100;
 
   return (
@@ -13,7 +14,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => 
       {/* Progress bar */}
       <div className="relative w-full h-2 bg-gray-300 rounded-full mb-4">
         <div
-          className="h-2 bg-yellow-400 rounded-full transition-all duration-300"
+          className="h-2 bg-green-700 rounded-full transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -25,12 +26,12 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => 
           const isCompleted = index < currentStep;
 
           return (
-            <div key={index} className="flex flex-col items-center text-center w-24">
+            <div key={index} className="flex flex-col items-center text-center w-24" onClick={isCompleted ? () => onStepSelect(index) : undefined}>
               {/* Štvorcový krok */}
               <div
                 className={`w-10 h-10 flex items-center justify-center font-semibold rounded-md border-2
                   ${isActive ? 'bg-yellow-400 border-yellow-400 text-white' : ''}
-                  ${isCompleted && !isActive ? 'bg-yellow-100 border-yellow-300 text-yellow-700' : ''}
+                  ${isCompleted && !isActive ? 'border-green-700 bg-green-100 text-green-700 cursor-pointer' : ''}
                   ${!isActive && !isCompleted ? 'bg-gray-100 border-gray-300 text-gray-500' : ''}
                 `}
               >

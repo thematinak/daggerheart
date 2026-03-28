@@ -1,5 +1,6 @@
 import React from "react";
 import { Domain } from "../../../common/types/Domain";
+import GameCard from "../../../common/components/GameCard";
 
 type DomainCardProps = {
   item: Domain;
@@ -9,19 +10,15 @@ type DomainCardProps = {
 
 const DomainCard: React.FC<DomainCardProps> = ({ item, selected = false, onSelect }) => {
   return (
-    <div
+    <GameCard 
+      selected={selected}
       onClick={onSelect}
-      className={`
-        border rounded-xl p-4 cursor-pointer transition-all duration-200
-        ${selected ? "border-amber-400 bg-amber-50" : "border-gray-300"}
-        hover:shadow-lg hover:scale-[1.02]
-      `}
     >
       <h3 className="font-bold text-lg">{item.name}</h3>
       {item.description && (
         <p className="text-sm text-gray-600 mt-1">{item.description}</p>
       )}
-    </div>
+    </GameCard>
   );
 };
 
