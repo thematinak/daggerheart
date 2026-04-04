@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 
 const LoginPage: React.FC = () => {
@@ -9,9 +9,9 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const { login } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch(`http://pecen.eu/daggerheart/api1/login_user.php`, {
+    const response = await fetch(`http://pecen.eu/daggerheart/api1/create_user.php`, {
       method: "POST",
       body: JSON.stringify({ username: name })
     });
@@ -33,7 +33,7 @@ const LoginPage: React.FC = () => {
         {/* Title */}
         <div className="text-center">
           <h1 className="text-2xl font-bold text-yellow-600">DaggerHeart MP</h1>
-          <p className="text-gray-500 text-sm">Login to your account</p>
+          <p className="text-gray-500 text-sm">Register</p>
         </div>
 
         {/* Error */}
@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
         )}
 
         {/* Form */}
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+        <form onSubmit={handleRegister} className="flex flex-col gap-4">
 
           {/* User Name */}
           <div className="flex flex-col gap-1">
@@ -65,17 +65,9 @@ const LoginPage: React.FC = () => {
             type="submit"
             className="mt-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded-lg transition"
           >
-            Login
-          </button>
-        </form>
-
-        {/* Register */}
-        <Link to="/register" className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <button className="text-yellow-600 font-semibold hover:underline">
             Register
           </button>
-        </Link>
+        </form>
 
       </div>
     </div>

@@ -72,6 +72,8 @@ export function GridSelector<T extends { id: string | number }>({
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  console.log("endpoint", endpoint);
+  
 
   useEffect(() => {
     let isMounted = true;

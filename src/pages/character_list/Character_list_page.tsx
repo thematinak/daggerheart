@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../common/contexts/AuthProvider";
 
 type CharacterListItem = {
   id: string;
@@ -8,11 +9,30 @@ type CharacterListItem = {
 };
 
 const CharacterListPage: React.FC = () => {
-  const [characters, setCharacters] = useState<CharacterListItem[]>([
-    { id: "1", name: "Arthos", level: 3, className: "Warrior" },
-    { id: "2", name: "Lyra", level: 5, className: "Mage" },
-    { id: "3", name: "Kael", level: 2, className: "Rogue" },
-  ]);
+  const { user } = useAuth();
+  const [characters, setCharacters] = useState<CharacterListItem[]>([]);
+  const [loading, setLoading] = useState({isLoading: false, error: null as string | null});
+
+  const fetchCharacters = async (userId: number) => {
+        try {
+          setLoading({ isLoading: true, error: null });
+    
+          const queryString = new URLSearchParams({user_id: userId.toString()}).toString();
+          const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?${queryString}`);
+          const data: CharacterListItem[] = await response.json();
+          setCharacters(data);
+        } catch (err: any) {
+          console.error(err);
+          setCharacters([]);
+          setLoading({ isLoading: false, error: err.message || "Unknown error" });
+        } finally {
+          setLoading(old => ({...old, isLoading: false }));
+        }
+  };
+
+  useEffect(() => {
+    fetchCharacters(user?.id ?? -1);
+  }, [user?.id]);
 
   const handleDelete = (id: string) => {
     setCharacters((prev) => prev.filter((c) => c.id !== id));
@@ -39,7 +59,8 @@ const CharacterListPage: React.FC = () => {
           </thead>
 
           <tbody>
-            {characters.length === 0 && (
+            {loading.isLoading && (<tr><td colSpan={4}>Loading...</td></tr>)}
+            {!loading.isLoading && characters.length === 0 && (
               <tr>
                 <td
                   colSpan={4}
@@ -50,7 +71,7 @@ const CharacterListPage: React.FC = () => {
               </tr>
             )}
 
-            {characters.map((character) => (
+            {!loading.isLoading && characters.map((character) => (
               <tr
                 key={character.id}
                 className="border-t hover:bg-gray-50"

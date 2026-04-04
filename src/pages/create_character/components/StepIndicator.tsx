@@ -29,8 +29,8 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep, onSte
             <div key={index} className="flex flex-col items-center text-center w-24" onClick={isCompleted ? () => onStepSelect(index) : undefined}>
               {/* Štvorcový krok */}
               <div
-                className={`w-10 h-10 flex items-center justify-center font-semibold rounded-md border-2
-                  ${isActive ? 'bg-yellow-400 border-yellow-400 text-white' : ''}
+                className={`w-10 h-10 flex items-center justify-center font-semibold rounded-md border transition-colors duration-300
+                  ${isActive ? 'bg-yellow-100 border-yellow-400 text-gray-500' : ''}
                   ${isCompleted && !isActive ? 'border-green-700 bg-green-100 text-green-700 cursor-pointer' : ''}
                   ${!isActive && !isCompleted ? 'bg-gray-100 border-gray-300 text-gray-500' : ''}
                 `}

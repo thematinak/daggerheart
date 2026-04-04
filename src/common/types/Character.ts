@@ -8,10 +8,14 @@ import { Domain } from "./Domain";
 import { Experience } from "./Experience";
 import { SpecializationsItem } from "./Specializations";
 import { StatModifiers } from "./StatModifiers";
-import { SelectedWeapons } from "./Weapon";
+import { SelectedWeapons, WeaponItem } from "./Weapon";
 
 export type Character = {
+  user_id: number;
   level: number;
+  bank: number;
+  name: string;
+  description: string;
   class: CharacterClass | null;
   backpack: BackpackItem[];
   specialization: SpecializationsItem | null;
@@ -20,9 +24,9 @@ export type Character = {
   attributes: Attributes;
   customAttributes: StatModifiers;
   weapons: SelectedWeapons;
+  weaponInventory: WeaponItem[];
   armor: ArmorItem | null;
-  name: string;
-  description: string;
+  armorInventory: ArmorItem[];
   primaryExperience: Experience;
   secondaryExperience: Experience;
   domainCards: Domain[];

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import ClassCard from "./components/ClassCard";
 import SpecializationsCard from "./components/SpecializationsCard";
 import AncestriesCard from "./components/AncestriesCard";
@@ -19,6 +19,8 @@ import { CommunityItem } from "../../common/types/Community";
 import { Domain } from "../../common/types/Domain";
 import { BackpackItem } from "../../common/types/BackpackItem";
 import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../common/contexts/AuthProvider";
 
 /* ---------- TYPES ---------- */
 
@@ -27,16 +29,11 @@ import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
 
 
 function generateQueryParams(level: number, domains: string[]): string {
-  // Odstráni duplicitné hodnoty
-  const uniqueDomains = Array.from(new Set(domains));
+  const cleaned: Record<string, string> = {};
+  if (level) cleaned.level = String(level);
+  if (domains.length > 0) cleaned.domain_id = domains.join(",");
 
-  // Vytvorí query parametre pre každý domain_id
-  const domainParams = uniqueDomains.map(domain => `domain_id=${encodeURIComponent(domain)}`).join('&');
-
-  // Pridá level
-  const query = `level=${level}&${domainParams}`;
-
-  return query;
+  return new URLSearchParams(cleaned).toString();
 }
 
 const attributes: AttributeItem[] = [
@@ -54,9 +51,13 @@ const attributes: AttributeItem[] = [
 const CharacterCreatorPage: React.FC = () => {
   const [step, setStep] = useState(1);
   const [classes, setSetClasses] = useState<CharacterClass[]>([]);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [character, setCharacter] = useState<Character>({
+     user_id: user?.id || 0,
     level: 1,
+    bank: 0,
     class: null,
     backpack: [],
     ancestry: null,
@@ -76,7 +77,9 @@ const CharacterCreatorPage: React.FC = () => {
     secondaryExperience: { name: "", description: "" },
     domainCards: [],
     weapons: {primary: null, secondary: null},
+    weaponInventory: [],
     armor: null,
+    armorInventory: [],
     customAttributes: {},
     countedStats: {
       evasion: 0,
@@ -118,6 +121,29 @@ const CharacterCreatorPage: React.FC = () => {
   const next = () => setStep((s) => Math.min(11, s + 1));
   const back = () => setStep((s) => Math.max(1, s - 1));
   const select = useCallback((field: keyof Character, value: any) => setCharacter((stateCharacter) => ({ ...stateCharacter, [field]: value })), []);
+  const createCharacter = useCallback(() => {
+    async function postCharacter() {
+      try {
+        const res = await fetch("http://pecen.eu/daggerheart/api1/create_character.php", {
+          method: "POST",
+          body: JSON.stringify({
+            ...character,
+            user_id: user?.id,
+          }),
+        });
+        const resBody = await res.json();
+        if (resBody.success) {
+          navigate("/");
+        } else {
+          throw new Error(resBody.error || "Failed to create character");
+        }
+      } catch (error) {
+        console.error("Error creating character:", error);
+      }
+    }
+    postCharacter();
+    
+  }, [character, navigate]);
 
   /* ---------- DOMAIN CARD TOGGLE ---------- */
 
@@ -277,7 +303,6 @@ const CharacterCreatorPage: React.FC = () => {
           <GridSelector<Domain>
             title="Select 2 Domain Cards"
             endpoint={`http://pecen.eu/daggerheart/api1/domain_cards.php?${generateQueryParams(1, character.class?.domains || [])}`}
-            // items={domainCards}
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}
@@ -287,7 +312,7 @@ const CharacterCreatorPage: React.FC = () => {
               />}
             showBack={true}
             onBack={back}
-            showNext={character.domainCards.length == 2}
+            showNext={character.domainCards.length === 2}
             onNext={next}
           />
         </>
@@ -296,14 +321,14 @@ const CharacterCreatorPage: React.FC = () => {
       {/* STEP 10 BACKPACK */}
       {step === 10 && (
         <>
-          <BackpackSelectorCard character={character} onBack={back} showNext={true} onNext={next} onSelect={(item: BackpackItem[]) => setCharacter({...character, backpack: item })} />
+          <BackpackSelectorCard character={character} onBack={back} showNext={true} onNext={next} onSelect={(item: BackpackItem[], bank: number) => setCharacter({...character, backpack: item, bank })} />
         </>
       )}
 
       {/* STEP 11 SUMMARY */}
       {step === 11 && (
         <>
-          <SummaryCard character={character} onBack={back} />
+          <SummaryCard character={character} onBack={back} onCreate={createCharacter} />
         </>
       )}
     </div>

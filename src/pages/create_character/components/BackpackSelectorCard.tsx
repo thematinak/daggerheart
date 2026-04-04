@@ -10,7 +10,7 @@ type Props = {
   onBack: () => void;
   onNext?: () => void;
   showNext?: boolean;
-  onSelect: (items: BackpackItem[]) => void;
+  onSelect: (items: BackpackItem[], bank: number) => void;
 };
 
 const FIXED_ITEMS: BackpackItem[] = [
@@ -33,13 +33,6 @@ const FIXED_ITEMS: BackpackItem[] = [
     name: "Basic supplies",
     modifiers: {},
     description: "Tent, bedroll, tinderbox, rations, etc.",
-    roll: 0
-  },
-  {
-    id: "gold",
-    name: "Gold",
-    modifiers: {},
-    description: "A handful of gold.",
     roll: 0
   }
 ];
@@ -82,7 +75,7 @@ export const BackpackSelectorCard: React.FC<Props> = ({
 
   // auto update parent
   useEffect(() => {
-    onSelect(finalItems);
+    onSelect(finalItems, 10);
   }, [selectedPotion, classItem]);
 
   return (

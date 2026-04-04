@@ -6,7 +6,7 @@ export type NextButtonProps = {
 
 export const NextButton: React.FC<NextButtonProps> = ({onNext}) => <button
                 onClick={onNext}
-                className="px-4 py-2 rounded-lg bg-yellow-400 text-white hover:bg-yellow-500 font-semibold"
+                className="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 font-semibold border border-green-700"
               >Next</button>
 
 export type PreviousButtonProps = {

@@ -1,6 +1,7 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Experience } from "../../../common/types/Experience";
+import { NextPreviousButton } from "./NextButton";
 
 export type ExperienceItem = {
   primaryExperience: Experience;
@@ -85,31 +86,9 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           }
         />
 
-        {/* Next / Back Buttons */}
+        {/* NAVIGATION */}
         {(showBack || showNext) && (
-          <div className="flex justify-between mt-4">
-            {showBack ? (
-              <button
-                onClick={onBack}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
-              >
-                Späť
-              </button>
-            ) : <div className="w-24" />}
-
-            {showNext ? (
-              <button
-                onClick={onNext}
-                className={`px-4 py-2 rounded-lg font-semibold
-                  ${!item.primaryExperience.name || !item.secondaryExperience.name
-                    ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-                    : "bg-yellow-400 text-white hover:bg-yellow-500"
-                  }`}
-              >
-                Pokračovať
-              </button>
-            ) : <div className="w-24" />}
-          </div>
+          <NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
         )}
       </GameCard>
     </div>

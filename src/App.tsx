@@ -7,6 +7,7 @@ import CharacterListPage from "./pages/character_list/Character_list_page";
 import GamePage from "./pages/game/GamePage";
 import { AuthProvider } from "./common/contexts/AuthProvider";
 import ProtectedRoute from "./common/components/ProtectedRoute";
+import RegisterPage from "./pages/register/RegisterPage";
 
 function App() {
   return (
@@ -15,12 +16,13 @@ function App() {
           <Routes>
 
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
 
               <Route path="/" element={<CharacterListPage />} />
-              <Route path="/create" element={<CharacterCreatorPage />} />
               <Route path="/game" element={<GamePage />} />
+              <Route path="/create" element={<CharacterCreatorPage />} />
 
             </Route>
 

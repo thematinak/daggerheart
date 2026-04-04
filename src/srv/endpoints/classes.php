@@ -21,7 +21,7 @@ $sql = "
         c.hope_feature,
         c.hope_feature_description,
         c.class_item,
-        d.name AS domain_name
+        cd.domain_id AS domain_name
     FROM dh_classes c
     LEFT JOIN dh_class_domains cd ON cd.class_id = c.id
     LEFT JOIN dh_domains d ON d.id = cd.domain_id
