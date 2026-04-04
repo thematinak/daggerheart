@@ -1,6 +1,7 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
+import styles from "../../../common/types/cssColor";
 
 export type InfoItem = {
   name: string;
@@ -31,7 +32,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         <h2 className="text-xl font-bold mb-4 text-center">Basic Character Details</h2>
 
         {/* Name Input */}
-        <label className="font-semibold text-gray-700">Enter character name</label>
+        <label className={`font-semibold ${styles.gray.text}`}>Enter character name</label>
         <input
           className="border rounded px-3 py-2 w-full"
           placeholder="Name"
@@ -40,7 +41,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         />
 
         {/* Description Textarea */}
-        <label className="font-semibold text-gray-700 mt-2">Physical Description</label>
+        <label className={`font-semibold ${styles.gray.text} mt-2`}>Physical Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"

@@ -2,6 +2,7 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Badge } from "../../../common/components/Badge";
 import { CharacterClass } from "../../../common/types/CharacterClass";
+import styles from "../../../common/types/cssColor";
 
 
 type ClassCardProps = {
@@ -13,7 +14,7 @@ type ClassCardProps = {
 export const ClassCard: React.FC<ClassCardProps> = ({ item, selected, onClick }) => (
   <GameCard selected={selected} onClick={onClick}>
     <h3 className="text-lg font-bold">{item.name}</h3>
-    <p className="text-sm text-gray-600">{item.description}</p>
+    <p className={`text-sm ${styles.gray.text}`}>{item.description}</p>
 
     <div className="flex gap-2">
       <Badge label={`❤️ HP: ${item.baseHp}`} color="red" />

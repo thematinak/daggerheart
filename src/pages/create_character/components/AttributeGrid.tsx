@@ -2,6 +2,7 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Badge } from "../../../common/components/Badge";
 import { NextPreviousButton } from "./NextButton";
+import styles from "../../../common/types/cssColor";
 
 export type Attributes = {
   agility: { value: number; id: number } | null;
@@ -98,7 +99,7 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
       <h3 className="text-lg font-bold">{item.name}</h3>
 
       {/* Skills */}
-      <ul className="text-sm text-gray-700 mb-2 list-disc list-inside">
+      <ul className={`text-sm ${styles.gray.text} mb-2 list-disc list-inside`}>
         {item.skills.map((s) => (
           <li key={s}>{s}</li>
         ))}

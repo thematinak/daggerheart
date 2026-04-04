@@ -3,6 +3,7 @@ import { Sword, Zap } from "lucide-react";
 import { Badge } from "./Badge";
 import GameCard from "./GameCard";
 import { WeaponItem } from "../types/Weapon";
+import styles from "../types/cssColor";
 
 type WeaponCardProps = {
   weapon: WeaponItem;
@@ -33,7 +34,7 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
     <div className="flex justify-between items-start gap-2">
       <div>
         <h3 className="font-bold text-lg">{weapon.name}</h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className={`text-sm ${styles.gray.text} mt-1`}>
           {weapon.attribute} • {weapon.burden === "two-handed" ? "Two Handed" : "One Handed"} • {weapon.range}
         </p>
       </div>
@@ -59,20 +60,20 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
 
     {/* Ability */}
     {weapon.ability && (
-      <div className="text-sm border-t pt-2 text-gray-700 flex flex-col gap-1">
+      <div className={`text-sm border-t pt-2 ${styles.gray.text} flex flex-col gap-1`}>
         <div className="flex items-center gap-2">
           <Zap size={16} className="text-yellow-500" />
           <strong>{weapon.ability}</strong>
         </div>
         {weapon.abilityDescription && (
-          <p className="text-xs text-gray-600 pl-6">{weapon.abilityDescription}</p>
+          <p className={`text-xs ${styles.gray.text} pl-6`}>{weapon.abilityDescription}</p>
         )}
       </div>
     )}
 
     {/* Description */}
     {weapon.description && (
-      <p className="text-xs text-gray-500 mt-1">{weapon.description}</p>
+      <p className={`text-xs ${styles.gray.text} mt-1`}>{weapon.description}</p>
     )}
   </GameCard>
 );

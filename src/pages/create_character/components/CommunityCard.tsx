@@ -2,6 +2,7 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard"; 
 import { Badge } from "../../../common/components/Badge";
 import { CommunityItem } from "../../../common/types/Community";
+import styles from "../../../common/types/cssColor";
 
 
 type CommunityCardProps = {
@@ -20,12 +21,12 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
     <h3 className="text-lg font-bold">{item.name}</h3>
 
     {/* Description */}
-    <p className="text-sm text-gray-600">{item.description}</p>
+    <p className={`text-sm ${styles.gray.text}`}>{item.description}</p>
 
     {/* Modifications */}
-    <div className="p-2 rounded-lg bg-gray-100 my-2">
+    <div className={`p-2 rounded-lg ${styles.gray.bg} my-2`}>
       <div className="font-semibold text-sm">{item.modifications.name}</div>
-      <div className="text-xs text-gray-600">{item.modifications.description}</div>
+      <div className={`text-xs ${styles.gray.text}`}>{item.modifications.description}</div>
     </div>
 
     {/* Traits as Badges */}

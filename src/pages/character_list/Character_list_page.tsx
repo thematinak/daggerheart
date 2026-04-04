@@ -2,7 +2,11 @@ import React from "react";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { GridSelector } from "../../common/components/GridSelector";
 import { useNavigate } from "react-router-dom";
-import { CommonData, useCommonData } from "../../common/contexts/CommonDataProvider";
+import { CommonData, useCommonData } from "../../common/contexts/CommonDataProvider"
+import { GiTrashCan } from "react-icons/gi";
+import { Badge } from "../../common/components/Badge";
+import GameCard from "../../common/components/GameCard";
+import styles from "../../common/types/cssColor";
 
 
 type CharacterListItem = {
@@ -40,25 +44,60 @@ const CharacterListPage: React.FC = () => {
      />);
 };
 
-const CharacterCard: React.FC<{ character: CharacterListItem, commonData: CommonData, onDelete: (id: string) => void }> = ({ character, commonData, onDelete }) => {
-  console.log(character, commonData);
-  
-  return (<div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition">
-      <h2 className="text-lg font-semibold">{character.name}</h2>
-      <p>Heritage: {commonData.ancestries[character.ancestryId]?.name || "Unknown"}</p>
-      <p>Level: {character.level}</p>
-      <p>Class: {commonData.characterClasses[character.classId]?.name || "Unknown"} - {commonData.specializations[character.specializationId]?.name || "Unknown"}</p>
-      <p>Community: {commonData.communities[character.communityId]?.name || "Unknown"}</p>
-      <p>
-        <button
-            onClick={() => onDelete(character.id)}
-            className="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md"
-          >
-          Delete
+const CharacterCard: React.FC<{
+  character: CharacterListItem;
+  commonData: CommonData;
+  onDelete: (id: string) => void;
+}> = ({ character, commonData, onDelete }) => {
+  return (
+    <GameCard hover={false}>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">
+          {character.name}
+        </h2>
+        <Badge color="purple" label={`Lv. ${character.level}`} />
+      </div>
+
+      {/* Info */}
+      <div className={`space-y-2 ${styles.gray.text} text-sm`}>
+        <p>
+          <span className="font-semibold">Heritage:</span>{" "}
+          {commonData.ancestries[character.ancestryId]?.name || "Unknown"}
+        </p>
+
+        <p>
+          <span className="font-semibold">Level:</span>{" "}
+          {character.level}
+        </p>
+
+        <p>
+          <span className="font-semibold">Class:</span>{" "}
+          {commonData.characterClasses[character.classId]?.name || "Unknown"}
+          {" - "}
+          {commonData.specializations[character.specializationId]?.name || "Unknown"}
+        </p>
+
+        <p>
+          <span className="font-semibold">Community:</span>{" "}
+          {commonData.communities[character.communityId]?.name || "Unknown"}
+        </p>
+      </div>
+
+      {/* Divider */}
+      <hr className="my-4" />
+
+      {/* Delete button */}
+      <div className="mb-4">
+        <div className="mb-3"></div>
+        <button className={`px-4 py-2 rounded-lg ${styles.red.bg} ${styles.red.text} ${styles.red.bgHover} font-semibold border ${styles.red.border}`}
+          onClick={() => onDelete(character.id)}
+        >
+          <GiTrashCan className="w-5 h-5" />
         </button>
-      </p>
-    </div>
+      </div>
+    </GameCard>
   );
-}
+};
 
 export default CharacterListPage;

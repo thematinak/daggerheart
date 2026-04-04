@@ -1,6 +1,7 @@
 import React from "react";
 import { Domain } from "../../../common/types/Domain";
 import GameCard from "../../../common/components/GameCard";
+import styles from "../../../common/types/cssColor";
 
 type DomainCardProps = {
   item: Domain;
@@ -16,7 +17,7 @@ const DomainCard: React.FC<DomainCardProps> = ({ item, selected = false, onSelec
     >
       <h3 className="font-bold text-lg">{item.name}</h3>
       {item.description && (
-        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+        <p className={`text-sm ${styles.gray.text} mt-1`}>{item.description}</p>
       )}
     </GameCard>
   );

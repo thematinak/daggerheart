@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../../../common/types/cssColor";
 
 export type PreviousButtonProps = {
   onBack?: () => void
@@ -6,7 +7,7 @@ export type PreviousButtonProps = {
 
 const PreviousButton: React.FC<PreviousButtonProps> = ({onBack}) => <button
                 onClick={onBack}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
+                className={`px-4 py-2 rounded-lg ${styles.gray.bg} ${styles.gray.text} ${styles.gray.bgHover} font-semibold border ${styles.gray.border}`}
               >Previous</button>
 
 

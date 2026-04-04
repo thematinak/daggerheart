@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ArmorCard from "./ArmorCard";
 import { ArmorItem } from "../types/Armor";
+import styles from "../types/cssColor";
 
 type ArmorFilters = {
   name?: string;
@@ -94,7 +95,7 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
 
       {/* STATES */}
       {loading && <p>Loading armor...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {error && <p className={styles.red.lightText}>Error: {error}</p>}
 
       {/* CARDS */}
       {!loading && !error && (

@@ -1,6 +1,7 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { SpecializationsItem } from "../../../common/types/Specializations";
+import styles from "../../../common/types/cssColor";
 
 
 type SpecializationsCardProps = {
@@ -19,7 +20,7 @@ const SpecializationsCard: React.FC<SpecializationsCardProps> = ({
     <h3 className="text-lg font-bold">{item.name}</h3>
 
     {/* Description */}
-    <p className="text-sm text-gray-600">{item.description}</p>
+    <p className={`text-sm ${styles.gray.text}`}>{item.description}</p>
 
     {/* Modifications */}
     {item.modifications.length > 0 && (
@@ -30,7 +31,7 @@ const SpecializationsCard: React.FC<SpecializationsCardProps> = ({
             className="p-2 rounded-lg bg-gray-100"
           >
             <div className="font-semibold text-sm">{mod.name}</div>
-            <div className="text-xs text-gray-600">{mod.description}</div>
+            <div className={`text-xs ${styles.gray.text}`}>{mod.description}</div>
           </div>
         ))}
       </div>

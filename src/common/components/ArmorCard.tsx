@@ -3,6 +3,7 @@ import { Shield, Zap } from "lucide-react";
 import { Badge } from "./Badge";
 import GameCard from "./GameCard"; // jednotný wrapper
 import { ArmorItem } from "../types/Armor";
+import styles from "../types/cssColor";
 
 
 type ArmorCardProps = {
@@ -56,7 +57,7 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
     </div>
 
     {/* Thresholds */}
-    <div className="flex items-center gap-2 bg-gray-100 px-2 py-1 rounded text-sm">
+    <div className={`flex items-center gap-2 ${styles.gray.bg} px-2 py-1 rounded text-sm`}>
       <Shield size={14} /> {armor.threshold1}/{armor.threshold2}
     </div>
 
@@ -65,7 +66,7 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
       {MODIFIER_KEYS.map((key) => {
         const value = armor.modifiers[key];
         return value !== undefined ? (
-          <p key={key} className="text-sm text-gray-700">
+          <p key={key} className={`text-sm ${styles.gray.text}`}>
             {value >= 0 ? `+${value}` : value} to {key.charAt(0).toUpperCase() + key.slice(1)}
           </p>
         ) : null;
@@ -74,9 +75,9 @@ export const ArmorCard: React.FC<ArmorCardProps> = ({
 
     {/* Ability */}
     {armor.ability && (
-      <div className="text-sm border-t pt-2 text-gray-700 flex flex-col gap-1">
+      <div className={`text-sm border-t pt-2 ${styles.gray.text} flex flex-col gap-1`}>
         <div className="flex items-center gap-2">
-          <Zap size={16} className="text-yellow-500" />
+          <Zap size={16} className={styles.yellow.lightText} />
           <strong>{armor.ability}</strong>
         </div>
         {armor.abilityDescription && (

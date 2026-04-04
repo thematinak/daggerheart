@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NextPreviousButton } from "../../pages/create_character/components/NextButton";
+import styles from "../types/cssColor";
 
 type GridSelectorProps<T> = {
   endpoint?: string;
@@ -79,7 +80,7 @@ export function GridSelector<T extends { id: string | number }>({
   // --- Error ---
   if (error) {
     return (
-      <div className="text-center text-red-500">
+      <div className={`text-center ${styles.red.lightText}`}>
         Error: {error}
       </div>
     );

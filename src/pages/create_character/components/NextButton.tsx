@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../../../common/types/cssColor";
 
 export type NextButtonProps = {
   onNext?: () => void
@@ -6,7 +7,7 @@ export type NextButtonProps = {
 
 export const NextButton: React.FC<NextButtonProps> = ({onNext}) => <button
                 onClick={onNext}
-                className="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 font-semibold border border-green-700"
+                className={`px-4 py-2 rounded-lg ${styles.green.bg} ${styles.green.text} ${styles.green.bgHover} font-semibold border ${styles.green.border}`}
               >Next</button>
 
 export type PreviousButtonProps = {
@@ -15,7 +16,7 @@ export type PreviousButtonProps = {
 
 export const PreviousButton: React.FC<PreviousButtonProps> = ({onBack}) => <button
                 onClick={onBack}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
+                className={`px-4 py-2 rounded-lg ${styles.gray.bg} ${styles.gray.text} ${styles.gray.bgHover} font-semibold border ${styles.gray.border}`}
               >Previous</button>
 
 export type NextPreviousProps = {

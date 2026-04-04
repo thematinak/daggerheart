@@ -1,6 +1,7 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Ancestries } from "../../../common/types/Ancestries";
+import styles from "../../../common/types/cssColor";
 
 
 
@@ -20,7 +21,7 @@ const AncestriesCard: React.FC<AncestriesCardProps> = ({
     <h3 className="text-lg font-bold">{item.name}</h3>
 
     {/* Description */}
-    <p className="text-sm text-gray-600">{item.description}</p>
+    <p className={`text-sm ${styles.gray.text}`}>{item.description}</p>
 
     {/* Modifications */}
     {item.modifications.length > 0 && (
@@ -28,10 +29,10 @@ const AncestriesCard: React.FC<AncestriesCardProps> = ({
         {item.modifications.map((mod) => (
           <div
             key={mod.id}
-            className="p-2 rounded-lg bg-gray-100"
+            className={`p-2 rounded-lg ${styles.gray.bg}`}
           >
             <div className="font-semibold text-sm">{mod.name}</div>
-            <div className="text-xs text-gray-600">{mod.description}</div>
+            <div className={`text-xs ${styles.gray.text}`}>{mod.description}</div>
           </div>
         ))}
       </div>

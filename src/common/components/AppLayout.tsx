@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
+import styles from "../types/cssColor";
 
 const AppLayout = () => {
   const {logout} = useAuth();
@@ -27,7 +28,7 @@ const AppLayout = () => {
 
       {/* FOOTER */}
       <footer className="bg-white border-t">
-        <div className="max-w-6xl mx-auto px-6 py-4 text-center text-sm text-gray-500">
+        <div className={`max-w-6xl mx-auto px-6 py-4 text-center text-sm ${styles.gray.lightText}`}>
           © {new Date().getFullYear()} DaggerHeart MP
         </div>
       </footer>

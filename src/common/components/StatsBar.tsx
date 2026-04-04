@@ -3,6 +3,7 @@ import GameCard from "./GameCard";
 import { Shield } from "lucide-react";
 import { Character, Stats } from "../types/Character";
 import { StatModifiers } from "../types/StatModifiers";
+import styles from "../types/cssColor";
 
 function applyModifiers(stats: Stats, modifiers?: StatModifiers) {
   if (!modifiers) return;
@@ -111,10 +112,6 @@ export function buildStatsFromCharacter(character: Character): Stats {
   // -------- CUSTOM ATTRIBUTES --------
   safeApply(character.customAttributes);
 
-  // =====================================================
-  // 🚧 CAPS / CLAMPS
-  // =====================================================
-
   const clamp = (value: number, min = 0, max = Infinity) =>
     Math.max(min, Math.min(max, value));
 
@@ -134,7 +131,7 @@ const ArmorDisplay: React.FC<{ value: number }> = ({ value }) => {
   return (
     <div className="flex gap-1 justify-center">
       {Array.from({ length: value }).map((_, i) => (
-        <Shield key={i} size={18} className="text-yellow-500 fill-yellow-400" />
+        <Shield key={i} size={18} className={`${styles.yellow.lightText} ${styles.yellow.fill}`} />
       ))}
     </div>
   );
@@ -143,14 +140,14 @@ const ArmorDisplay: React.FC<{ value: number }> = ({ value }) => {
 const StatCard: React.FC<{ label: string; value: number }> = ({ label, value }) => (
   <GameCard hover={false}>
     <div className="flex flex-col items-center justify-center flex-1 min-h-[70px]">
-      <span className="text-xs text-gray-500 uppercase tracking-wide">
+      <span className={`text-xs ${styles.gray.lightText} uppercase tracking-wide`}>
         {label}
       </span>
 
       {label === "Armor" ? (
         <ArmorDisplay value={value} />
       ) : (
-        <span className="text-lg font-bold text-gray-800">
+        <span className={`text-lg font-bold ${styles.gray.text}`}>
           {value}
         </span>
       )}

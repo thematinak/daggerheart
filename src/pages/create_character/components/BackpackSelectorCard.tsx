@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BackpackItem } from "../../../common/types/BackpackItem";
-import { Card } from "../../../common/components/Card";
 import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
+import styles from "../../../common/types/cssColor";
 
 
 type Props = {
@@ -87,10 +87,10 @@ export const BackpackSelectorCard: React.FC<Props> = ({
         {FIXED_ITEMS.map((item) => (
           <div
             key={item.id}
-            className="p-3 border rounded-lg bg-gray-50"
+            className={`p-3 border rounded-lg ${styles.gray.bg}`}
           >
             <h3 className="font-semibold">{item.name}</h3>
-            <p className="text-sm text-gray-600">
+            <p className={`text-sm ${styles.gray.text}`}>
               {item.description}
             </p>
           </div>
@@ -101,9 +101,9 @@ export const BackpackSelectorCard: React.FC<Props> = ({
       {classItem && (
         <div className="mb-6">
           <h3 className="font-semibold mb-2">Class Item</h3>
-          <div className="p-3 border rounded-lg bg-yellow-50">
+          <div className={`p-3 border rounded-lg ${styles.yellow.bg}`}>
             <h4 className="font-semibold">{classItem.name}</h4>
-            <p className="text-sm text-gray-600">
+            <p className={`text-sm ${styles.gray.text}`}>
               {classItem.description}
             </p>
           </div>
@@ -128,7 +128,7 @@ export const BackpackSelectorCard: React.FC<Props> = ({
                 selected={isSelected}
               >
                 <h4 className="font-semibold">{potion.name}</h4>
-                <p className="text-sm text-gray-600">
+                <p className={`text-sm ${styles.gray.text}`}>
                   {potion.description}
                 </p>
               </GameCard>

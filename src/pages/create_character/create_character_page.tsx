@@ -1,4 +1,4 @@
-import React, { use, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import ClassCard from "./components/ClassCard";
 import SpecializationsCard from "./components/SpecializationsCard";
 import AncestriesCard from "./components/AncestriesCard";

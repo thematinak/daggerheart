@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../types/cssColor";
 
 type GameCardProps = {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ const GameCard: React.FC<GameCardProps> = ({ children, selected, onClick, hover 
         relative rounded-xl border p-4 flex flex-col gap-3
         shadow-sm transition-all
         ${hover ? "hover:shadow-lg hover:scale-[1.02]" : ""}
-        ${selected ? "border-green-700 bg-green-100" : "border-gray-300"}
+        ${selected ? `${styles.green.border} ${styles.green.bg}` : styles.gray.border}
         cursor-pointer
       `}
     >

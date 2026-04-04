@@ -2,6 +2,7 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { Experience } from "../../../common/types/Experience";
 import { NextPreviousButton } from "./NextButton";
+import styles from "../../../common/types/cssColor";
 
 export type ExperienceItem = {
   primaryExperience: Experience;
@@ -31,7 +32,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
         {/* Primary Experience */}
         <h2 className="text-xl font-bold mb-4 text-center">Primary Experience</h2>
 
-        <label className="font-semibold text-gray-700">Name</label>
+        <label className={`font-semibold ${styles.gray.text}`}>Name</label>
         <input
           className="border rounded px-3 py-2 w-full"
           placeholder="Name"
@@ -44,7 +45,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           }
         />
 
-        <label className="font-semibold text-gray-700 mt-2">Description</label>
+        <label className={`font-semibold ${styles.gray.text} mt-2`}>Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"
@@ -60,7 +61,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
         {/* Secondary Experience */}
         <h2 className="text-xl font-bold mt-4 mb-2 text-center">Secondary Experience</h2>
 
-        <label className="font-semibold text-gray-700">Name</label>
+        <label className={`font-semibold ${styles.gray.text}`}>Name</label>
         <input
           className="border rounded px-3 py-2 w-full"
           placeholder="Name"
@@ -73,7 +74,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           }
         />
 
-        <label className="font-semibold text-gray-700 mt-2">Description</label>
+        <label className={`font-semibold ${styles.gray.text} mt-2`}>Description</label>
         <textarea
           className="border rounded px-3 py-2 w-full resize-none"
           placeholder="Description"
