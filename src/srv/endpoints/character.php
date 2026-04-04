@@ -1,11 +1,54 @@
 <?php
 
+// --- CORS ---
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
+
+// --- PREFLIGHT ---
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 require_once 'db.php';
 
-// --- INPUT ---
+$method = $_SERVER['REQUEST_METHOD'];
+
+// ==========================
+// DELETE CHARACTER
+// ==========================
+if ($method === 'DELETE') {
+
+    $id = $_GET['id'] ?? null;
+
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(["error" => "id is required"]);
+        exit;
+    }
+
+    try {
+        $stmt = $pdo->prepare("DELETE FROM dh_character WHERE id = ?");
+        $stmt->execute([$id]);
+
+        echo json_encode([
+            "success" => true,
+            "deletedId" => $id
+        ]);
+
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(["error" => "Server error"]);
+    }
+
+    exit;
+}
+
+// ==========================
+// GET CHARACTERS
+// ==========================
 $userId = $_GET['user_id'] ?? null;
 
 if (!$userId) {
@@ -15,27 +58,26 @@ if (!$userId) {
 }
 
 try {
-    // --- QUERY ---
     $stmt = $pdo->prepare("
         SELECT ch.*, c.name AS class_name
-        FROM dh_character as ch
-            join dh_classes as c on ch.user_id = 1
-        WHERE c.id = ch.class_id
-        ORDER BY ch.name;
+        FROM dh_character ch
+        LEFT JOIN dh_classes c ON ch.class_id = c.id
+        WHERE ch.user_id = ?
+        ORDER BY ch.name
     ");
+
     $stmt->execute([$userId]);
 
     $characters = [];
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-        // --- JSON polia ---
-        $attributes = !empty($row['attributes']) 
-            ? json_decode($row['attributes']) 
+        $attributes = !empty($row['attributes'])
+            ? json_decode($row['attributes'])
             : new stdClass();
 
-        $customAttributes = !empty($row['customAttributes']) 
-            ? json_decode($row['customAttributes']) 
+        $customAttributes = !empty($row['customAttributes'])
+            ? json_decode($row['customAttributes'])
             : new stdClass();
 
         $characters[] = [
@@ -69,7 +111,5 @@ try {
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode([
-        "error" => "Server error"
-    ]);
+    echo json_encode(["error" => "Server error"]);
 }

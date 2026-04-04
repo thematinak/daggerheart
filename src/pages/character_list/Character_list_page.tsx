@@ -34,8 +34,17 @@ const CharacterListPage: React.FC = () => {
     fetchCharacters(user?.id ?? -1);
   }, [user?.id]);
 
-  const handleDelete = (id: string) => {
-    setCharacters((prev) => prev.filter((c) => c.id !== id));
+  const handleDelete = async (id: string) => {
+    const queryString = new URLSearchParams({id: id}).toString();
+    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?${queryString}`, {
+      method: "DELETE"
+    });
+    const resJson = await response.json();
+    if (resJson.success) {
+      setCharacters((prev) => prev.filter((c) => c.id !== id));
+    } else {
+      alert("Failed to delete character: " + (resJson.error || "Unknown error"));
+    }
   };
 
   return (
