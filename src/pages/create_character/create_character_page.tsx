@@ -159,7 +159,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CharacterClass>
             title="Select Class"
-            items={commonData.characterClasses}
+            items={Object.keys(commonData.characterClasses).map((key) => commonData.characterClasses[key])}
             selectedId={character.class?.id}
             onSelect={(selected, pos) => select("class", selected)}
             renderItem={(cls, selected) => <ClassCard item={cls} selected={selected} />}
@@ -174,7 +174,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<SpecializationsItem>
             title="Select Specialization"
-            items={commonData.specializations.filter((spec) => spec.classId === character.class?.id)}
+            items={Object.keys(commonData.specializations).map((key) => commonData.specializations[key]).filter((spec) => spec.classId === character.class?.id)}
             selectedId={character.specialization?.id}
             onSelect={(id, pos) => select("specialization", id)}
             renderItem={(spec, selected) => <SpecializationsCard item={spec} selected={selected} />}
@@ -191,7 +191,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Ancestries>
             title="Select Ancestry"
-            items={commonData.ancestries}
+            items={Object.keys(commonData.ancestries).map((key) => commonData.ancestries[key])}
             selectedId={character.ancestry?.id}
             onSelect={(selected, pos) => select("ancestry", selected)}
             renderItem={(ans, selected) => <AncestriesCard item={ans} selected={selected} />}
@@ -209,7 +209,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CommunityItem>
             title="Select Community"
-            items={commonData.communities}
+            items={Object.keys(commonData.communities).map((key) => commonData.communities[key])}
             selectedId={character.community?.id}
             onSelect={(selected, pos) => select("community", selected)}
             renderItem={(ans, selected) => <CommunityCard item={ans} selected={selected} />}

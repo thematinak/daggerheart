@@ -5,13 +5,18 @@ import { CommunityItem } from "../types/Community";
 import { Domain } from "../types/Domain";
 import { SpecializationsItem } from "../types/Specializations";
 
-type CommonData = {
-    ancestries: Ancestries[];
-    characterClasses: CharacterClass[];
-    communities: CommunityItem[];
+export type CommonData = {
+    ancestries: {[key: string]: Ancestries};
+    characterClasses: {[key: string]: CharacterClass};
+    communities: {[key: string]: CommunityItem};
     domainCards: Domain[];
-    specializations: SpecializationsItem[];
+    specializations: {[key: string]: SpecializationsItem};
 };
+
+const reduceListById = (l: any[]) => l.reduce((acc, item) => {
+  acc[item.id] = item;
+  return acc;
+}, {});
 
 type CommonDataContextType = {
   commonData: CommonData;
@@ -19,22 +24,22 @@ type CommonDataContextType = {
 
 const CommonDataContext = createContext<CommonDataContextType>({
     commonData: {
-      ancestries: [],
-      characterClasses: [],
-      communities: [],
+      ancestries: {},
+      characterClasses: {},
+      communities: {},
       domainCards: [],
-      specializations: []
+      specializations: {}
     }
 });
 
 export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [commonData, setCommonData] = useState<CommonData>(() => {
     return {
-      ancestries: [],
-      characterClasses: [],
-      communities: [],
+      ancestries: {},
+      characterClasses: {},
+      communities: {},
       domainCards: [],
-      specializations: []
+      specializations: {}
     };
   });
 
@@ -58,11 +63,11 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         ]);
 
         setCommonData({
-          ancestries,
-          characterClasses: classes,
-          communities,
-          domainCards,
-          specializations
+          ancestries: reduceListById(ancestries),
+          characterClasses: reduceListById(classes),
+          communities: reduceListById(communities),
+          domainCards: domainCards,
+          specializations: reduceListById(specializations)
         });
 
       } catch (error) {

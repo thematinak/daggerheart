@@ -59,11 +59,8 @@ if (!$userId) {
 
 try {
     $stmt = $pdo->prepare("
-        SELECT ch.*, c.name AS class_name
+        SELECT ch.*
         FROM dh_character ch
-        LEFT JOIN dh_classes c ON ch.class_id = c.id
-        LEFT JOIN dh_ancestries a ON ch.ancestry_id = a.id
-        LEFT JOIN dh_communities com ON ch.community_id = com.id
         WHERE ch.user_id = ?
         ORDER BY ch.name
     ");
@@ -88,7 +85,6 @@ try {
             "level" => (int)$row["level"],
 
             "classId" => $row["class_id"],
-            "className" => $row["class_name"],
             "specializationId" => $row["specialization_id"],
             "ancestryId" => $row["ancestry_id"],
             "communityId" => $row["community_id"],
