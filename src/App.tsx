@@ -8,10 +8,12 @@ import GamePage from "./pages/game/GamePage";
 import { AuthProvider } from "./common/contexts/AuthProvider";
 import ProtectedRoute from "./common/components/ProtectedRoute";
 import RegisterPage from "./pages/register/RegisterPage";
+import { CommonDataProvider } from "./common/contexts/CommonDataProvider";
 
 function App() {
   return (
     <AuthProvider>
+      <CommonDataProvider>
         <BrowserRouter>
           <Routes>
 
@@ -28,6 +30,7 @@ function App() {
 
           </Routes>
         </BrowserRouter>
+        </CommonDataProvider>
       </AuthProvider>
   );
 

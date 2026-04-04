@@ -4,6 +4,7 @@ export type SpecializationsItem = {
   id: string;
   name: string;
   description: string;
+  classId: string;
   modifications: SpecialModifications[];
 };
 

@@ -21,6 +21,7 @@ import { BackpackItem } from "../../common/types/BackpackItem";
 import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
+import { useCommonData } from "../../common/contexts/CommonDataProvider";
 
 /* ---------- TYPES ---------- */
 
@@ -50,7 +51,7 @@ const attributes: AttributeItem[] = [
 
 const CharacterCreatorPage: React.FC = () => {
   const [step, setStep] = useState(1);
-  const [classes, setSetClasses] = useState<CharacterClass[]>([]);
+  const { commonData } = useCommonData();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -102,21 +103,6 @@ const CharacterCreatorPage: React.FC = () => {
       stress: 0
     }
   });
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const res = await fetch("http://pecen.eu/daggerheart/api1/classes.php");
-          if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
-          const data: CharacterClass[] = await res.json();
-          setSetClasses(data);
-        } catch (err: any) {
-          console.error(err.message || "Unknown error");
-        }
-      };
-  
-      fetchData();
-    }, []);
 
   const next = () => setStep((s) => Math.min(11, s + 1));
   const back = () => setStep((s) => Math.max(1, s - 1));
@@ -173,8 +159,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CharacterClass>
             title="Select Class"
-            endpoint="http://pecen.eu/daggerheart/api1/classes.php"
-            // items={classes}
+            items={commonData.characterClasses}
             selectedId={character.class?.id}
             onSelect={(selected, pos) => select("class", selected)}
             renderItem={(cls, selected) => <ClassCard item={cls} selected={selected} />}
@@ -189,7 +174,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<SpecializationsItem>
             title="Select Specialization"
-            endpoint={`http://pecen.eu/daggerheart/api1/specializations.php?class_id=${character.class?.id}`}
+            items={commonData.specializations.filter((spec) => spec.classId === character.class?.id)}
             selectedId={character.specialization?.id}
             onSelect={(id, pos) => select("specialization", id)}
             renderItem={(spec, selected) => <SpecializationsCard item={spec} selected={selected} />}
@@ -206,7 +191,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Ancestries>
             title="Select Ancestry"
-            endpoint="http://pecen.eu/daggerheart/api1/ancestries.php"
+            items={commonData.ancestries}
             selectedId={character.ancestry?.id}
             onSelect={(selected, pos) => select("ancestry", selected)}
             renderItem={(ans, selected) => <AncestriesCard item={ans} selected={selected} />}
@@ -224,7 +209,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CommunityItem>
             title="Select Community"
-            endpoint="http://pecen.eu/daggerheart/api1/communities.php"
+            items={commonData.communities}
             selectedId={character.community?.id}
             onSelect={(selected, pos) => select("community", selected)}
             renderItem={(ans, selected) => <CommunityCard item={ans} selected={selected} />}
@@ -302,7 +287,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Domain>
             title="Select 2 Domain Cards"
-            endpoint={`http://pecen.eu/daggerheart/api1/domain_cards.php?${generateQueryParams(1, character.class?.domains || [])}`}
+            items={commonData.domainCards.filter(card => card.level === 1 && character.class?.domains.includes(card.domainId))}
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}

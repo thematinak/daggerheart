@@ -62,6 +62,8 @@ try {
         SELECT ch.*, c.name AS class_name
         FROM dh_character ch
         LEFT JOIN dh_classes c ON ch.class_id = c.id
+        LEFT JOIN dh_ancestries a ON ch.ancestry_id = a.id
+        LEFT JOIN dh_communities com ON ch.community_id = com.id
         WHERE ch.user_id = ?
         ORDER BY ch.name
     ");

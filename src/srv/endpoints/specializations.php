@@ -17,6 +17,7 @@ try {
             s.id AS spec_id,
             s.name AS spec_name,
             s.description AS spec_description,
+            s.class_id AS class_id,
 
             sm.id AS mod_id,
             sm.name AS mod_name,
@@ -52,6 +53,7 @@ try {
             $specializations[$specId] = [
                 'id' => $specId,
                 'name' => $row['spec_name'],
+                'classId' => $row['class_id'],
                 'description' => $row['spec_description'],
                 'modifications' => []
             ];
