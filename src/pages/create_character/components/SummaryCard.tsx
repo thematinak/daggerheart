@@ -97,21 +97,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {character.class?.name && (
-                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-                      {character.class.name}
-                    </span>
-                  )}
-                  {character.specialization?.name && (
-                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-                      {character.specialization.name}
-                    </span>
-                  )}
-                  {character.community?.name && (
-                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-                      {character.community.name}
-                    </span>
-                  )}
                 </div>
               </div>
             </div>
@@ -239,30 +224,41 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             </div>
           </SummarySection>
 
-          <SummarySection title="Ready To Create" icon={<ScrollText size={18} />} className="lg:col-span-2">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <p className="max-w-2xl text-sm leading-6 text-slate-600">
-                This screen is now your final checkpoint. If everything feels right, create the
-                character and send this build into the world.
-              </p>
+          {(onBack || onCreate) && (
+            <SummarySection
+              title={onCreate ? "Ready To Create" : "Character Overview"}
+              icon={<ScrollText size={18} />}
+              className="lg:col-span-2"
+            >
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <p className="max-w-2xl text-sm leading-6 text-slate-600">
+                  {onCreate
+                    ? "This screen is now your final checkpoint. If everything feels right, create the character and send this build into the world."
+                    : "Review the full build, stats, gear, and background details for this character."}
+                </p>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={onBack}
-                  className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
-                >
-                  Back
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  {onBack && (
+                    <button
+                      onClick={onBack}
+                      className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
+                    >
+                      Back
+                    </button>
+                  )}
 
-                <button
-                  onClick={onCreate}
-                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
-                >
-                  Create Character
-                </button>
+                  {onCreate && (
+                    <button
+                      onClick={onCreate}
+                      className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
+                    >
+                      Create Character
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </SummarySection>
+            </SummarySection>
+          )}
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import GameCard from "./GameCard";
 import { Shield } from "lucide-react";
 import { Character, Stats } from "../types/Character";
 import { StatModifiers } from "../types/StatModifiers";
@@ -129,30 +128,30 @@ export function buildStatsFromCharacter(character: Character): Stats {
 
 const ArmorDisplay: React.FC<{ value: number }> = ({ value }) => {
   return (
-    <div className="flex gap-1 justify-center">
+    <div className="flex justify-center gap-0.5">
       {Array.from({ length: value }).map((_, i) => (
-        <Shield key={i} size={18} className={`${styles.yellow.lightText} ${styles.yellow.fill}`} />
+        <Shield key={i} size={14} className={`${styles.yellow.lightText} ${styles.yellow.fill}`} />
       ))}
     </div>
   );
 };
 
-const StatCard: React.FC<{ label: string; value: number }> = ({ label, value }) => (
-  <GameCard hover={false}>
-    <div className="flex flex-col items-center justify-center flex-1 min-h-[70px]">
-      <span className={`text-xs ${styles.gray.lightText} uppercase tracking-wide`}>
+const StatCard: React.FC<{ label: string; value: number | string }> = ({ label, value }) => (
+  <div className="rounded-xl border border-slate-200 bg-white/88 px-1.5 py-2 shadow-[0_6px_14px_-12px_rgba(15,23,42,0.18)]">
+    <div className="flex min-h-[48px] flex-col items-center justify-center">
+      <span className={`text-[10px] ${styles.gray.lightText} uppercase tracking-[0.1em] text-center`}>
         {label}
       </span>
 
-      {label === "Armor" ? (
+      {label === "Armor" && typeof value === "number" ? (
         <ArmorDisplay value={value} />
       ) : (
-        <span className={`text-lg font-bold ${styles.gray.text}`}>
+        <span className={`text-sm font-bold ${styles.gray.text}`}>
           {value}
         </span>
       )}
     </div>
-  </GameCard>
+  </div>
 );
 
 type StatsBarProps = {
@@ -160,9 +159,7 @@ type StatsBarProps = {
 };
 
 const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
-  const items = [
-    { label: "Evasion", value: stats.evasion },
-    { label: "Armor", value: stats.maxArmor },
+  const attributeItems = [
     { label: "Agility", value: stats.agility },
     { label: "Strength", value: stats.strength },
     { label: "Finesse", value: stats.finesse },
@@ -171,13 +168,31 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
     { label: "Knowledge", value: stats.knowledge },
   ];
 
+  const defenseItems = [
+    { label: "Evasion", value: stats.evasion },
+    { label: "Thresholds", value: `${stats.threshold1}/${stats.threshold2}` },
+    { label: "Armor", value: stats.maxArmor },
+    { label: "HP", value: `${stats.hp}/${stats.maxHp}` },
+    { label: "Stress", value: `${stats.stress}/${stats.maxStress}` },
+  ];
+
   return (
-    <div className="flex gap-2 w-full">
-      {items.map((s) => (
-        <div key={s.label} className="flex-1 min-w-[90px]">
-          <StatCard label={s.label} value={s.value} />
-        </div>
-      ))}
+    <div className="flex w-full flex-col gap-2">
+      <div className="grid grid-cols-6 gap-1.5">
+        {attributeItems.map((stat) => (
+          <div key={stat.label} className="min-w-0">
+            <StatCard label={stat.label} value={stat.value} />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-5 gap-1.5">
+        {defenseItems.map((stat) => (
+          <div key={stat.label} className="min-w-0">
+            <StatCard label={stat.label} value={stat.value} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

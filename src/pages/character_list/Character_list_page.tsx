@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Shield, Swords, Castle, BadgeCheck } from "lucide-react";
+import { Swords, Castle, BadgeCheck } from "lucide-react";
 import { GiTrashCan } from "react-icons/gi";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { CommonData, useCommonData } from "../../common/contexts/CommonDataProvider";
