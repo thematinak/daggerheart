@@ -28,7 +28,7 @@ const AppLayout = () => {
 
       {/* FOOTER */}
       <footer className="bg-white border-t">
-        <div className={`max-w-6xl mx-auto px-6 py-4 text-center text-sm ${styles.gray.lightText}`}>
+        <div className={`max-w-6xl mx-auto px-6 py-4 text-center text-sm ${styles.semantic.muted.text}`}>
           © {new Date().getFullYear()} DaggerHeart MP
         </div>
       </footer>

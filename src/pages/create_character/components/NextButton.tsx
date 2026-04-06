@@ -5,19 +5,21 @@ export type NextButtonProps = {
   onNext?: () => void
 };
 
-export const NextButton: React.FC<NextButtonProps> = ({onNext}) => <button
-                onClick={onNext}
-                className={`px-4 py-2 rounded-lg ${styles.green.bg} ${styles.green.text} ${styles.green.bgHover} font-semibold border ${styles.green.border}`}
-              >Next</button>
+export const NextButton: React.FC<NextButtonProps> = ({onNext}) => (
+  <button onClick={onNext} className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}>
+    Next
+  </button>
+)
 
 export type PreviousButtonProps = {
   onBack?: () => void
 };
 
-export const PreviousButton: React.FC<PreviousButtonProps> = ({onBack}) => <button
-                onClick={onBack}
-                className={`px-4 py-2 rounded-lg ${styles.gray.bg} ${styles.gray.text} ${styles.gray.bgHover} font-semibold border ${styles.gray.border}`}
-              >Previous</button>
+export const PreviousButton: React.FC<PreviousButtonProps> = ({onBack}) => (
+  <button onClick={onBack} className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}>
+    Previous
+  </button>
+)
 
 export type NextPreviousProps = {
   onNext?: () => void;

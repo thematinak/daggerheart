@@ -13,10 +13,10 @@ const GameCard: React.FC<GameCardProps> = ({ children, selected, onClick, hover 
     <div
       onClick={onClick}
       className={`
-        relative rounded-xl border p-4 flex flex-col gap-3
-        shadow-sm transition-all
+        ${styles.tokens.card.base}
+        ${styles.tokens.card.hover}
         ${hover ? "hover:shadow-lg hover:scale-[1.02]" : ""}
-        ${selected ? `${styles.green.border} ${styles.green.bg}` : styles.gray.border}
+        ${selected ? styles.tokens.card.selected : styles.semantic.muted.border}
         cursor-pointer
       `}
     >
