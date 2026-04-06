@@ -136,9 +136,9 @@ const tokens: ComponentTokens = {
   },
   badge: "rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide shadow-sm",
   card: {
-    base: "rounded-[1.5rem] border border-white/70 bg-white/82 p-5 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.3)] backdrop-blur",
-    hover: "transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_28px_65px_-35px_rgba(15,23,42,0.38)]",
-    selected: "border-amber-500 bg-[linear-gradient(180deg,_rgba(255,251,235,0.98),_rgba(255,247,237,0.96))] ring-1 ring-amber-300/70",
+    base: "rounded-[1.5rem] border border-slate-200/85 bg-white/90 p-5 shadow-[0_8px_18px_-12px_rgba(15,23,42,0.16)] backdrop-blur",
+    hover: "transition-all duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_14px_28px_-18px_rgba(15,23,42,0.22)]",
+    selected: "border-amber-500 bg-[linear-gradient(180deg,_rgba(255,251,235,0.99),_rgba(255,247,237,0.97))] shadow-[0_12px_24px_-18px_rgba(180,83,9,0.2)] ring-1 ring-amber-300/70",
   },
   stepIndicator: {
     bar: "relative h-2 w-full overflow-hidden rounded-full border border-white/60 bg-white/70 shadow-inner",

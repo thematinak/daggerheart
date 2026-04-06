@@ -57,41 +57,40 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
   }, [filters]);
 
   return (
-    <div className="border rounded-xl p-5 bg-white shadow-sm flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
 
-      {/* FILTER BAR */}
-      <div className="grid md:grid-cols-3 gap-3">
+      {!selected && (
+        <div className="grid gap-3 md:grid-cols-3">
+          <input
+            placeholder="Name"
+            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+            className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
+          />
 
-        <input
-          placeholder="Name"
-          onChange={(e) => setFilters({ ...filters, name: e.target.value })}
-          className="border rounded-lg px-3 py-2"
-        />
+          <select
+            onChange={(e) => setFilters({ ...filters, tier: e.target.value ? Number(e.target.value) : undefined })}
+            className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
+          >
+            <option value="">Tier</option>
+            <option value="1">T1</option>
+            <option value="2">T2</option>
+            <option value="3">T3</option>
+            <option value="4">T4</option>
+          </select>
 
-        <select
-          onChange={(e) => setFilters({ ...filters, tier: e.target.value ? Number(e.target.value) : undefined })}
-          className="border rounded-lg px-3 py-2"
-        >
-          <option value="">Tier</option>
-          <option value="1">T1</option>
-          <option value="2">T2</option>
-          <option value="3">T3</option>
-          <option value="4">T4</option>
-        </select>
-
-        <select
-          onChange={(e) =>
-            setFilters({ ...filters, baseScore: e.target.value })
-          }
-          className="border rounded-lg px-3 py-2"
-        >
-          <option value="">Weight</option>
-          <option value="light">Light (0-2)</option>
-          <option value="medium">Medium (3-4)</option>
-          <option value="heavy">Heavy (5+)</option>
-        </select>
-
-      </div>
+          <select
+            onChange={(e) =>
+              setFilters({ ...filters, baseScore: e.target.value })
+            }
+            className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
+          >
+            <option value="">Weight</option>
+            <option value="light">Light (0-2)</option>
+            <option value="medium">Medium (3-4)</option>
+            <option value="heavy">Heavy (5+)</option>
+          </select>
+        </div>
+      )}
 
       {/* STATES */}
       {loading && <p>Loading armor...</p>}
@@ -99,10 +98,10 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
 
       {/* CARDS */}
       {!loading && !error && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
           {items.length === 0 && <p>No armor found</p>}
 
-          {items.map((a) => (
+          {(selected ? [selected] : items).map((a) => (
             <ArmorCard
               key={a.id}
               armor={a}

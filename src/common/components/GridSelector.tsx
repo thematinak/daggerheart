@@ -9,6 +9,8 @@ type GridSelectorProps<T> = {
   onSelect: (id: T, pos: number) => void;
   renderItem: (item: T, selected: boolean) => React.ReactNode;
   title?: string;
+  eyebrow?: string;
+  description?: string;
   showNext?: boolean;
   showBack?: boolean;
   onNext?: () => void;
@@ -22,6 +24,8 @@ export function GridSelector<T extends { id: string | number }>({
   onSelect,
   renderItem,
   title,
+  eyebrow = "Character Builder",
+  description,
   showNext = false,
   showBack = false,
   onNext,
@@ -99,9 +103,12 @@ export function GridSelector<T extends { id: string | number }>({
       {title && (
         <div className="text-center">
           <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-            Character Builder
+            {eyebrow}
           </div>
           <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">{title}</h2>
+          {description && (
+            <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>{description}</p>
+          )}
         </div>
       )}
 

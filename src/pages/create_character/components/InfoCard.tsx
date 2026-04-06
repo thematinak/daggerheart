@@ -1,5 +1,4 @@
 import React from "react";
-import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
 
@@ -26,33 +25,58 @@ const InfoCard: React.FC<InfoCardProps> = ({
   onBack,
 }) => {
   return (
-    <div className="flex justify-center items-start min-h-screen pt-10 p-4">
-      <GameCard hover={false}>
-        {/* Header */}
-        <h2 className="text-xl font-bold mb-4 text-center">Basic Character Details</h2>
+    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
+      <div className="text-center">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
+          Character Builder
+        </div>
+        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+          Basic Character Details
+        </h2>
+        <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
+          Give your character a name and a short visual description to anchor the build.
+        </p>
+      </div>
 
-        {/* Name Input */}
-        <label className={`font-semibold ${styles.gray.text}`}>Enter character name</label>
-        <input
-          className="border rounded px-3 py-2 w-full"
-          placeholder="Name"
-          value={item.name}
-          onChange={(e) => onSelect({ ...item, name: e.target.value })}
-        />
+      <div className="grid gap-5">
+        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+          <div className="mb-3">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+              Identity
+            </div>
+            <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
+              Character Name
+            </label>
+          </div>
+          <input
+            className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
+            placeholder="Name"
+            value={item.name}
+            onChange={(e) => onSelect({ ...item, name: e.target.value })}
+          />
+        </div>
 
-        {/* Description Textarea */}
-        <label className={`font-semibold ${styles.gray.text} mt-2`}>Physical Description</label>
-        <textarea
-          className="border rounded px-3 py-2 w-full resize-none"
-          placeholder="Description"
-          value={item.description}
-          onChange={(e) => onSelect({ ...item, description: e.target.value })}
-        />
+        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+          <div className="mb-3">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+              Presence
+            </div>
+            <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
+              Physical Description
+            </label>
+          </div>
+          <textarea
+            className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[140px] resize-none`}
+            placeholder="Describe appearance, vibe, clothing, scars, posture..."
+            value={item.description}
+            onChange={(e) => onSelect({ ...item, description: e.target.value })}
+          />
+        </div>
+      </div>
 
-        {/* Next / Back Buttons */}
-        {(showBack || showNext) && (<NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
-        )}
-      </GameCard>
+      {(showBack || showNext) && (
+        <NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
+      )}
     </div>
   );
 };
