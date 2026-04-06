@@ -23,6 +23,13 @@ export type SemanticColors = {
 };
 
 export type ComponentTokens = {
+  page: {
+    shell: string;
+    container: string;
+    section: string;
+    title: string;
+    subtitle: string;
+  };
   button: {
     base: string;
     primary: string;
@@ -38,6 +45,7 @@ export type ComponentTokens = {
   };
   stepIndicator: {
     bar: string;
+    progress: string;
     stepBase: string;
     active: string;
     completed: string;
@@ -101,40 +109,48 @@ const palette: ColorPalette = {
 };
 
 const semantic: SemanticColors = {
-  primary: palette.green,
+  primary: palette.yellow,
   secondary: palette.gray,
   success: palette.green,
   warning: palette.yellow,
   error: palette.red,
   info: palette.blue,
-  accent: palette.purple,
+  accent: palette.blue,
   muted: palette.gray,
 };
 
 const tokens: ComponentTokens = {
-  button: {
-    base: "px-4 py-2 rounded-lg font-semibold border transition-all duration-200",
-    primary: `bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700`,
-    secondary: `bg-slate-100 text-slate-900 border-slate-300 hover:bg-slate-200`,
-    danger: `bg-rose-100 text-rose-800 border-rose-600 hover:bg-rose-200`,
-    ghost: "bg-transparent text-slate-900 border-transparent hover:bg-slate-100",
+  page: {
+    shell: "relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.2),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.14),_transparent_28%),linear-gradient(180deg,_#fffaf0_0%,_#f8fafc_40%,_#eef2ff_100%)] text-slate-900",
+    container: "relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8",
+    section: "rounded-[2rem] border border-white/70 bg-white/80 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.35)] backdrop-blur",
+    title: "text-3xl font-black tracking-tight text-slate-950 sm:text-4xl",
+    subtitle: "text-sm leading-6 text-slate-600 sm:text-base",
   },
-  badge: "rounded-full text-xs px-3 py-1 font-semibold border",
+  button: {
+    base: "inline-flex items-center justify-center rounded-xl border px-4 py-2.5 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-300/70 focus:ring-offset-2",
+    primary: "border-amber-700 bg-[linear-gradient(135deg,_#b45309,_#d97706_55%,_#f59e0b)] text-white shadow-[0_18px_35px_-18px_rgba(180,83,9,0.8)] hover:-translate-y-0.5 hover:brightness-105",
+    secondary: "border-slate-300 bg-white/90 text-slate-800 shadow-sm hover:-translate-y-0.5 hover:bg-slate-50",
+    danger: "border-rose-300 bg-rose-50 text-rose-800 hover:-translate-y-0.5 hover:bg-rose-100",
+    ghost: "border-transparent bg-transparent text-slate-900 hover:bg-white/70",
+  },
+  badge: "rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide shadow-sm",
   card: {
-    base: "rounded-xl border p-4 bg-white shadow-sm",
-    hover: "transition-all duration-200 hover:shadow-lg hover:scale-[1.02]",
-    selected: `${palette.green.bg} ${palette.green.border}`,
+    base: "rounded-[1.5rem] border border-white/70 bg-white/82 p-5 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.3)] backdrop-blur",
+    hover: "transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_28px_65px_-35px_rgba(15,23,42,0.38)]",
+    selected: "border-amber-500 bg-[linear-gradient(180deg,_rgba(255,251,235,0.98),_rgba(255,247,237,0.96))] ring-1 ring-amber-300/70",
   },
   stepIndicator: {
-    bar: "relative w-full h-2 rounded-full mb-4",
-    stepBase: "w-10 h-10 flex items-center justify-center font-semibold rounded-md border transition-colors",
-    active: `${palette.blue.bg} ${palette.blue.border} ${palette.blue.text}`,
-    completed: `${palette.green.bg} ${palette.green.border} ${palette.green.text} ${palette.green.bgHover}`,
-    upcoming: `${palette.gray.bg} ${palette.gray.border} ${palette.gray.lightText}`,
+    bar: "relative h-2 w-full overflow-hidden rounded-full border border-white/60 bg-white/70 shadow-inner",
+    progress: "h-full rounded-full bg-[linear-gradient(90deg,_#b45309,_#f59e0b,_#fbbf24)] transition-all duration-300",
+    stepBase: "flex h-11 w-11 items-center justify-center rounded-2xl border font-semibold shadow-sm transition-all",
+    active: "border-amber-500 bg-amber-100 text-amber-900 ring-2 ring-amber-200/80",
+    completed: "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100",
+    upcoming: "border-slate-200 bg-white/80 text-slate-400",
   },
   input: {
-    base: "w-full rounded-lg border px-3 py-2 bg-white text-slate-900",
-    focus: "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500",
+    base: "w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-slate-900 shadow-sm placeholder:text-slate-400",
+    focus: "focus:outline-none focus:ring-2 focus:ring-amber-300/70 focus:border-amber-400",
   },
 };
 

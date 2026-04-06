@@ -90,7 +90,7 @@ const CharacterCard: React.FC<{
       {/* Delete button */}
       <div className="mb-4">
         <div className="mb-3"></div>
-        <button className={`px-4 py-2 rounded-lg ${styles.red.bg} ${styles.red.text} ${styles.red.bgHover} font-semibold border ${styles.red.border}`}
+        <button className={`${styles.tokens.button.base} ${styles.tokens.button.danger} px-3 py-2`}
           onClick={() => onDelete(character.id)}
         >
           <GiTrashCan className="w-5 h-5" />

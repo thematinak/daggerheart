@@ -1,5 +1,18 @@
 import React from "react";
+import {
+  BadgeCheck,
+  BookOpen,
+  Castle,
+  Crosshair,
+  ScrollText,
+  Shield,
+  Sparkles,
+  Swords,
+  UserCheck,
+  UserRound,
+} from "lucide-react";
 import StatsBar, { buildStatsFromCharacter } from "../../../common/components/StatsBar";
+import styles from "../../../common/types/cssColor";
 import { Character } from "../../../common/types/Character";
 
 type SummaryCardProps = {
@@ -8,178 +21,249 @@ type SummaryCardProps = {
   onCreate?: () => void;
 };
 
+type SectionCardProps = {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+};
+
+const formatLabel = (label: string) =>
+  label.charAt(0).toUpperCase() + label.slice(1);
+
+const SummarySection: React.FC<SectionCardProps> = ({ title, icon, children, className = "" }) => (
+  <section
+    className={`rounded-3xl border border-amber-200/70 bg-white/85 p-5 shadow-[0_18px_50px_-30px_rgba(120,53,15,0.45)] backdrop-blur ${className}`}
+  >
+    <div className="mb-4 flex items-center gap-3">
+      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+        {icon}
+      </div>
+      <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+    </div>
+    {children}
+  </section>
+);
+
+const DetailRow: React.FC<{ label: string; value?: React.ReactNode; className?: string }> = ({
+  label,
+  value,
+  className = "",
+}) => (
+  <div className={`rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 ${className}`}>
+    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+      {label}
+    </div>
+    <div className="mt-1 text-sm font-medium text-slate-900">{value || "-"}</div>
+  </div>
+);
+
 const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }) => {
+  const stats = buildStatsFromCharacter(character);
+  const subtitle = [
+    character.class?.name,
+    character.specialization?.name,
+    character.ancestry?.name,
+  ]
+    .filter(Boolean)
+    .join(" / ");
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
-      <div className="w-full max-w-5xl flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+        <section className="overflow-hidden rounded-[2rem] border border-amber-300/70 bg-white/85 shadow-[0_30px_80px_-40px_rgba(120,53,15,0.5)] backdrop-blur">
+          <div className="grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:px-10 lg:py-8">
+            <div className="relative overflow-hidden rounded-[1.75rem] bg-[linear-gradient(135deg,_rgba(120,53,15,0.96),_rgba(180,83,9,0.94)_55%,_rgba(245,158,11,0.9)_100%)] p-6 text-white">
+              <div className="absolute -right-10 top-0 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
+              <div className="absolute bottom-0 left-8 h-24 w-24 rounded-full bg-amber-200/20 blur-2xl" />
+              <div className="relative flex h-full flex-col justify-between gap-6">
+                <div className="flex items-center gap-2 text-amber-100">
+                  <UserCheck size={16} />
+                  <span className="text-xs font-semibold uppercase tracking-[0.28em]">
+                    Final Character Preview
+                  </span>
+                </div>
 
-        <h1 className="text-2xl font-bold text-center mb-4">
-          Character Summary
-        </h1>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
+                    {character.name || "Unnamed Hero"}
+                  </h1>
+                  <p className="mt-2 text-sm text-amber-50/90 sm:text-base">
+                    {subtitle || "Your choices come together here."}
+                  </p>
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-amber-50/85">
+                    {character.description || "No description yet."}
+                  </p>
+                </div>
 
-        <StatsBar stats={buildStatsFromCharacter(character)} />
-        <div className="flex flex-wrap gap-4">
-          {/* BASIC INFO */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Basic Info</h2>
-            <p><strong>Name:</strong> {character.name}</p>
-            <p><strong>Description:</strong> {character.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {character.class?.name && (
+                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                      {character.class.name}
+                    </span>
+                  )}
+                  {character.specialization?.name && (
+                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                      {character.specialization.name}
+                    </span>
+                  )}
+                  {character.community?.name && (
+                    <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                      {character.community.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <DetailRow label="Ancestry" value={character.ancestry?.name} />
+              <DetailRow label="Community" value={character.community?.name} />
+              <DetailRow label="Primary Experience" value={character.primaryExperience?.name} />
+              <DetailRow label="Secondary Experience" value={character.secondaryExperience?.name} />
+            </div>
           </div>
 
-          {/* CLASS */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Class & Specialization</h2>
-
-            <p><strong>Class:</strong> {character.class?.name || "-"}</p>
-            {character.class?.description && (
-              <p className="text-sm text-gray-600">
-                {character.class.description}
-              </p>
-            )}
-
-            <p className="mt-2">
-              <strong>Specialization:</strong> {character.specialization?.name || "-"}
-            </p>
-
-            {character.specialization?.description && (
-              <p className="text-sm text-gray-600">
-                {character.specialization.description}
-              </p>
-            )}
+          <div className="border-t border-amber-100/80 bg-white/70 px-6 py-5 sm:px-8 lg:px-10">
+            <StatsBar stats={stats} />
           </div>
+        </section>
 
-          {/* BACKGROUND */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Background</h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SummarySection title="Class & Path" icon={<BadgeCheck size={18} />} className="lg:col-span-1">
+            <div className="grid gap-3">
+              <DetailRow label="Class" value={character.class?.name} />
+              {character.class?.description && (
+                <p className="text-sm leading-6 text-slate-600">{character.class.description}</p>
+              )}
+              <DetailRow label="Specialization" value={character.specialization?.name} />
+              {character.specialization?.description && (
+                <p className="text-sm leading-6 text-slate-600">
+                  {character.specialization.description}
+                </p>
+              )}
+            </div>
+          </SummarySection>
 
-            <p><strong>Ancestry:</strong> {character.ancestry?.name || "-"}</p>
-            {character.ancestry?.description && (
-              <p className="text-sm text-gray-600">
-                {character.ancestry.description}
-              </p>
-            )}
+          <SummarySection title="Origins" icon={<Castle size={18} />} className="lg:col-span-1">
+            <div className="grid gap-3">
+              <DetailRow label="Ancestry" value={character.ancestry?.name} />
+              {character.ancestry?.description && (
+                <p className="text-sm leading-6 text-slate-600">{character.ancestry.description}</p>
+              )}
+              <DetailRow label="Community" value={character.community?.name} />
+              {character.community?.description && (
+                <p className="text-sm leading-6 text-slate-600">{character.community.description}</p>
+              )}
+            </div>
+          </SummarySection>
 
-            <p className="mt-2">
-              <strong>Community:</strong> {character.community?.name || "-"}
-            </p>
-
-            {character.community?.description && (
-              <p className="text-sm text-gray-600">
-                {character.community.description}
-              </p>
-            )}
-          </div>
-
-          {/* DOMAINS */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Domains</h2>
-
+          <SummarySection title="Domains" icon={<Sparkles size={18} />}>
             {character.domainCards.length > 0 ? (
-              <ul className="flex flex-wrap gap-2">
-                {character.domainCards.map((d) => (
-                  <li
-                    key={d.id}
-                    className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md"
+              <div className="flex flex-wrap gap-3">
+                {character.domainCards.map((domain) => (
+                  <div
+                    key={domain.id}
+                    className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-4 py-3 text-sm font-semibold text-amber-900 shadow-sm"
                   >
-                    <strong>{d.name}</strong>
-                  </li>
+                    {domain.name}
+                  </div>
                 ))}
-              </ul>
+              </div>
             ) : (
-              <p>-</p>
+              <p className="text-sm text-slate-500">No domains selected.</p>
             )}
-          </div>
+          </SummarySection>
 
-          {/* ATTRIBUTES */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Attributes</h2>
-
-            <ul className="grid grid-cols-2 gap-2">
+          <SummarySection title="Attributes" icon={<Crosshair size={18} />}>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {Object.entries(character.attributes).map(([key, value]) => (
-                <li
+                <div
                   key={key}
-                  className="bg-gray-100 px-2 py-1 rounded-md"
+                  className="rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-3 text-center shadow-sm"
                 >
-                  <strong>{key}:</strong> {value?.value}
-                </li>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                    {formatLabel(key)}
+                  </div>
+                  <div className="mt-2 text-2xl font-black text-slate-900">{value?.value ?? "-"}</div>
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          </SummarySection>
 
-          {/* GEAR */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Gear</h2>
-
-            <p>
-              <strong>Primary Weapon:</strong>{" "}
-              {character.weapons?.primary?.name || "-"}
-            </p>
-
-            {character.weapons?.secondary && (
-              <p>
-                <strong>Secondary Weapon:</strong>{" "}
-                {character.weapons.secondary.name}
-              </p>
-            )}
-
-            <p className="mt-2">
-              <strong>Armor:</strong>{" "}
-              {character.armor?.name || "-"}
-            </p>
-
+          <SummarySection title="Gear" icon={<Swords size={18} />}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DetailRow label="Primary Weapon" value={character.weapons?.primary?.name} />
+              <DetailRow label="Secondary Weapon" value={character.weapons?.secondary?.name} />
+              <DetailRow label="Armor" value={character.armor?.name} className="sm:col-span-2" />
+            </div>
             {character.armor?.abilityDescription && (
-              <p className="text-sm text-gray-600">
+              <div className="mt-3 rounded-2xl border border-amber-100 bg-amber-50/70 px-4 py-3 text-sm leading-6 text-amber-900">
+                <div className="mb-1 flex items-center gap-2 font-semibold">
+                  <Shield size={16} />
+                  Armor Ability
+                </div>
                 {character.armor.abilityDescription}
-              </p>
+              </div>
             )}
-          </div>
+          </SummarySection>
 
-          {/* EXPERIENCE */}
-          <div className="flex-1 min-w-[250px] border rounded-lg p-4 bg-white shadow">
-            <h2 className="font-semibold mb-2">Experience</h2>
+          <SummarySection title="Experience" icon={<BookOpen size={18} />}>
+            <div className="grid gap-3">
+              <DetailRow label="Primary" value={character.primaryExperience?.name} />
+              {character.primaryExperience?.description && (
+                <p className="text-sm leading-6 text-slate-600">
+                  {character.primaryExperience.description}
+                </p>
+              )}
+              <DetailRow label="Secondary" value={character.secondaryExperience?.name} />
+              {character.secondaryExperience?.description && (
+                <p className="text-sm leading-6 text-slate-600">
+                  {character.secondaryExperience.description}
+                </p>
+              )}
+            </div>
+          </SummarySection>
 
-            <p>
-              <strong>Primary:</strong>{" "}
-              {character.primaryExperience?.name || "-"}
-            </p>
+          <SummarySection title="Identity" icon={<UserRound size={18} />}>
+            <div className="grid gap-3">
+              <DetailRow label="Name" value={character.name || "Unnamed Hero"} />
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+                <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  Description
+                </div>
+                <p className="text-sm leading-6 text-slate-700">
+                  {character.description || "No description provided."}
+                </p>
+              </div>
+            </div>
+          </SummarySection>
 
-            {character.primaryExperience?.description && (
-              <p className="text-sm text-gray-600">
-                {character.primaryExperience.description}
+          <SummarySection title="Ready To Create" icon={<ScrollText size={18} />} className="lg:col-span-2">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <p className="max-w-2xl text-sm leading-6 text-slate-600">
+                This screen is now your final checkpoint. If everything feels right, create the
+                character and send this build into the world.
               </p>
-            )}
 
-            <p className="mt-2">
-              <strong>Secondary:</strong>{" "}
-              {character.secondaryExperience?.name || "-"}
-            </p>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={onBack}
+                  className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
+                >
+                  Back
+                </button>
 
-            {character.secondaryExperience?.description && (
-              <p className="text-sm text-gray-600">
-                {character.secondaryExperience.description}
-              </p>
-            )}
-          </div>
-
+                <button
+                  onClick={onCreate}
+                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
+                >
+                  Create Character
+                </button>
+              </div>
+            </div>
+          </SummarySection>
         </div>
-
-        {/* BUTTONS */}
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={onBack}
-            className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold"
-          >
-            Back
-          </button>
-
-          <button
-            onClick={onCreate}
-            className="px-4 py-2 rounded-lg bg-yellow-400 text-white hover:bg-yellow-500 font-semibold"
-          >
-            Create Character
-          </button>
-        </div>
-
       </div>
     </div>
   );

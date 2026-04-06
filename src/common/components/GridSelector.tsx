@@ -74,13 +74,20 @@ export function GridSelector<T extends { id: string | number }>({
 
   // --- Loading ---
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className={`${styles.tokens.page.section} p-8 text-center`}>
+        <div className="text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">
+          Loading
+        </div>
+        <p className={`mt-2 ${styles.semantic.muted.text}`}>Preparing your selection...</p>
+      </div>
+    );
   }
 
   // --- Error ---
   if (error) {
     return (
-      <div className={`text-center ${styles.red.lightText}`}>
+      <div className={`${styles.tokens.page.section} p-8 text-center ${styles.red.lightText}`}>
         Error: {error}
       </div>
     );
@@ -88,9 +95,14 @@ export function GridSelector<T extends { id: string | number }>({
 
   // --- Render ---
   return (
-    <div className="flex flex-col gap-4">
+    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
       {title && (
-        <h2 className="text-center text-2xl font-bold">{title}</h2>
+        <div className="text-center">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
+            Character Builder
+          </div>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">{title}</h2>
+        </div>
       )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
+import styles from "../../common/types/cssColor";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,56 +28,52 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8 flex flex-col gap-6">
+    <div className={`${styles.tokens.page.shell} flex min-h-screen items-center justify-center p-4`}>
+      <div className="pointer-events-none absolute inset-0 opacity-80">
+        <div className="absolute left-[10%] top-20 h-44 w-44 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="absolute right-[12%] bottom-16 h-56 w-56 rounded-full bg-sky-200/20 blur-3xl" />
+      </div>
+      <div className={`${styles.tokens.page.section} relative z-10 flex w-full max-w-md flex-col gap-6 p-8`}>
 
-        {/* Title */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-yellow-600">DaggerHeart MP</h1>
-          <p className="text-gray-500 text-sm">Login to your account</p>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700">
+            Welcome Back
+          </div>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
+          <p className={`mt-2 ${styles.tokens.page.subtitle}`}>Login to your account</p>
         </div>
 
-        {/* Error */}
         {error && (
-          <div className="bg-red-100 text-red-700 p-2 rounded text-sm">
+          <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
             {error}
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
-
-          {/* User Name */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-gray-700">
+            <label className={`text-sm font-semibold ${styles.gray.text}`}>
               User name
             </label>
             <input
               type="text"
-              className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
 
-          {/* Button */}
           <button
             type="submit"
-            className="mt-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded-lg transition"
+            className={`${styles.tokens.button.base} ${styles.tokens.button.primary} mt-2`}
           >
             Login
           </button>
         </form>
 
-        {/* Register */}
-        <Link to="/register" className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <button className="text-yellow-600 font-semibold hover:underline">
-            Register
-          </button>
+        <Link to="/register" className="text-center text-sm text-slate-600">
+          Don't have an account? <span className="font-semibold text-amber-700 hover:underline">Register</span>
         </Link>
-
       </div>
     </div>
   );

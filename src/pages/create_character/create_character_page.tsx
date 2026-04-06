@@ -22,6 +22,7 @@ import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
+import styles from "../../common/types/cssColor";
 
 /* ---------- TYPES ---------- */
 
@@ -152,8 +153,23 @@ const CharacterCreatorPage: React.FC = () => {
   /* ---------- RENDER ---------- */
 
   return (
-    <div style={{ padding: 40 }}>
-      <StepIndicator onStepSelect={(stepIndex: number) => setStep(stepIndex + 1)} currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Backpack", "Summary" ]} />
+    <div className="flex flex-col gap-6">
+      <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
+        <div className="mb-6 text-center">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
+            Forge A Hero
+          </div>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+            Create Your Character
+          </h1>
+          <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
+            Build your DaggerHeart adventurer step by step and finish with a polished final summary.
+          </p>
+        </div>
+
+        <StepIndicator onStepSelect={(stepIndex: number) => setStep(stepIndex + 1)} currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Backpack", "Summary" ]} />
+      </section>
+
       {/* STEP 1 */}
       {step === 1 && (
         <>
