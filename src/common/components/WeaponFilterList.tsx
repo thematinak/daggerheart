@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import WeaponCard from "./WeaponCard";
+import { useCommonData } from "../contexts/CommonDataProvider";
 import { WeaponItem } from "../types/Weapon";
 import styles from "../types/cssColor";
 
@@ -22,50 +23,39 @@ const WeaponFilterList: React.FC<Props> = ({
   forcedSlot,
   onSelect,
 }) => {
+  const { commonData } = useCommonData();
   const [filters, setFilters] = useState<WeaponFilters>({});
-  const [items, setItems] = useState<WeaponItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchWeapons = async (f: WeaponFilters) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const cleaned: Record<string, string> = {};
-      Object.entries(f).forEach(([key, value]) => {
-        if (value !== undefined && value !== "") {
-          cleaned[key] = String(value);
-        }
-      });
-
-      const queryString = new URLSearchParams(cleaned).toString();
-
-      const response = await fetch(`http://pecen.eu/daggerheart/api1/weapons.php?${queryString}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch weapons");
-      }
-
-      const data: WeaponItem[] = await response.json();
-      setItems(data);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Unknown error");
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const f = {
+  const items = useMemo(() => {
+    const appliedFilters = {
       ...filters,
       ...(forcedSlot ? { slot: forcedSlot } : {}),
     };
 
-    fetchWeapons(f);
-  }, [filters, forcedSlot]);
+    return Object.values(commonData.weapons).filter((weapon) => {
+      if (appliedFilters.attribute && weapon.attribute !== appliedFilters.attribute) {
+        return false;
+      }
+
+      if (appliedFilters.range && weapon.range !== appliedFilters.range) {
+        return false;
+      }
+
+      if (appliedFilters.burden && weapon.burden !== appliedFilters.burden) {
+        return false;
+      }
+
+      if (appliedFilters.tier && weapon.tier !== appliedFilters.tier) {
+        return false;
+      }
+
+      if (appliedFilters.slot && weapon.slot !== appliedFilters.slot) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [commonData.weapons, filters, forcedSlot]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -133,26 +123,20 @@ const WeaponFilterList: React.FC<Props> = ({
         </div>
       )}
 
-      {/* STATES */}
-      {loading && <p>Loading weapons...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
-
       {/* CARDS */}
-      {!loading && !error && (
-        <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
-          {items.length === 0 && <p>No weapons found</p>}
+      <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
+        {items.length === 0 && <p>No weapons found</p>}
 
-          {(selected ? [selected] : items).map((w) => (
-            <WeaponCard
-              key={w.id}
-              weapon={w}
-              selected={selected?.id === w.id}
-              onSelect={() => onSelect(w)}
-              onDeselect={() => onSelect(null)}
-            />
-          ))}
-        </div>
-      )}
+        {(selected ? [selected] : items).map((w) => (
+          <WeaponCard
+            key={w.id}
+            weapon={w}
+            selected={selected?.id === w.id}
+            onSelect={() => onSelect(w)}
+            onDeselect={() => onSelect(null)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -4,6 +4,9 @@ import { Ancestries } from "../types/Ancestries";
 import { CommunityItem } from "../types/Community";
 import { Domain } from "../types/Domain";
 import { SpecializationsItem } from "../types/Specializations";
+import { BackpackItem } from "../types/BackpackItem";
+import { WeaponItem } from "../types/Weapon";
+import { ArmorItem } from "../types/Armor";
 
 export type CommonData = {
     ancestries: {[key: string]: Ancestries};
@@ -11,6 +14,9 @@ export type CommonData = {
     communities: {[key: string]: CommunityItem};
     domainCards: Domain[];
     specializations: {[key: string]: SpecializationsItem};
+    backpackItems: {[key: string]: BackpackItem};
+    weapons: {[key: string]: WeaponItem};
+    armor: {[key: string]: ArmorItem};
 };
 
 const reduceListById = (l: any[]) => l.reduce((acc, item) => {
@@ -28,7 +34,10 @@ const CommonDataContext = createContext<CommonDataContextType>({
       characterClasses: {},
       communities: {},
       domainCards: [],
-      specializations: {}
+      specializations: {},
+      backpackItems: {},
+      weapons: {},
+      armor: {}
     }
 });
 
@@ -39,27 +48,54 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       characterClasses: {},
       communities: {},
       domainCards: [],
-      specializations: {}
+      specializations: {},
+      backpackItems: {},
+      weapons: {},
+      armor: {}
     };
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [ancestriesRes, classesRes, communitiesRes, domainCardsRes, specializationsRes] = await Promise.all([
+        const [
+          ancestriesRes,
+          classesRes,
+          communitiesRes,
+          domainCardsRes,
+          specializationsRes,
+          backpackItemsRes,
+          weaponsRes,
+          armorRes
+        ] = await Promise.all([
           fetch("http://pecen.eu/daggerheart/api1/ancestries.php"),
           fetch("http://pecen.eu/daggerheart/api1/classes.php"),
           fetch("http://pecen.eu/daggerheart/api1/communities.php"),
           fetch("http://pecen.eu/daggerheart/api1/domain_cards.php"),
-          fetch("http://pecen.eu/daggerheart/api1/specializations.php")
+          fetch("http://pecen.eu/daggerheart/api1/specializations.php"),
+          fetch("http://pecen.eu/daggerheart/api1/backpack_items.php"),
+          fetch("http://pecen.eu/daggerheart/api1/weapons.php"),
+          fetch("http://pecen.eu/daggerheart/api1/armor.php")
         ]);
 
-        const [ancestries, classes, communities, domainCards, specializations] = await Promise.all([
+        const [
+          ancestries,
+          classes,
+          communities,
+          domainCards,
+          specializations,
+          backpackItems,
+          weapons,
+          armor
+        ] = await Promise.all([
           ancestriesRes.json(),
           classesRes.json(),
           communitiesRes.json(),
           domainCardsRes.json(),
-          specializationsRes.json()
+          specializationsRes.json(),
+          backpackItemsRes.json(),
+          weaponsRes.json(),
+          armorRes.json()
         ]);
 
         setCommonData({
@@ -67,7 +103,10 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           characterClasses: reduceListById(classes),
           communities: reduceListById(communities),
           domainCards: domainCards,
-          specializations: reduceListById(specializations)
+          specializations: reduceListById(specializations),
+          backpackItems: reduceListById(backpackItems),
+          weapons: reduceListById(weapons),
+          armor: reduceListById(armor)
         });
 
       } catch (error) {

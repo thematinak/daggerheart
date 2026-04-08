@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ArmorCard from "./ArmorCard";
+import { useCommonData } from "../contexts/CommonDataProvider";
 import { ArmorItem } from "../types/Armor";
 import styles from "../types/cssColor";
 
@@ -15,46 +16,34 @@ type Props = {
 };
 
 const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
+  const { commonData } = useCommonData();
   const [filters, setFilters] = useState<ArmorFilters>({});
-  const [items, setItems] = useState<ArmorItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchArmor = async (f: ArmorFilters) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const cleaned: Record<string, string> = {};
-
-      Object.entries(f).forEach(([key, value]) => {
-        if (value !== undefined && value !== "") {
-          cleaned[key] = String(value);
-        }
-      });
-
-      const queryString = new URLSearchParams(cleaned).toString();
-
-      const response = await fetch(`http://pecen.eu/daggerheart/api1/armor.php?${queryString}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch armor");
+  const items = useMemo(() => {
+    return Object.values(commonData.armor).filter((armor) => {
+      if (filters.name && !armor.name.toLowerCase().includes(filters.name.toLowerCase())) {
+        return false;
       }
 
-      const data: ArmorItem[] = await response.json();
-      setItems(data);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Unknown error");
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (filters.tier && armor.tier !== filters.tier) {
+        return false;
+      }
 
-  useEffect(() => {
-    fetchArmor(filters);
-  }, [filters]);
+      if (filters.baseScore === "light" && !(armor.baseScore >= 0 && armor.baseScore <= 2)) {
+        return false;
+      }
+
+      if (filters.baseScore === "medium" && !(armor.baseScore >= 3 && armor.baseScore <= 4)) {
+        return false;
+      }
+
+      if (filters.baseScore === "heavy" && !(armor.baseScore >= 5)) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [commonData.armor, filters]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -92,26 +81,20 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
         </div>
       )}
 
-      {/* STATES */}
-      {loading && <p>Loading armor...</p>}
-      {error && <p className={styles.red.lightText}>Error: {error}</p>}
-
       {/* CARDS */}
-      {!loading && !error && (
-        <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
-          {items.length === 0 && <p>No armor found</p>}
+      <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
+        {items.length === 0 && <p>No armor found</p>}
 
-          {(selected ? [selected] : items).map((a) => (
-            <ArmorCard
-              key={a.id}
-              armor={a}
-              selected={selected?.id === a.id}
-              onSelect={() => onSelect(a)}
-              onDeselect={() => onSelect(null)}
-            />
-          ))}
-        </div>
-      )}
+        {(selected ? [selected] : items).map((a) => (
+          <ArmorCard
+            key={a.id}
+            armor={a}
+            selected={selected?.id === a.id}
+            onSelect={() => onSelect(a)}
+            onDeselect={() => onSelect(null)}
+          />
+        ))}
+      </div>
 
     </div>
   );

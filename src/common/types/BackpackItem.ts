@@ -6,4 +6,6 @@ export type BackpackItem = {
   roll: number;
   description: string;
   modifiers: StatModifiers;
+  type?: "loot" | "consumables";
+  quantity?: number;
 };

@@ -29,6 +29,7 @@ export type ComponentTokens = {
     section: string;
     title: string;
     subtitle: string;
+    eyebrow: string;
   };
   button: {
     base: string;
@@ -55,6 +56,24 @@ export type ComponentTokens = {
     base: string;
     focus: string;
   };
+  panel: {
+    base: string;
+    muted: string;
+    accent: string;
+  };
+  text: {
+    heading: string;
+    body: string;
+    muted: string;
+    label: string;
+  };
+  pill: {
+    base: string;
+    muted: string;
+    accent: string;
+    info: string;
+  };
+  emptyState: string;
 };
 
 const palette: ColorPalette = {
@@ -126,6 +145,7 @@ const tokens: ComponentTokens = {
     section: "rounded-[2rem] border border-white/70 bg-white/80 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.35)] backdrop-blur",
     title: "text-3xl font-black tracking-tight text-slate-950 sm:text-4xl",
     subtitle: "text-sm leading-6 text-slate-600 sm:text-base",
+    eyebrow: "text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700",
   },
   button: {
     base: "inline-flex items-center justify-center rounded-xl border px-4 py-2.5 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-300/70 focus:ring-offset-2",
@@ -152,6 +172,24 @@ const tokens: ComponentTokens = {
     base: "w-full rounded-xl border border-slate-200 bg-white/90 px-3 py-2.5 text-slate-900 shadow-sm placeholder:text-slate-400",
     focus: "focus:outline-none focus:ring-2 focus:ring-amber-300/70 focus:border-amber-400",
   },
+  panel: {
+    base: "rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm",
+    muted: "rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3",
+    accent: "rounded-[1.5rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 to-orange-50 p-5",
+  },
+  text: {
+    heading: "text-slate-950",
+    body: "text-sm leading-6 text-slate-700",
+    muted: "text-sm text-slate-500",
+    label: "text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500",
+  },
+  pill: {
+    base: "rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide",
+    muted: "border-slate-200 bg-slate-100 text-slate-600",
+    accent: "border-amber-200 bg-amber-50 text-amber-800",
+    info: "border-amber-200 bg-white text-amber-800",
+  },
+  emptyState: "rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-6 text-center text-sm text-slate-500",
 };
 
 const styles = {

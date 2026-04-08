@@ -15,9 +15,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
   <div className="flex flex-col gap-6">
     <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
       <div className="mb-5 text-center">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-          Actions
-        </div>
+        <div className={styles.tokens.page.eyebrow}>Actions</div>
         <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
           Action Loadout
         </h2>
@@ -27,7 +25,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
 
     <div className="grid gap-4 lg:grid-cols-2">
       <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className="mb-4 flex items-center gap-2 text-slate-950">
+        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
           <Swords size={18} />
           <h3 className="text-xl font-bold">Equipped Weapons</h3>
         </div>
@@ -46,7 +44,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
       </section>
 
       <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className="mb-4 flex items-center gap-2 text-slate-950">
+        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
           <Shield size={18} />
           <h3 className="text-xl font-bold">Armor & Thresholds</h3>
         </div>
@@ -62,14 +60,14 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
 
     <div className="grid gap-4 lg:grid-cols-2">
       <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className="mb-4 flex items-center gap-2 text-slate-950">
+        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
           <Sparkles size={18} />
           <h3 className="text-xl font-bold">Hope Feature</h3>
         </div>
 
         {character.class?.hopeFeature ? (
-          <div className="rounded-[1.5rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 to-orange-50 p-5">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-700">
+          <div className={styles.tokens.panel.accent}>
+            <div className={styles.tokens.page.eyebrow}>
               {character.class.name}
             </div>
             <h4 className="mt-2 text-xl font-black text-amber-950">{character.class.hopeFeature}</h4>
@@ -91,7 +89,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
       </section>
 
       <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className="mb-4 flex items-center gap-2 text-slate-950">
+        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
           <ScrollText size={18} />
           <h3 className="text-xl font-bold">Domain Cards</h3>
         </div>
@@ -101,16 +99,16 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
             character.domainCards.map((domainCard) => (
               <div
                 key={domainCard.id}
-                className="rounded-[1.5rem] border border-slate-200 bg-white/80 p-4 shadow-sm"
+                className={styles.tokens.panel.base}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                    <div className={styles.tokens.text.label}>
                       Domain Card
                     </div>
                     <h4 className="mt-1 text-lg font-bold text-slate-950">{domainCard.name}</h4>
                   </div>
-                  <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+                  <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
                     Level {domainCard.level}
                   </span>
                 </div>
@@ -127,16 +125,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats }) => (
 );
 
 const EmptyState: React.FC<{ text: string }> = ({ text }) => (
-  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-6 text-center text-sm text-slate-500">
-    {text}
-  </div>
-);
-
-const StatPill: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-center">
-    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">{label}</div>
-    <div className="mt-2 text-2xl font-black text-slate-950">{value}</div>
-  </div>
+  <div className={styles.tokens.emptyState}>{text}</div>
 );
 
 export default CombatTab;
