@@ -23,20 +23,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
+import { buildStatsFromCharacter } from "../../common/components/StatsBar";
 
 /* ---------- TYPES ---------- */
-
-
-/* ---------- SAMPLE DATA ---------- */
-
-
-function generateQueryParams(level: number, domains: string[]): string {
-  const cleaned: Record<string, string> = {};
-  if (level) cleaned.level = String(level);
-  if (domains.length > 0) cleaned.domain_id = domains.join(",");
-
-  return new URLSearchParams(cleaned).toString();
-}
 
 const attributes: AttributeItem[] = [
   { id: "Agility", name: "agility", skills: ["Leap", "Maneuver"] },
@@ -57,6 +46,7 @@ const CharacterCreatorPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [character, setCharacter] = useState<Character>({
+    id: "",
      user_id: user?.id || 0,
     level: 1,
     bank: 0,
@@ -85,9 +75,6 @@ const CharacterCreatorPage: React.FC = () => {
     customAttributes: {},
     countedStats: {
       evasion: 0,
-      maxArmor: 0,
-      armor: 0,
-
       agility: 0,
       strength: 0,
       finesse: 0,
@@ -99,10 +86,11 @@ const CharacterCreatorPage: React.FC = () => {
       threshold2: 0,
 
       maxHp: 0,
-      hp: 0,
       maxStress: 0,
-      stress: 0
-    }
+      maxArmor: 0,
+      maxHope: 6,
+    },
+    currentStats: {armor: 0, hp: 0, stress: 0, hope: 0}
   });
 
   const next = () => setStep((s) => Math.min(11, s + 1));
@@ -110,12 +98,14 @@ const CharacterCreatorPage: React.FC = () => {
   const select = useCallback((field: keyof Character, value: any) => setCharacter((stateCharacter) => ({ ...stateCharacter, [field]: value })), []);
   const createCharacter = useCallback(() => {
     async function postCharacter() {
+      const stats = buildStatsFromCharacter(character);
       try {
         const res = await fetch("http://pecen.eu/daggerheart/api1/create_character.php", {
           method: "POST",
           body: JSON.stringify({
             ...character,
             user_id: user?.id,
+            currentStats: {hp: stats.maxHp, stress: 0, armor: stats.maxArmor, hope: 0},
           }),
         });
         const resBody = await res.json();
@@ -130,7 +120,7 @@ const CharacterCreatorPage: React.FC = () => {
     }
     postCharacter();
     
-  }, [character, navigate]);
+  }, [character, user, navigate]);
 
   /* ---------- DOMAIN CARD TOGGLE ---------- */
 

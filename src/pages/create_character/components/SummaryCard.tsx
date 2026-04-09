@@ -33,7 +33,7 @@ const formatLabel = (label: string) =>
 
 const SummarySection: React.FC<SectionCardProps> = ({ title, icon, children, className = "" }) => (
   <section
-    className={`rounded-3xl border border-amber-200/70 bg-white/85 p-5 shadow-[0_18px_50px_-30px_rgba(120,53,15,0.45)] backdrop-blur ${className}`}
+    className={`${styles.tokens.page.section} ${className}`}
   >
     <div className="mb-4 flex items-center gap-3">
       <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
@@ -110,7 +110,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
           </div>
 
           <div className="border-t border-amber-100/80 bg-white/70 px-6 py-5 sm:px-8 lg:px-10">
-            <StatsBar stats={stats} />
+            <StatsBar stats={stats} currentStats={character.currentStats} />
           </div>
         </section>
 
@@ -161,7 +161,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
           </SummarySection>
 
           <SummarySection title="Attributes" icon={<Crosshair size={18} />}>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
               {Object.entries(character.attributes).map(([key, value]) => (
                 <div
                   key={key}

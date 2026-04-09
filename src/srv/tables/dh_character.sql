@@ -12,6 +12,7 @@ CREATE TABLE dh_character (
 
     attributes JSON DEFAULT ('{}'),
     customAttributes JSON DEFAULT ('{}'),
+    current_stats JSON DEFAULT ('{}'),
 
     name VARCHAR(50) NOT NULL,
     description VARCHAR(1000),

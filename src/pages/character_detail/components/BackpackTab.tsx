@@ -12,9 +12,15 @@ import styles from "../../../common/types/cssColor";
 
 type BackpackTabProps = {
   character: Character;
+  onCharacterUpdated: () => Promise<void>;
 };
 
-const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
+type CharacterCommand =
+  | { action: "add" | "remove"; target: "bank"; value: number }
+  | { action: "add"; target: "item"; id: string; quantity: number }
+  | { action: "add" | "remove" | "equip"; target: "weapon" | "armor"; id: string };
+
+const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated }) => {
   const { commonData } = useCommonData();
   const [isItemPickerOpen, setIsItemPickerOpen] = useState(false);
   const [isWeaponPickerOpen, setIsWeaponPickerOpen] = useState(false);
@@ -22,6 +28,12 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
   const [pendingItems, setPendingItems] = useState<BackpackItem[]>([]);
   const [pendingWeapons, setPendingWeapons] = useState<WeaponItem[]>([]);
   const [pendingArmor, setPendingArmor] = useState<ArmorItem[]>([]);
+  const [isSavingBank, setIsSavingBank] = useState(false);
+  const [isSavingPending, setIsSavingPending] = useState(false);
+  const [isEquippingEquipment, setIsEquippingEquipment] = useState(false);
+  const [isRemovingEquipment, setIsRemovingEquipment] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const availableItems = useMemo(
     () => Object.values(commonData.backpackItems).sort((a, b) => a.name.localeCompare(b.name)),
@@ -188,6 +200,137 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
     setPendingArmor((current) => current.filter((_, index) => index !== indexToRemove));
   };
 
+  const hasPendingChanges = pendingItems.length > 0 || pendingWeapons.length > 0 || pendingArmor.length > 0;
+
+  const postCommands = async (commands: CharacterCommand[]) => {
+    const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        character_id: character.id,
+        commands,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to save character changes");
+    }
+
+    await onCharacterUpdated();
+  };
+
+  const handleBankChange = async (action: "add" | "remove", value: number) => {
+    try {
+      setIsSavingBank(true);
+      setSaveError(null);
+      setSaveMessage(null);
+
+      await postCommands([
+        {
+          action,
+          target: "bank",
+          value,
+        },
+      ]);
+
+      setSaveMessage(`Bank was ${action === "add" ? "updated" : "reduced"}.`);
+    } catch (error: any) {
+      setSaveError(error.message || "Failed to update bank.");
+    } finally {
+      setIsSavingBank(false);
+    }
+  };
+
+  const handleSavePending = async () => {
+    if (!hasPendingChanges) {
+      return;
+    }
+
+    const commands: CharacterCommand[] = [
+      ...pendingItems.map((item) => ({
+        action: "add" as const,
+        target: "item" as const,
+        id: item.id,
+        quantity: Math.max(1, item.quantity ?? 1),
+      })),
+      ...pendingWeapons.map((weapon) => ({
+        action: "add" as const,
+        target: "weapon" as const,
+        id: weapon.id,
+      })),
+      ...pendingArmor.map((armor) => ({
+        action: "add" as const,
+        target: "armor" as const,
+        id: armor.id,
+      })),
+    ];
+
+    try {
+      setIsSavingPending(true);
+      setSaveError(null);
+      setSaveMessage(null);
+
+      await postCommands(commands);
+
+      setPendingItems([]);
+      setPendingWeapons([]);
+      setPendingArmor([]);
+      setSaveMessage("Pending additions were saved.");
+    } catch (error: any) {
+      setSaveError(error.message || "Failed to save pending additions.");
+    } finally {
+      setIsSavingPending(false);
+    }
+  };
+
+  const handleEquipEquipment = async (target: "weapon" | "armor", id: string) => {
+    try {
+      setIsEquippingEquipment(true);
+      setSaveError(null);
+      setSaveMessage(null);
+
+      await postCommands([
+        {
+          action: "equip",
+          target,
+          id,
+        },
+      ]);
+
+      setSaveMessage(`${target === "weapon" ? "Weapon" : "Armor"} equipped.`);
+    } catch (error: any) {
+      setSaveError(error.message || `Failed to equip ${target}.`);
+    } finally {
+      setIsEquippingEquipment(false);
+    }
+  };
+
+  const handleRemoveEquipment = async (target: "weapon" | "armor", id: string) => {
+    try {
+      setIsRemovingEquipment(true);
+      setSaveError(null);
+      setSaveMessage(null);
+
+      await postCommands([
+        {
+          action: "remove",
+          target,
+          id,
+        },
+      ]);
+
+      setSaveMessage(`${target === "weapon" ? "Weapon" : "Armor"} removed.`);
+    } catch (error: any) {
+      setSaveError(error.message || `Failed to remove ${target}.`);
+    } finally {
+      setIsRemovingEquipment(false);
+    }
+  };
+
   return (
     <div className="grid gap-6">
       <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
@@ -197,39 +340,6 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
             Backpack & Equipment
           </h2>
         </div>
-
-        <section className={`${styles.tokens.panel.base} mb-4`}>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className={styles.tokens.page.eyebrow}>Wealth</div>
-              <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
-              <p className={`mt-1 ${styles.tokens.text.muted}`}>
-                Total value: {character.bank} handful
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <BankUnitCard
-                icon={<Package size={18} />}
-                label="Chests"
-                value={bankBreakdown.chests}
-                note="1 chest = 13 bags"
-              />
-              <BankUnitCard
-                icon={<ShoppingBag size={18} />}
-                label="Bags"
-                value={bankBreakdown.bags}
-                note="1 bag = 10 handful"
-              />
-              <BankUnitCard
-                icon={<Coins size={18} />}
-                label="Handful"
-                value={bankBreakdown.handful}
-                note="Loose coin"
-              />
-            </div>
-          </div>
-        </section>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <section className={styles.tokens.panel.base}>
@@ -243,7 +353,68 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
             </div>
           </section>
 
-          <section className={styles.tokens.panel.base}>
+          <section className={`${styles.tokens.panel.base}`}>
+            <h3 className="mb-4 text-xl font-bold text-slate-950">Stored Equipment</h3>
+            <div className="grid gap-4">
+              {character.weaponInventory.length > 0 ? (
+                character.weaponInventory.map((weapon) => (
+                  <div key={weapon.id} className="grid gap-2">
+                    <WeaponCard weapon={weapon} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveEquipment("weapon", weapon.id)}
+                        disabled={isRemovingEquipment || isEquippingEquipment}
+                        className={`${styles.tokens.button.base} ${styles.tokens.button.danger} mr-2 disabled:cursor-not-allowed disabled:opacity-60`}
+                      >
+                        {isRemovingEquipment ? "Removing..." : "Remove"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleEquipEquipment("weapon", weapon.id)}
+                        disabled={isEquippingEquipment || isRemovingEquipment}
+                        className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} disabled:cursor-not-allowed disabled:opacity-60`}
+                      >
+                        {isEquippingEquipment ? "Equipping..." : "Equip"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <EmptyState text="No stored weapons." />
+              )}
+
+              {character.armorInventory.length > 0 ? (
+                character.armorInventory.map((armor) => (
+                  <div key={armor.id} className="grid gap-2">
+                    <ArmorCard armor={armor} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveEquipment("armor", armor.id)}
+                        disabled={isRemovingEquipment || isEquippingEquipment}
+                        className={`${styles.tokens.button.base} ${styles.tokens.button.danger} mr-2 disabled:cursor-not-allowed disabled:opacity-60`}
+                      >
+                        {isRemovingEquipment ? "Removing..." : "Remove"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleEquipEquipment("armor", armor.id)}
+                        disabled={isEquippingEquipment || isRemovingEquipment}
+                        className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} disabled:cursor-not-allowed disabled:opacity-60`}
+                      >
+                        {isEquippingEquipment ? "Equipping..." : "Equip"}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <EmptyState text="No stored armor." />
+              )}
+            </div>
+          </section>
+
+          <section className={`${styles.tokens.panel.base} col-span-2`}>
             <h3 className="mb-4 text-xl font-bold text-slate-950">Add To Character</h3>
             <div className="grid gap-4">
               <div className="grid gap-3 sm:grid-cols-3">
@@ -257,14 +428,14 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
                 <button
                   type="button"
                   onClick={() => setIsWeaponPickerOpen(true)}
-                  className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
+                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
                 >
                   Add weapon
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsArmorPickerOpen(true)}
-                  className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
+                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
                 >
                   Add armor
                 </button>
@@ -273,9 +444,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
               <div className="grid gap-3">
                 <div>
                   <div className="text-sm font-semibold text-slate-950">Pending item additions</div>
-                  <p className="mt-1 text-sm text-slate-500">
-                    These additions are only prepared in UI for now. Server save will be added in the next step.
-                  </p>
+                  <p className="mt-1 text-sm text-slate-500">Prepared additions can be saved straight to the character.</p>
                 </div>
 
                 {pendingItems.length > 0 ? (
@@ -357,30 +526,73 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character }) => {
                   <EmptyState text="No pending armor." />
                 )}
               </div>
-            </div>
-          </section>
 
-          <section className={`${styles.tokens.panel.base} lg:col-span-2`}>
-            <h3 className="mb-4 text-xl font-bold text-slate-950">Stored Equipment</h3>
-            <div className="grid gap-4">
-              {character.weaponInventory.length > 0 ? (
-                character.weaponInventory.map((weapon) => (
-                  <WeaponCard key={weapon.id} weapon={weapon} selected={false} onSelect={() => {}} onDeselect={() => {}} />
-                ))
-              ) : (
-                <EmptyState text="No stored weapons." />
-              )}
+              <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                <div className="flex flex-col gap-1">
+                  <div className="text-sm font-semibold text-slate-950">Save pending additions</div>
+                  <p className="text-sm text-slate-500">
+                    Items, weapons, and armor will be written to the database and refreshed into the page state.
+                  </p>
+                </div>
 
-              {character.armorInventory.length > 0 ? (
-                character.armorInventory.map((armor) => (
-                  <ArmorCard key={armor.id} armor={armor} selected={false} onSelect={() => {}} onDeselect={() => {}} />
-                ))
-              ) : (
-                <EmptyState text="No stored armor." />
-              )}
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSavePending}
+                    disabled={!hasPendingChanges || isSavingPending}
+                    className={`${styles.tokens.button.base} ${styles.tokens.button.primary} disabled:cursor-not-allowed disabled:opacity-60`}
+                  >
+                    {isSavingPending ? "Saving additions..." : "Save pending"}
+                  </button>
+
+                  {saveMessage ? <span className="text-sm font-medium text-emerald-700">{saveMessage}</span> : null}
+                  {saveError ? <span className="text-sm font-medium text-rose-700">{saveError}</span> : null}
+                </div>
+              </div>
             </div>
           </section>
         </div>
+
+        <section className={`${styles.tokens.panel.base} mt-4 lg:mt-6`}>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
+              <p className={`mt-1 ${styles.tokens.text.muted}`}>
+                Total value: {character.bank} handful
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <BankUnitCard
+                icon={<Package size={18} />}
+                label="Chests"
+                value={bankBreakdown.chests}
+                note="1 chest = 13 bags"
+                onAdd={() => handleBankChange("add", BANK_VALUES.chest)}
+                onRemove={() => handleBankChange("remove", BANK_VALUES.chest)}
+                disabled={isSavingBank}
+              />
+              <BankUnitCard
+                icon={<ShoppingBag size={18} />}
+                label="Bags"
+                value={bankBreakdown.bags}
+                note="1 bag = 10 handful"
+                onAdd={() => handleBankChange("add", BANK_VALUES.bag)}
+                onRemove={() => handleBankChange("remove", BANK_VALUES.bag)}
+                disabled={isSavingBank}
+              />
+              <BankUnitCard
+                icon={<Coins size={18} />}
+                label="Handful"
+                value={bankBreakdown.handful}
+                note="Loose coin"
+                onAdd={() => handleBankChange("add", BANK_VALUES.handful)}
+                onRemove={() => handleBankChange("remove", BANK_VALUES.handful)}
+                disabled={isSavingBank}
+              />
+            </div>
+          </div>
+        </section>
       </section>
 
       <ModalCardPicker
@@ -488,12 +700,21 @@ const getBankBreakdown = (bank: number) => {
   return { chests, bags, handful };
 };
 
+const BANK_VALUES = {
+  chest: 130,
+  bag: 10,
+  handful: 1,
+};
+
 const BankUnitCard: React.FC<{
   icon: React.ReactNode;
   label: string;
   value: number;
   note: string;
-}> = ({ icon, label, value, note }) => (
+  onAdd: () => void;
+  onRemove: () => void;
+  disabled?: boolean;
+}> = ({ icon, label, value, note, onAdd, onRemove, disabled = false }) => (
   <div className={`${styles.tokens.panel.muted} min-w-[11rem]`}>
     <div className="flex items-center gap-2">
       <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
@@ -505,6 +726,24 @@ const BankUnitCard: React.FC<{
       </div>
     </div>
     <p className={`mt-3 ${styles.tokens.text.muted}`}>{note}</p>
+    <div className="mt-4 flex gap-2">
+      <button
+        type="button"
+        onClick={onRemove}
+        disabled={disabled}
+        className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        -
+      </button>
+      <button
+        type="button"
+        onClick={onAdd}
+        disabled={disabled}
+        className="flex-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-sm font-bold text-amber-900 transition hover:border-amber-400 hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        +
+      </button>
+    </div>
   </div>
 );
 

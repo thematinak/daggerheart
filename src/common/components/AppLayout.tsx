@@ -23,7 +23,7 @@ const AppLayout = () => {
             <h1 className="text-xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
           </div>
 
-          <nav className="flex items-center gap-2 rounded-full border border-white/70 bg-white/75 p-1 text-sm shadow-sm">
+          <nav className="flex items-center gap-2 rounded-full border border-amber-200/80 bg-white/75 p-1 text-sm shadow-sm">
             <Link to="/" className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-amber-50 hover:text-amber-900">Characters</Link>
             <Link to="/create" className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-amber-50 hover:text-amber-900">Create</Link>
             <Link to="/login" onClick={logout} className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-rose-50 hover:text-rose-700">Logout</Link>

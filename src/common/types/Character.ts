@@ -11,6 +11,7 @@ import { StatModifiers } from "./StatModifiers";
 import { SelectedWeapons, WeaponItem } from "./Weapon";
 
 export type Character = {
+  id: string;
   user_id: number;
   level: number;
   bank: number;
@@ -31,12 +32,13 @@ export type Character = {
   secondaryExperience: Experience;
   domainCards: Domain[];
   countedStats: Stats;
+  currentStats: CurrentStats;
 };
 
 export type Stats = {
   evasion: number;
   maxArmor: number;
-  armor: number;
+  maxHope: number;
 
   agility: number;
   strength: number;
@@ -49,7 +51,12 @@ export type Stats = {
   threshold2: number;
 
   maxHp: number;
-  hp: number;
   maxStress: number;
+};
+
+export type CurrentStats = {
+  hp: number;
   stress: number;
+  armor: number;
+  hope: number;
 };

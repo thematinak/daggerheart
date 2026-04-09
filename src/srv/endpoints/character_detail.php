@@ -249,6 +249,7 @@ try {
         ] : null,
         "attributes" => decode_json_or_default($character["attributes"], new stdClass()),
         "customAttributes" => decode_json_or_default($character["customAttributes"], new stdClass()),
+        "currentStats" => decode_json_or_default($character["current_stats"], new stdClass()),
         "primaryExperience" => [
             "name" => $character["primaryExperience"],
             "description" => $character["primaryExperienceDescription"],

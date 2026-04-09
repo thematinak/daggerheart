@@ -142,7 +142,7 @@ const tokens: ComponentTokens = {
   page: {
     shell: "relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.2),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.14),_transparent_28%),linear-gradient(180deg,_#fffaf0_0%,_#f8fafc_40%,_#eef2ff_100%)] text-slate-900",
     container: "relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8",
-    section: "rounded-[2rem] border border-white/70 bg-white/80 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.35)] backdrop-blur",
+    section: "rounded-[2rem] border border-amber-200/80 bg-white/80 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.35)] backdrop-blur p-5",
     title: "text-3xl font-black tracking-tight text-slate-950 sm:text-4xl",
     subtitle: "text-sm leading-6 text-slate-600 sm:text-base",
     eyebrow: "text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700",

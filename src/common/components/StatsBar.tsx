@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield } from "lucide-react";
-import { Character, Stats } from "../types/Character";
+import { Character, CurrentStats, Stats } from "../types/Character";
 import { StatModifiers } from "../types/StatModifiers";
 import styles from "../types/cssColor";
 
@@ -20,7 +20,9 @@ export function buildStatsFromCharacter(character: Character): Stats {
   const stats: Stats = {
     evasion: 0,
     maxArmor: 0,
-    armor: 0,
+    maxHope: 6,
+    maxHp: 0,
+    maxStress: 0,
 
     agility: 0,
     strength: 0,
@@ -31,11 +33,6 @@ export function buildStatsFromCharacter(character: Character): Stats {
 
     threshold1: 0,
     threshold2: 0,
-
-    maxHp: 0,
-    hp: 0,
-    maxStress: 0,
-    stress: 0,
   };
 
   const safeApply = (mod?: StatModifiers) => {
@@ -114,10 +111,6 @@ export function buildStatsFromCharacter(character: Character): Stats {
   const clamp = (value: number, min = 0, max = Infinity) =>
     Math.max(min, Math.min(max, value));
 
-  stats.hp = clamp(stats.hp, 0, stats.maxHp);
-  stats.stress = clamp(stats.stress, 0, stats.maxStress);
-  stats.armor = clamp(stats.armor, 0, stats.maxArmor);
-
   // optional caps (ak chceš balans)
   stats.evasion = clamp(stats.evasion, 0, 50);
   stats.threshold1 = clamp(stats.threshold1, 0);
@@ -136,9 +129,16 @@ const ArmorDisplay: React.FC<{ value: number }> = ({ value }) => {
   );
 };
 
-const StatCard: React.FC<{ label: string; value: number | string }> = ({ label, value }) => (
+type AdjustableStatKey = "hp" | "stress" | "armor" | "hope";
+
+type StatCardProps = {
+  label: string;
+  value: number | string;
+};
+
+const StatCard: React.FC<StatCardProps> = ({ label, value }) => (
   <div className="rounded-xl border border-slate-200 bg-white/88 px-1.5 py-2 shadow-[0_6px_14px_-12px_rgba(15,23,42,0.18)]">
-    <div className="flex min-h-[48px] flex-col items-center justify-center">
+    <div className="flex min-h-[48px] flex-col items-center justify-center gap-2">
       <span className={`text-[10px] ${styles.gray.lightText} uppercase tracking-[0.1em] text-center`}>
         {label}
       </span>
@@ -156,10 +156,25 @@ const StatCard: React.FC<{ label: string; value: number | string }> = ({ label, 
 
 type StatsBarProps = {
   stats: Stats;
+  currentStats: CurrentStats;
+  adjustableStats?: Partial<Record<AdjustableStatKey, {
+    onDecrease: () => void;
+    onIncrease: () => void;
+    disabled?: boolean;
+  }>>;
 };
 
-const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
+const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, adjustableStats }) => {
+  const normalizedCurrentStats: CurrentStats = {
+    hp: currentStats.hp ?? 0,
+    stress: currentStats.stress ?? 0,
+    armor: currentStats.armor ?? 0,
+    hope: currentStats.hope ?? 0,
+  };
+
   const attributeItems = [
+    { label: "Evasion", value: stats.evasion },
+    { label: "Thresholds", value: `${stats.threshold1}/${stats.threshold2}` },
     { label: "Agility", value: stats.agility },
     { label: "Strength", value: stats.strength },
     { label: "Finesse", value: stats.finesse },
@@ -169,16 +184,15 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
   ];
 
   const defenseItems = [
-    { label: "Evasion", value: stats.evasion },
-    { label: "Thresholds", value: `${stats.threshold1}/${stats.threshold2}` },
-    { label: "Armor", value: stats.maxArmor },
-    { label: "HP", value: `${stats.hp}/${stats.maxHp}` },
-    { label: "Stress", value: `${stats.stress}/${stats.maxStress}` },
+    { label: "Armor", value: normalizedCurrentStats.armor, controls: adjustableStats?.armor },
+    { label: "HP", value: `${normalizedCurrentStats.hp}/${stats.maxHp}`, controls: adjustableStats?.hp },
+    { label: "Stress", value: `${normalizedCurrentStats.stress}/${stats.maxStress}`, controls: adjustableStats?.stress },
+    { label: "Hope", value: `${normalizedCurrentStats.hope}/${stats.maxHope}`, controls: adjustableStats?.hope },
   ];
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="grid grid-cols-6 gap-1.5">
+      <div className="grid grid-cols-8 gap-1.5">
         {attributeItems.map((stat) => (
           <div key={stat.label} className="min-w-0">
             <StatCard label={stat.label} value={stat.value} />
@@ -186,7 +200,7 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats }) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-5 gap-1.5">
+      <div className="grid grid-cols-8 gap-1.5">
         {defenseItems.map((stat) => (
           <div key={stat.label} className="min-w-0">
             <StatCard label={stat.label} value={stat.value} />

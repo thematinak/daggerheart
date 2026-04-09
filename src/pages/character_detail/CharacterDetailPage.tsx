@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Backpack, ScrollText, Swords } from "lucide-react";
 import SummaryCard from "../create_character/components/SummaryCard";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
-import { Character } from "../../common/types/Character";
+import { Character, CurrentStats } from "../../common/types/Character";
 import { CharacterClass } from "../../common/types/CharacterClass";
 import { SpecializationsItem } from "../../common/types/Specializations";
 import { Ancestries } from "../../common/types/Ancestries";
@@ -79,6 +79,7 @@ type CharacterDetailResponse = {
     domainId: string;
   }>;
   backpack: BackpackItem[];
+  currentStats: CurrentStats;
 };
 
 const emptyCharacterClass = (data: NonNullable<CharacterDetailResponse["class"]>): CharacterClass => ({
@@ -157,6 +158,33 @@ const CharacterDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>("overview");
+  const [isAdjustingStat, setIsAdjustingStat] = useState(false);
+
+  const loadCharacter = useCallback(async () => {
+    if (!id) {
+      setError("Character id is missing.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`http://pecen.eu/daggerheart/api1/character_detail.php?id=${id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to load character");
+      }
+
+      setCharacterResponse(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to load character");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
     if (!id) {
@@ -165,40 +193,8 @@ const CharacterDetailPage: React.FC = () => {
       return;
     }
 
-    let active = true;
-
-    const loadCharacter = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(`http://pecen.eu/daggerheart/api1/character_detail.php?id=${id}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to load character");
-        }
-
-        if (active) {
-          setCharacterResponse(data);
-        }
-      } catch (err: any) {
-        if (active) {
-          setError(err.message || "Failed to load character");
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
-
     loadCharacter();
-
-    return () => {
-      active = false;
-    };
-  }, [id]);
+  }, [id, loadCharacter]);
 
   const character = useMemo<Character | null>(() => {
     if (!characterResponse) {
@@ -230,6 +226,7 @@ const CharacterDetailPage: React.FC = () => {
     });
 
     return {
+      id: characterResponse.id,
       user_id: characterResponse.userId,
       level: characterResponse.level,
       bank: characterResponse.bank,
@@ -255,6 +252,7 @@ const CharacterDetailPage: React.FC = () => {
       countedStats: {
         evasion: 0,
         maxArmor: 0,
+        maxHope: 6,
         armor: 0,
         agility: 0,
         strength: 0,
@@ -269,10 +267,75 @@ const CharacterDetailPage: React.FC = () => {
         maxStress: 0,
         stress: 0,
       },
+      currentStats: characterResponse.currentStats || {},
     };
   }, [characterResponse, commonData]);
 
   const stats = useMemo(() => (character ? buildStatsFromCharacter(character) : null), [character]);
+
+  const handleAdjustCurrentStat = useCallback(
+    async (stat: "health" | "stress" | "armor" | "hope", action: "add" | "remove") => {
+      if (!character) {
+        return;
+      }
+
+      const maxValue =
+        stat === "health"
+          ? stats?.maxHp ?? 0
+          : stat === "stress"
+            ? stats?.maxStress ?? 0
+            : stat === "hope"
+              ? stats?.maxHope ?? 6
+              : stats?.maxArmor ?? 0;
+
+      const currentValue =
+        stat === "health"
+          ? character.currentStats.hp
+          : stat === "stress"
+            ? character.currentStats.stress
+            : stat === "hope"
+              ? character.currentStats.hope
+              : character.currentStats.armor;
+
+      if ((action === "remove" && currentValue <= 0) || (action === "add" && currentValue >= maxValue)) {
+        return;
+      }
+
+      try {
+        setIsAdjustingStat(true);
+
+        const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            character_id: character.id,
+            commands: [
+              {
+                action,
+                target: stat,
+                value: 1,
+              },
+            ],
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to update current stat");
+        }
+
+        await loadCharacter();
+      } catch (err: any) {
+        setError(err.message || "Failed to update current stat");
+      } finally {
+        setIsAdjustingStat(false);
+      }
+    },
+    [character, stats, loadCharacter]
+  );
 
   if (loading) {
     return (
@@ -319,13 +382,6 @@ const CharacterDetailPage: React.FC = () => {
               Switch between overview, combat-ready information, and backpack contents.
             </p>
           </div>
-
-          <button
-            onClick={() => navigate("/")}
-            className={`${styles.tokens.button.base} ${styles.tokens.button.secondary}`}
-          >
-            Back To Characters
-          </button>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -350,9 +406,21 @@ const CharacterDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {activeTab === "overview" && <SummaryCard character={character} onBack={() => navigate("/")} />}
-      {activeTab === "actions" && stats && <CombatTab character={character} stats={stats} />}
-      {activeTab === "backpack" && <BackpackTab character={character} />}
+      {activeTab === "overview" && <SummaryCard character={character}  />}
+      {activeTab === "actions" && stats && (
+        <CombatTab
+          character={character}
+          stats={stats}
+          onAdjustCurrentStat={handleAdjustCurrentStat}
+          isAdjustingStat={isAdjustingStat}
+        />
+      )}
+      {activeTab === "backpack" && (
+        <BackpackTab
+          character={character}
+          onCharacterUpdated={loadCharacter}
+        />
+      )}
     </div>
   );
 };

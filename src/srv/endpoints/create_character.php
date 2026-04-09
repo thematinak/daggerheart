@@ -2,8 +2,19 @@
 
 header("Content-Type: application/json");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Origin: *");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(["error" => "Method not allowed"]);
+    exit;
+}
 
 require_once 'db.php';
 
@@ -43,7 +54,7 @@ try {
             class_id, specialization_id,
             ancestry_id, community_id,
             bank,
-            attributes, customAttributes,
+            attributes, customAttributes, current_stats,
             name, description,
             primaryExperience, primaryExperienceDescription,
             secondaryExperience, secondaryExperienceDescription
@@ -51,7 +62,7 @@ try {
             ?, ?, ?,
             ?, ?, ?, ?,
             ?,
-            ?, ?,
+            ?, ?, ?,
             ?, ?,
             ?, ?,
             ?, ?
@@ -69,6 +80,7 @@ try {
         $input['bank'] ?? 0,
         json_encode($input['attributes'] ?? []),
         json_encode($input['customAttributes'] ?? []),
+        json_encode($input['currentStats'] ?? []),
         $input['name'],
         $input['description'] ?? null,
         $input['primaryExperience']['name'] ?? null,
