@@ -9,6 +9,8 @@ import { WeaponItem } from "../../../common/types/Weapon";
 import { ArmorItem } from "../../../common/types/Armor";
 import { useCommonData } from "../../../common/contexts/CommonDataProvider";
 import styles from "../../../common/types/cssColor";
+import Eyebrow from "../../../common/components/Eyebrow";
+import H2 from "../../../common/components/H2";
 
 type BackpackTabProps = {
   character: Character;
@@ -335,10 +337,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
     <div className="grid gap-6">
       <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
         <div className="mb-5 text-center">
-          <div className={styles.tokens.page.eyebrow}>Inventory</div>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-            Backpack & Equipment
-          </h2>
+          <Eyebrow eyebrow="Inventory" />
+          <H2>Backpack & Equipment</H2>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">

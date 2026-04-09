@@ -13,11 +13,13 @@ import { WeaponItem } from "../../common/types/Weapon";
 import { ArmorItem } from "../../common/types/Armor";
 import { BackpackItem } from "../../common/types/BackpackItem";
 import { Attributes } from "../create_character/components/AttributeGrid";
+import { Experience } from "../../common/types/Experience";
 import { StatModifiers } from "../../common/types/StatModifiers";
 import styles from "../../common/types/cssColor";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
 import CombatTab from "./components/CombatTab";
 import BackpackTab from "./components/BackpackTab";
+import Eyebrow from "../../common/components/Eyebrow";
 
 type CharacterDetailResponse = {
   id: string;
@@ -56,14 +58,7 @@ type CharacterDetailResponse = {
   };
   attributes: Partial<Attributes>;
   customAttributes: StatModifiers;
-  primaryExperience: {
-    name: string;
-    description: string;
-  };
-  secondaryExperience: {
-    name: string;
-    description: string;
-  };
+  experiences: Experience[];
   weapons: {
     primary: WeaponItem | null;
     secondary: WeaponItem | null;
@@ -147,6 +142,18 @@ const normalizeAttributes = (attributes?: Partial<Attributes>): Attributes => ({
   presence: attributes?.presence ?? null,
   knowledge: attributes?.knowledge ?? null,
 });
+
+const normalizeExperiences = (experiences?: Experience[]): Experience[] => {
+  const normalized = Array.isArray(experiences)
+    ? experiences.filter((experience) => experience && typeof experience === "object")
+    : [];
+
+  return normalized.map(item => ({
+    name: item.name || "",
+    description: item.description || "",
+    bonus: typeof item.bonus === "number" ? item.bonus : 2,
+  }));
+};
 
 type DetailTab = "overview" | "actions" | "backpack";
 
@@ -246,8 +253,7 @@ const CharacterDetailPage: React.FC = () => {
       weaponInventory: characterResponse.weaponInventory || [],
       armor: characterResponse.armor || null,
       armorInventory: characterResponse.armorInventory || [],
-      primaryExperience: characterResponse.primaryExperience || { name: "", description: "" },
-      secondaryExperience: characterResponse.secondaryExperience || { name: "", description: "" },
+      experiences: normalizeExperiences(characterResponse.experiences),
       domainCards: resolvedDomains,
       countedStats: {
         evasion: 0,
@@ -372,9 +378,7 @@ const CharacterDetailPage: React.FC = () => {
       <div className={`${styles.tokens.page.section} flex flex-col gap-5 p-5 sm:p-6 lg:p-8`}>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-              Character Detail
-            </div>
+            <Eyebrow eyebrow="Character Detail" />
             <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
               {character.name}
             </h1>

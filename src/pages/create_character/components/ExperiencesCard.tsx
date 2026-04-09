@@ -2,20 +2,21 @@ import React from "react";
 import { Experience } from "../../../common/types/Experience";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
-
-export type ExperienceItem = {
-  primaryExperience: Experience;
-  secondaryExperience: Experience;
-};
+import Eyebrow from "../../../common/components/Eyebrow";
+import H2 from "../../../common/components/H2";
+import Subtitle from "../../../common/components/Subtitle";
 
 type ExperienceCardProps = {
-  item: ExperienceItem;
-  onSelect: (info: ExperienceItem) => void;
+  item: Experience[];
+  onSelect: (info: { experiences: Experience[] }) => void;
   showNext?: boolean;
   showBack?: boolean;
   onNext?: () => void;
   onBack?: () => void;
 };
+
+const ensureExperience = (items: Experience[], index: number): Experience =>
+  items[index] || { name: "", description: "", bonus: 2 };
 
 const ExperienceCard: React.FC<ExperienceCardProps> = ({
   item,
@@ -25,30 +26,23 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   onNext,
   onBack,
 }) => {
+  const primaryExperience = ensureExperience(item, 0);
+  const secondaryExperience = ensureExperience(item, 1);
+
   return (
     <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
       <div className="text-center">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-          Character Builder
-        </div>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-          Define Experiences
-        </h2>
-        <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
-          Add the two experiences that best reflect your character&apos;s history and expertise.
-        </p>
+        <Eyebrow eyebrow="Character Builder" />
+        <H2>Define Experiences</H2>
+        <Subtitle text="Add the two experiences that best reflect your character's history and expertise." />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
           <div className="mb-4">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Primary
-            </div>
+            <Eyebrow eyebrow="Primary" />
             <h3 className="mt-1 text-xl font-bold text-slate-950">Primary Experience</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              The experience your character leans on most often.
-            </p>
+            <Subtitle text="The experience your character leans on most often." />
           </div>
 
           <div className="flex flex-col gap-4">
@@ -57,11 +51,13 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               <input
                 className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
                 placeholder="Name"
-                value={item.primaryExperience.name}
+                value={primaryExperience.name}
                 onChange={(e) =>
                   onSelect({
-                    ...item,
-                    primaryExperience: { ...item.primaryExperience, name: e.target.value },
+                    experiences: [
+                      { ...primaryExperience, name: e.target.value },
+                      secondaryExperience,
+                    ],
                   })
                 }
               />
@@ -72,11 +68,13 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               <textarea
                 className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[140px] resize-none`}
                 placeholder="Describe what this experience represents."
-                value={item.primaryExperience.description}
+                value={primaryExperience.description}
                 onChange={(e) =>
                   onSelect({
-                    ...item,
-                    primaryExperience: { ...item.primaryExperience, description: e.target.value },
+                    experiences: [
+                      { ...primaryExperience, description: e.target.value },
+                      secondaryExperience,
+                    ],
                   })
                 }
               />
@@ -86,13 +84,9 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
 
         <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
           <div className="mb-4">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Secondary
-            </div>
+            <Eyebrow eyebrow="Secondary" />
             <h3 className="mt-1 text-xl font-bold text-slate-950">Secondary Experience</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              A supporting experience that rounds out the character.
-            </p>
+            <Subtitle text="A supporting experience that rounds out the character." />
           </div>
 
           <div className="flex flex-col gap-4">
@@ -101,11 +95,13 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               <input
                 className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
                 placeholder="Name"
-                value={item.secondaryExperience.name}
+                value={secondaryExperience.name}
                 onChange={(e) =>
                   onSelect({
-                    ...item,
-                    secondaryExperience: { ...item.secondaryExperience, name: e.target.value },
+                    experiences: [
+                      primaryExperience,
+                      { ...secondaryExperience, name: e.target.value },
+                    ],
                   })
                 }
               />
@@ -116,11 +112,13 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               <textarea
                 className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[140px] resize-none`}
                 placeholder="Describe what this experience represents."
-                value={item.secondaryExperience.description}
+                value={secondaryExperience.description}
                 onChange={(e) =>
                   onSelect({
-                    ...item,
-                    secondaryExperience: { ...item.secondaryExperience, description: e.target.value },
+                    experiences: [
+                      primaryExperience,
+                      { ...secondaryExperience, description: e.target.value },
+                    ],
                   })
                 }
               />

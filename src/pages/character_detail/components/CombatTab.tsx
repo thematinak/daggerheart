@@ -5,6 +5,8 @@ import WeaponCard from "../../../common/components/WeaponCard";
 import ArmorCard from "../../../common/components/ArmorCard";
 import { Character } from "../../../common/types/Character";
 import styles from "../../../common/types/cssColor";
+import Eyebrow from "../../../common/components/Eyebrow";
+import H2 from "../../../common/components/H2";
 
 type CombatTabProps = {
   character: Character;
@@ -17,10 +19,8 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
   <div className="flex flex-col gap-6">
     <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
       <div className="mb-5 text-center">
-        <div className={styles.tokens.page.eyebrow}>Actions</div>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-          Action Loadout
-        </h2>
+        <Eyebrow eyebrow="Action Actions" />
+        <H2>Action Loadout</H2>
       </div>
       <div className="grid gap-4">
         <StatsBar

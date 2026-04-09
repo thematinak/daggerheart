@@ -6,8 +6,8 @@ import styles from "../types/cssColor";
 
 type ArmorFilters = {
   name?: string;
-  tier?: number;
-  baseScore?: string;
+  tier?: ArmorItem["tier"];
+  baseScore?: string; // "light", "medium", "heavy"
 };
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 
 const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
   const { commonData } = useCommonData();
-  const [filters, setFilters] = useState<ArmorFilters>({});
+  const [filters, setFilters] = useState<ArmorFilters>({tier: 1});
 
   const items = useMemo(() => {
     return Object.values(commonData.armor).filter((armor) => {
@@ -57,7 +57,8 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
           />
 
           <select
-            onChange={(e) => setFilters({ ...filters, tier: e.target.value ? Number(e.target.value) : undefined })}
+            onChange={(e) => setFilters({ ...filters, tier: e.target.value ? (Number(e.target.value) as ArmorItem["tier"]) : undefined })}
+            value={filters.tier || ""}
             className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
           >
             <option value="">Tier</option>

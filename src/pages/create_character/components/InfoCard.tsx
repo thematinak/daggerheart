@@ -1,6 +1,8 @@
 import React from "react";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
+import Eyebrow from "../../../common/components/Eyebrow";
+import H2 from "../../../common/components/H2";
 
 export type InfoItem = {
   name: string;
@@ -27,13 +29,9 @@ const InfoCard: React.FC<InfoCardProps> = ({
   return (
     <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
       <div className="text-center">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-          Character Builder
-        </div>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-          Basic Character Details
-        </h2>
-        <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
+        <Eyebrow eyebrow="Character Builder" />
+        <H2>Basic Character Details</H2>
+        <p className={styles.tokens.page.subtitle}>
           Give your character a name and a short visual description to anchor the build.
         </p>
       </div>
@@ -41,9 +39,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
       <div className="grid gap-5">
         <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
           <div className="mb-3">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Identity
-            </div>
+            <Eyebrow eyebrow="Identity" />
             <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
               Character Name
             </label>
@@ -58,9 +54,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
 
         <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
           <div className="mb-3">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-              Presence
-            </div>
+            <Eyebrow eyebrow="Presence" />
             <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
               Physical Description
             </label>

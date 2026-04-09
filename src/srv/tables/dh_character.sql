@@ -13,15 +13,10 @@ CREATE TABLE dh_character (
     attributes JSON DEFAULT ('{}'),
     customAttributes JSON DEFAULT ('{}'),
     current_stats JSON DEFAULT ('{}'),
+    experiences JSON DEFAULT ('[]'),
 
     name VARCHAR(50) NOT NULL,
     description VARCHAR(1000),
-
-    primaryExperience VARCHAR(50),
-    primaryExperienceDescription VARCHAR(1000),
-
-    secondaryExperience VARCHAR(50),
-    secondaryExperienceDescription VARCHAR(1000),
 
     -- Foreign keys
     CONSTRAINT fk_character_class

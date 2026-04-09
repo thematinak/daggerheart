@@ -2,6 +2,8 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
+import H2 from "../../../common/components/H2";
+import Section from "../../../common/components/Section";
 
 export type Attributes = {
   agility: { value: number; id: number } | null;
@@ -51,41 +53,29 @@ export const AttributesGrid: React.FC<AttributesGridProps> = ({
     .map((attribute) => attribute.id);
 
   return (
-    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
-      <div className="text-center">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-          Character Builder
+    <Section title="Assign Attributes" subtitle="Every modifier can be used only once. Pick the spread that fits your build best.">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {attributes.map((item) => (
+            <AttributeCard
+              key={item.id}
+              item={item}
+              usedIds={usedIds}
+              chosen={selected[item.name]}
+              onSelect={(value) => onSelect({ ...selected, [item.name]: value })}
+              onDeselect={() => onSelect({ ...selected, [item.name]: null })}
+            />
+          ))}
         </div>
-        <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
-          Assign Attributes
-        </h2>
-        <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
-          Every modifier can be used only once. Pick the spread that fits your build best.
-        </p>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {attributes.map((item) => (
-          <AttributeCard
-            key={item.id}
-            item={item}
-            usedIds={usedIds}
-            chosen={selected[item.name]}
-            onSelect={(value) => onSelect({ ...selected, [item.name]: value })}
-            onDeselect={() => onSelect({ ...selected, [item.name]: null })}
+        {(showBack || showNext) && (
+          <NextPreviousButton
+            showBack={showBack}
+            showNext={showNext}
+            onBack={onBack}
+            onNext={onNext}
           />
-        ))}
-      </div>
-
-      {(showBack || showNext) && (
-        <NextPreviousButton
-          showBack={showBack}
-          showNext={showNext}
-          onBack={onBack}
-          onNext={onNext}
-        />
-      )}
-    </div>
+        )}
+    </Section>
   );
 };
 
@@ -160,16 +150,6 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
               );
             })}
           </div>
-
-          {chosen && (
-            <button
-              type="button"
-              onClick={onDeselect}
-              className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              Clear Selection
-            </button>
-          )}
         </div>
       </div>
     </GameCard>

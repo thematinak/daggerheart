@@ -28,6 +28,7 @@ export type ComponentTokens = {
     container: string;
     section: string;
     title: string;
+    smallerTitle: string;
     subtitle: string;
     eyebrow: string;
   };
@@ -144,6 +145,7 @@ const tokens: ComponentTokens = {
     container: "relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8",
     section: "rounded-[2rem] border border-amber-200/80 bg-white/80 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.35)] backdrop-blur p-5",
     title: "text-3xl font-black tracking-tight text-slate-950 sm:text-4xl",
+    smallerTitle: "text-2xl font-black tracking-tight text-slate-950 sm:text-3xl",
     subtitle: "text-sm leading-6 text-slate-600 sm:text-base",
     eyebrow: "text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700",
   },

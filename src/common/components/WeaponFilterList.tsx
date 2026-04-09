@@ -7,9 +7,9 @@ import styles from "../types/cssColor";
 type WeaponFilters = {
   attribute?: string;
   range?: string;
-  burden?: string;
-  tier?: number;
-  slot?: string;
+  burden?: WeaponItem["burden"];
+  tier?: WeaponItem["tier"];
+  slot?: WeaponItem["slot"];
 };
 
 type Props = {
@@ -24,7 +24,7 @@ const WeaponFilterList: React.FC<Props> = ({
   onSelect,
 }) => {
   const { commonData } = useCommonData();
-  const [filters, setFilters] = useState<WeaponFilters>({});
+  const [filters, setFilters] = useState<WeaponFilters>({tier: 1});
 
   const items = useMemo(() => {
     const appliedFilters = {
@@ -86,7 +86,7 @@ const WeaponFilterList: React.FC<Props> = ({
           </select>
 
           <select
-            onChange={(e) => setFilters({ ...filters, burden: e.target.value })}
+            onChange={(e) => setFilters({ ...filters, burden: e.target.value ? (e.target.value as WeaponItem["burden"]) : undefined })}
             className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
             value={filters.burden || ""}
           >
@@ -97,7 +97,7 @@ const WeaponFilterList: React.FC<Props> = ({
 
           <select
             onChange={(e) =>
-              setFilters({ ...filters, tier: e.target.value ? Number(e.target.value) : undefined })
+              setFilters({ ...filters, tier: e.target.value ? (Number(e.target.value) as WeaponItem["tier"]) : undefined })
             }
             className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
             value={filters.tier || ""}
@@ -111,7 +111,7 @@ const WeaponFilterList: React.FC<Props> = ({
 
           {!forcedSlot && (
             <select
-              onChange={(e) => setFilters({ ...filters, slot: e.target.value })}
+              onChange={(e) => setFilters({ ...filters, slot: e.target.value ? (e.target.value as WeaponItem["slot"]) : undefined })}
               className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
               value={filters.slot || ""}
             >

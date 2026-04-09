@@ -8,6 +8,8 @@ import { GridSelector } from "../../common/components/GridSelector";
 import { Badge } from "../../common/components/Badge";
 import GameCard from "../../common/components/GameCard";
 import styles from "../../common/types/cssColor";
+import H2 from "../../common/components/H2";
+import Eyebrow from "../../common/components/Eyebrow";
 
 type CharacterListItem = {
   id: string;
@@ -67,12 +69,8 @@ const CharacterCard: React.FC<{
       <div className="flex h-full flex-col gap-5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-700">
-              Adventurer
-            </div>
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
-              {character.name}
-            </h2>
+            <Eyebrow eyebrow="Adventurer" />
+            <H2>{character.name}</H2>
           </div>
           <Badge color="blue" label={`Lv. ${character.level}`} />
         </div>

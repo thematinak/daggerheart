@@ -26,6 +26,38 @@ function decode_json_object($value)
     return is_array($decoded) ? $decoded : [];
 }
 
+function decode_character_experiences($row)
+{
+    $decoded = decode_json_object($row['experiences'] ?? null);
+
+    if (count($decoded) > 0) {
+        return array_values(array_map(function ($experience) {
+            return [
+                "name" => isset($experience['name']) ? (string)$experience['name'] : '',
+                "description" => isset($experience['description']) ? (string)$experience['description'] : '',
+                "bonus" => isset($experience['bonus']) ? (int)$experience['bonus'] : 2,
+            ];
+        }, array_filter($decoded, function ($experience) {
+            return is_array($experience);
+        })));
+    }
+
+    return array_values(array_filter([
+        [
+            "name" => $row['primaryExperience'] ?? '',
+            "description" => $row['primaryExperienceDescription'] ?? '',
+            "bonus" => 2,
+        ],
+        [
+            "name" => $row['secondaryExperience'] ?? '',
+            "description" => $row['secondaryExperienceDescription'] ?? '',
+            "bonus" => 2,
+        ],
+    ], function ($experience) {
+        return $experience['name'] !== '' || $experience['description'] !== '';
+    }));
+}
+
 function json_error_response($statusCode, $message)
 {
     http_response_code($statusCode);
@@ -168,6 +200,82 @@ function remove_equipment(PDO $pdo, $characterId, $equipmentType, $itemId)
     $deleteStmt->execute([$characterId, $itemId]);
 }
 
+function get_weapon_equipment(PDO $pdo, $characterId, $itemId)
+{
+    $stmt = $pdo->prepare("
+        SELECT
+            ce.id,
+            ce.is_equipped,
+            w.id AS weapon_id,
+            w.slot,
+            w.burden
+        FROM dh_character_equipment ce
+        INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+        WHERE ce.character_id = ? AND ce.weapon_id = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$characterId, $itemId]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+function normalize_equipped_weapons(PDO $pdo, $characterId)
+{
+    $stmt = $pdo->prepare("
+        SELECT
+            ce.id,
+            ce.is_equipped,
+            w.slot,
+            w.burden
+        FROM dh_character_equipment ce
+        INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+        WHERE ce.character_id = ? AND ce.is_equipped = 1
+        ORDER BY ce.id ASC
+    ");
+    $stmt->execute([$characterId]);
+    $equippedWeapons = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $equippedPrimary = null;
+    $equippedSecondary = null;
+    $idsToUnequip = [];
+
+    foreach ($equippedWeapons as $weapon) {
+        if ($weapon['slot'] === 'primary') {
+            if ($equippedPrimary === null) {
+                $equippedPrimary = $weapon;
+            } else {
+                $idsToUnequip[] = (int)$weapon['id'];
+            }
+            continue;
+        }
+
+        if ($weapon['slot'] === 'secondary') {
+            if ($equippedSecondary === null) {
+                $equippedSecondary = $weapon;
+            } else {
+                $idsToUnequip[] = (int)$weapon['id'];
+            }
+        }
+    }
+
+    if ($equippedPrimary !== null && $equippedPrimary['burden'] === 'two-handed' && $equippedSecondary !== null) {
+        $idsToUnequip[] = (int)$equippedSecondary['id'];
+    }
+
+    if (count($idsToUnequip) === 0) {
+        return;
+    }
+
+    $idsToUnequip = array_values(array_unique($idsToUnequip));
+    $placeholders = implode(',', array_fill(0, count($idsToUnequip), '?'));
+    $unequipStmt = $pdo->prepare("
+        UPDATE dh_character_equipment
+        SET is_equipped = 0
+        WHERE id IN ({$placeholders})
+    ");
+    $unequipStmt->execute($idsToUnequip);
+}
+
 function equip_item(PDO $pdo, $characterId, $equipmentType, $itemId)
 {
     $column = $equipmentType . "_id";
@@ -200,29 +308,66 @@ function equip_item(PDO $pdo, $characterId, $equipmentType, $itemId)
         $resetStmt->execute([$characterId]);
     }
 
+    if ($equipmentType === 'weapon') {
+        $weapon = get_weapon_equipment($pdo, $characterId, $itemId);
+
+        if (!$weapon) {
+            throw new Exception("Weapon could not be equipped");
+        }
+
+        if ($weapon['slot'] === 'primary') {
+            $resetPrimaryStmt = $pdo->prepare("
+                UPDATE dh_character_equipment ce
+                INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+                SET ce.is_equipped = 0
+                WHERE ce.character_id = ? AND w.slot = 'primary'
+            ");
+            $resetPrimaryStmt->execute([$characterId]);
+
+            if ($weapon['burden'] === 'two-handed') {
+                $resetSecondaryStmt = $pdo->prepare("
+                    UPDATE dh_character_equipment ce
+                    INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+                    SET ce.is_equipped = 0
+                    WHERE ce.character_id = ? AND w.slot = 'secondary'
+                ");
+                $resetSecondaryStmt->execute([$characterId]);
+            }
+        } elseif ($weapon['slot'] === 'secondary') {
+            $primaryStmt = $pdo->prepare("
+                SELECT
+                    ce.id,
+                    w.burden
+                FROM dh_character_equipment ce
+                INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+                WHERE ce.character_id = ?
+                  AND ce.is_equipped = 1
+                  AND w.slot = 'primary'
+                ORDER BY ce.id ASC
+                LIMIT 1
+            ");
+            $primaryStmt->execute([$characterId]);
+            $equippedPrimary = $primaryStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$equippedPrimary || $equippedPrimary['burden'] !== 'one-handed') {
+                throw new Exception("Secondary weapon requires an equipped one-handed primary weapon");
+            }
+
+            $resetSecondaryStmt = $pdo->prepare("
+                UPDATE dh_character_equipment ce
+                INNER JOIN dh_weapons w ON w.id = ce.weapon_id
+                SET ce.is_equipped = 0
+                WHERE ce.character_id = ? AND w.slot = 'secondary'
+            ");
+            $resetSecondaryStmt->execute([$characterId]);
+        }
+    }
+
     $equipStmt = $pdo->prepare("UPDATE dh_character_equipment SET is_equipped = 1 WHERE id = ?");
     $equipStmt->execute([$existing['id']]);
 
     if ($equipmentType === 'weapon') {
-        $equippedStmt = $pdo->prepare("
-            SELECT id
-            FROM dh_character_equipment
-            WHERE character_id = ? AND weapon_id IS NOT NULL AND is_equipped = 1
-            ORDER BY CASE WHEN id = ? THEN 0 ELSE 1 END, id ASC
-        ");
-        $equippedStmt->execute([$characterId, $existing['id']]);
-        $equippedIds = array_map('intval', array_column($equippedStmt->fetchAll(PDO::FETCH_ASSOC), 'id'));
-
-        if (count($equippedIds) > 2) {
-            $idsToUnequip = array_slice($equippedIds, 2);
-            $placeholders = implode(',', array_fill(0, count($idsToUnequip), '?'));
-            $unequipStmt = $pdo->prepare("
-                UPDATE dh_character_equipment
-                SET is_equipped = 0
-                WHERE id IN ({$placeholders})
-            ");
-            $unequipStmt->execute($idsToUnequip);
-        }
+        normalize_equipped_weapons($pdo, $characterId);
     }
 }
 
@@ -436,12 +581,7 @@ try {
 
             "name" => $row["name"],
             "description" => $row["description"],
-
-            "primaryExperience" => $row["primaryExperience"],
-            "primaryExperienceDescription" => $row["primaryExperienceDescription"],
-
-            "secondaryExperience" => $row["secondaryExperience"],
-            "secondaryExperienceDescription" => $row["secondaryExperienceDescription"],
+            "experiences" => decode_character_experiences($row),
 
             "attributes" => $attributes,
             "customAttributes" => $customAttributes,

@@ -18,7 +18,7 @@ const AppLayout = () => {
 
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700">
-              Campaign Hub
+              With Love
             </div>
             <h1 className="text-xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
           </div>

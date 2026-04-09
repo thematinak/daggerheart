@@ -28,8 +28,7 @@ export type Character = {
   weaponInventory: WeaponItem[];
   armor: ArmorItem | null;
   armorInventory: ArmorItem[];
-  primaryExperience: Experience;
-  secondaryExperience: Experience;
+  experiences: Experience[];
   domainCards: Domain[];
   countedStats: Stats;
   currentStats: CurrentStats;

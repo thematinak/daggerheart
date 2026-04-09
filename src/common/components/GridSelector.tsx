@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { NextPreviousButton } from "../../pages/create_character/components/NextButton";
 import styles from "../types/cssColor";
+import H2 from "./H2";
+import Eyebrow from "./Eyebrow";
+import Section from "./Section";
 
 type GridSelectorProps<T> = {
   endpoint?: string;
@@ -24,7 +27,7 @@ export function GridSelector<T extends { id: string | number }>({
   onSelect,
   renderItem,
   title,
-  eyebrow = "Character Builder",
+  eyebrow,
   description,
   showNext = false,
   showBack = false,
@@ -99,35 +102,26 @@ export function GridSelector<T extends { id: string | number }>({
 
   // --- Render ---
   return (
-    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
-      {title && (
-        <div className="text-center">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-            {eyebrow}
-          </div>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">{title}</h2>
-          {description && (
-            <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>{description}</p>
-          )}
+    <Section eyebrow={eyebrow} title={title} subtitle={description}>
+      <div className={`flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {loadedItems.map((item, pos) => (
+            <div key={item.id} onClick={() => onSelect(item, pos)}>
+              {renderItem(item, item.id === selectedId)}
+            </div>
+          ))}
         </div>
-      )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {loadedItems.map((item, pos) => (
-          <div key={item.id} onClick={() => onSelect(item, pos)}>
-            {renderItem(item, item.id === selectedId)}
-          </div>
-        ))}
+        {(showBack || showNext) && (
+          <NextPreviousButton
+            showBack={showBack}
+            showNext={showNext}
+            onBack={onBack}
+            onNext={onNext}
+          />
+        )}
       </div>
-
-      {(showBack || showNext) && (
-        <NextPreviousButton
-          showBack={showBack}
-          showNext={showNext}
-          onBack={onBack}
-          onNext={onNext}
-        />
-      )}
-    </div>
+    </Section>
   );
 }

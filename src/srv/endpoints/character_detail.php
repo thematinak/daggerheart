@@ -36,6 +36,38 @@ function decode_json_or_default($value, $default)
     return $decoded !== null ? $decoded : $default;
 }
 
+function decode_character_experiences($character)
+{
+    $decoded = decode_json_or_default($character["experiences"] ?? null, null);
+
+    if (is_array($decoded)) {
+        return array_values(array_map(function ($experience) {
+            return [
+                "name" => isset($experience["name"]) ? (string)$experience["name"] : "",
+                "description" => isset($experience["description"]) ? (string)$experience["description"] : "",
+                "bonus" => isset($experience["bonus"]) ? (int)$experience["bonus"] : 2,
+            ];
+        }, array_filter($decoded, function ($experience) {
+            return is_array($experience);
+        })));
+    }
+
+    return array_values(array_filter([
+        [
+            "name" => $character["primaryExperience"] ?? "",
+            "description" => $character["primaryExperienceDescription"] ?? "",
+            "bonus" => 2,
+        ],
+        [
+            "name" => $character["secondaryExperience"] ?? "",
+            "description" => $character["secondaryExperienceDescription"] ?? "",
+            "bonus" => 2,
+        ],
+    ], function ($experience) {
+        return $experience["name"] !== "" || $experience["description"] !== "";
+    }));
+}
+
 function map_weapon_row($row)
 {
     return [
@@ -119,20 +151,29 @@ try {
     $weaponStmt->execute([$characterId]);
     $weaponRows = $weaponStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $equippedWeapons = [];
+    $primaryWeapon = null;
+    $secondaryWeapon = null;
     $weaponInventory = [];
 
     foreach ($weaponRows as $row) {
         $mapped = map_weapon_row($row);
         if ((int)$row["is_equipped"] === 1) {
-            $equippedWeapons[] = $mapped;
+            if ($mapped["slot"] === "primary" && $primaryWeapon === null) {
+                $primaryWeapon = $mapped;
+                continue;
+            }
+
+            if ($mapped["slot"] === "secondary" && $secondaryWeapon === null) {
+                $secondaryWeapon = $mapped;
+                continue;
+            }
         } else {
             $weaponInventory[] = $mapped;
+            continue;
         }
-    }
 
-    $primaryWeapon = $equippedWeapons[0] ?? null;
-    $secondaryWeapon = $equippedWeapons[1] ?? null;
+        $weaponInventory[] = $mapped;
+    }
 
     $armorStmt = $pdo->prepare("
         SELECT
@@ -250,14 +291,7 @@ try {
         "attributes" => decode_json_or_default($character["attributes"], new stdClass()),
         "customAttributes" => decode_json_or_default($character["customAttributes"], new stdClass()),
         "currentStats" => decode_json_or_default($character["current_stats"], new stdClass()),
-        "primaryExperience" => [
-            "name" => $character["primaryExperience"],
-            "description" => $character["primaryExperienceDescription"],
-        ],
-        "secondaryExperience" => [
-            "name" => $character["secondaryExperience"],
-            "description" => $character["secondaryExperienceDescription"],
-        ],
+        "experiences" => decode_character_experiences($character),
         "weapons" => [
             "primary" => $primaryWeapon,
             "secondary" => $secondaryWeapon,

@@ -3,6 +3,8 @@ import { BackpackItem } from "../../../common/types/BackpackItem";
 import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
+import H3 from "../../../common/components/H3";
+import Section from "../../../common/components/Section";
 
 
 type Props = {
@@ -79,11 +81,9 @@ export const BackpackSelectorCard: React.FC<Props> = ({
   }, [selectedPotion, classItem]);
 
   return (
-    <div className="p-4 max-w-2xl mx-auto bg-white rounded-2xl shadow">
-      <h2 className="text-xl font-bold mb-4">Backpack</h2>
-
+    <Section title="Backpack" subtitle="Select the essential items your character will carry on their adventures. Your backpack defines your preparedness for the challenges ahead.">
       {/* FIXED ITEMS */}
-      <div className="space-y-3 mb-6">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         {FIXED_ITEMS.map((item) => (
           <div
             key={item.id}
@@ -116,16 +116,13 @@ export const BackpackSelectorCard: React.FC<Props> = ({
           Choose your potion
         </h3>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {POTION_OPTIONS.map((potion) => {
-            const isSelected =
-              selectedPotion?.id === potion.id;
-
             return (
               <GameCard
                 key={potion.id}
                 onClick={() => setSelectedPotion(potion)}
-                selected={isSelected}
+                selected={selectedPotion?.id === potion.id}
               >
                 <h4 className="font-semibold">{potion.name}</h4>
                 <p className={`text-sm ${styles.gray.text}`}>
@@ -141,6 +138,6 @@ export const BackpackSelectorCard: React.FC<Props> = ({
       {(showNext) && (
           <NextPreviousButton showBack={true} showNext={showNext} onBack={onBack} onNext={onNext} />
       )}
-    </div>
+    </Section>
   );
 };

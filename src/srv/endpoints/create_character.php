@@ -26,6 +26,29 @@ if (!$input) {
     exit;
 }
 
+function normalize_experiences($value)
+{
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $experiences = [];
+
+    foreach ($value as $experience) {
+        if (!is_array($experience)) {
+            continue;
+        }
+
+        $experiences[] = [
+            "name" => isset($experience["name"]) ? (string)$experience["name"] : "",
+            "description" => isset($experience["description"]) ? (string)$experience["description"] : "",
+            "bonus" => isset($experience["bonus"]) ? (int)$experience["bonus"] : 2,
+        ];
+    }
+
+    return $experiences;
+}
+
 try {
     $pdo->beginTransaction();
 
@@ -55,17 +78,13 @@ try {
             ancestry_id, community_id,
             bank,
             attributes, customAttributes, current_stats,
-            name, description,
-            primaryExperience, primaryExperienceDescription,
-            secondaryExperience, secondaryExperienceDescription
+            name, description, experiences
         ) VALUES (
             ?, ?, ?,
             ?, ?, ?, ?,
             ?,
             ?, ?, ?,
-            ?, ?,
-            ?, ?,
-            ?, ?
+            ?, ?, ?
         )
     ");
 
@@ -83,10 +102,7 @@ try {
         json_encode($input['currentStats'] ?? []),
         $input['name'],
         $input['description'] ?? null,
-        $input['primaryExperience']['name'] ?? null,
-        $input['primaryExperience']['description'] ?? null,
-        $input['secondaryExperience']['name'] ?? null,
-        $input['secondaryExperience']['description'] ?? null
+        json_encode(normalize_experiences($input['experiences'] ?? []))
     ]);
 
     // =========================

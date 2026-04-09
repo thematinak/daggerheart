@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "../types/cssColor";
+import Eyebrow from "./Eyebrow";
 
 type BaseFilter<T> = {
   id: string;
@@ -147,9 +148,7 @@ const ModalCardPicker = <T,>({
         <div className="flex max-h-[90vh] w-full max-w-6xl min-h-0 flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,_rgba(255,251,235,0.98),_rgba(255,255,255,0.98))] shadow-[0_24px_80px_-30px_rgba(15,23,42,0.45)]">
         <div className="flex items-center justify-between border-b border-slate-200/80 px-6 py-5">
           <div>
-            {eyebrow ? (
-              <div className={styles.tokens.page.eyebrow}>{eyebrow}</div>
-            ) : null}
+            {eyebrow ? <Eyebrow eyebrow={eyebrow} /> : null}
             <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{title}</h3>
           </div>
 
@@ -227,7 +226,7 @@ const ModalCardPicker = <T,>({
 
           <section className={`${styles.tokens.panel.base} grid self-start gap-4 lg:sticky lg:top-0`}>
             <div>
-              <div className={styles.tokens.page.eyebrow}>Selection</div>
+              <Eyebrow eyebrow="Selection" />
               <h4 className="mt-2 text-xl font-bold text-slate-950">Item detail</h4>
             </div>
 

@@ -14,6 +14,7 @@ import {
 import StatsBar, { buildStatsFromCharacter } from "../../../common/components/StatsBar";
 import styles from "../../../common/types/cssColor";
 import { Character } from "../../../common/types/Character";
+import H2 from "../../../common/components/H2";
 
 type SummaryCardProps = {
   character: Character;
@@ -39,7 +40,7 @@ const SummarySection: React.FC<SectionCardProps> = ({ title, icon, children, cla
       <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
         {icon}
       </div>
-      <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+      <H2>{title}</H2>
     </div>
     {children}
   </section>
@@ -51,7 +52,7 @@ const DetailRow: React.FC<{ label: string; value?: React.ReactNode; className?: 
   className = "",
 }) => (
   <div className={`rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 ${className}`}>
-    <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+    <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
       {label}
     </div>
     <div className="mt-1 text-sm font-medium text-slate-900">{value || "-"}</div>
@@ -67,6 +68,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
   ]
     .filter(Boolean)
     .join(" / ");
+
+    console.log("experience", character.experiences);
+    
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,10 +106,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <DetailRow label="Class" value={character.class?.name} />
+              <DetailRow label="Specialization" value={character.specialization?.name} />
               <DetailRow label="Ancestry" value={character.ancestry?.name} />
               <DetailRow label="Community" value={character.community?.name} />
-              <DetailRow label="Primary Experience" value={character.primaryExperience?.name} />
-              <DetailRow label="Secondary Experience" value={character.secondaryExperience?.name} />
             </div>
           </div>
 
@@ -195,32 +199,16 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
 
           <SummarySection title="Experience" icon={<BookOpen size={18} />}>
             <div className="grid gap-3">
-              <DetailRow label="Primary" value={character.primaryExperience?.name} />
-              {character.primaryExperience?.description && (
-                <p className="text-sm leading-6 text-slate-600">
-                  {character.primaryExperience.description}
-                </p>
-              )}
-              <DetailRow label="Secondary" value={character.secondaryExperience?.name} />
-              {character.secondaryExperience?.description && (
-                <p className="text-sm leading-6 text-slate-600">
-                  {character.secondaryExperience.description}
-                </p>
-              )}
-            </div>
-          </SummarySection>
-
-          <SummarySection title="Identity" icon={<UserRound size={18} />}>
-            <div className="grid gap-3">
-              <DetailRow label="Name" value={character.name || "Unnamed Hero"} />
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
-                <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-                  Description
+              {character.experiences.map((experience, index) => (
+                <div key={index} className="border-b border-slate-200 pb-3">
+                  <DetailRow label={(index + 1) + ". Experience"} value={experience.name} />
+                  {experience.description && (
+                    <p className="text-sm leading-6 text-slate-600">
+                      {experience.description}
+                    </p>
+                  )}
                 </div>
-                <p className="text-sm leading-6 text-slate-700">
-                  {character.description || "No description provided."}
-                </p>
-              </div>
+              ))}
             </div>
           </SummarySection>
 

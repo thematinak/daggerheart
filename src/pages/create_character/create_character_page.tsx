@@ -24,6 +24,7 @@ import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
+import Section from "../../common/components/Section";
 
 /* ---------- TYPES ---------- */
 
@@ -65,8 +66,10 @@ const CharacterCreatorPage: React.FC = () => {
     },
     name: "",
     description: "",
-    primaryExperience: { name: "", description: "" },
-    secondaryExperience: { name: "", description: "" },
+    experiences: [
+      { name: "", description: "", bonus: 2 },
+      { name: "", description: "", bonus: 2 },
+    ],
     domainCards: [],
     weapons: {primary: null, secondary: null},
     weaponInventory: [],
@@ -144,21 +147,7 @@ const CharacterCreatorPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
-        <div className="mb-6 text-center">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
-            Forge A Hero
-          </div>
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
-            Create Your Character
-          </h1>
-          <p className={`mx-auto mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
-            Build your DaggerHeart adventurer step by step and finish with a polished final summary.
-          </p>
-        </div>
-
-        <StepIndicator onStepSelect={(stepIndex: number) => setStep(stepIndex + 1)} currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Backpack", "Summary" ]} />
-      </section>
+      <StepIndicator onStepSelect={(stepIndex: number) => setStep(stepIndex + 1)} currentStep={step-1} steps={["Class", "Specialization", "Ancestry", "Community", "Attributes", "Gear", "Info", "Experience", "Domain", "Backpack", "Summary" ]} />
 
       {/* STEP 1 */}
       {step === 1 && (
@@ -278,11 +267,11 @@ const CharacterCreatorPage: React.FC = () => {
       { step === 8 && (
         <>
           <ExperienceCard 
-            item={{primaryExperience: character.primaryExperience, secondaryExperience: character.secondaryExperience}} 
+            item={character.experiences}
             onSelect={item => setCharacter({...character, ...item })}
             showBack={true}
             onBack={back}
-            showNext={character.primaryExperience.name !== '' && character.secondaryExperience.name !== ''}
+            showNext={character.experiences.length >= 2 && character.experiences[0].name !== '' && character.experiences[1].name !== ''}
             onNext={next}
             />
         </>
