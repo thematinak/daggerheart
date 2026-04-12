@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Backpack, ScrollText, Swords } from "lucide-react";
+import { ArrowUp, Backpack, Clock3, Moon, ScrollText, Swords } from "lucide-react";
 import SummaryCard from "../create_character/components/SummaryCard";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
 import { Character, CurrentStats } from "../../common/types/Character";
@@ -19,7 +19,11 @@ import styles from "../../common/types/cssColor";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
 import CombatTab from "./components/CombatTab";
 import BackpackTab from "./components/BackpackTab";
+import LevelUpModal from "./components/LevelUpModal";
+import LongRestModal from "./components/LongRestModal";
+import ShortRestModal from "./components/ShortRestModal";
 import Eyebrow from "../../common/components/Eyebrow";
+import H2 from "../../common/components/H2";
 
 type CharacterDetailResponse = {
   id: string;
@@ -155,7 +159,8 @@ const normalizeExperiences = (experiences?: Experience[]): Experience[] => {
   }));
 };
 
-type DetailTab = "overview" | "actions" | "backpack";
+type DetailTab = "overview" | "combat" | "backpack";
+type CharacterActionModal = "longRest" | "shortRest" | "levelUp" | null;
 
 const CharacterDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -166,6 +171,7 @@ const CharacterDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>("overview");
   const [isAdjustingStat, setIsAdjustingStat] = useState(false);
+  const [activeModal, setActiveModal] = useState<CharacterActionModal>(null);
 
   const loadCharacter = useCallback(async () => {
     if (!id) {
@@ -379,12 +385,25 @@ const CharacterDetailPage: React.FC = () => {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Eyebrow eyebrow="Character Detail" />
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
-              {character.name}
-            </h1>
-            <p className={`mt-3 max-w-2xl ${styles.tokens.page.subtitle}`}>
-              Switch between overview, combat-ready information, and backpack contents.
-            </p>
+            <H2>{character.name}</H2>
+          </div>
+
+          <div className="flex flex-col gap-3 lg:w-56 lg:items-stretch">
+            <CharacterActionButton
+              label="Long Rest"
+              icon={<Moon size={16} />}
+              onClick={() => setActiveModal("longRest")}
+            />
+            <CharacterActionButton
+              label="Short Rest"
+              icon={<Clock3 size={16} />}
+              onClick={() => setActiveModal("shortRest")}
+            />
+            <CharacterActionButton
+              label="Level Up"
+              icon={<ArrowUp size={16} />}
+              onClick={() => setActiveModal("levelUp")}
+            />
           </div>
         </div>
 
@@ -396,10 +415,10 @@ const CharacterDetailPage: React.FC = () => {
             onClick={() => setActiveTab("overview")}
           />
           <TabButton
-            label="Actions"
+            label="Combat"
             icon={<Swords size={16} />}
-            active={activeTab === "actions"}
-            onClick={() => setActiveTab("actions")}
+            active={activeTab === "combat"}
+            onClick={() => setActiveTab("combat")}
           />
           <TabButton
             label="Backpack"
@@ -411,7 +430,7 @@ const CharacterDetailPage: React.FC = () => {
       </div>
 
       {activeTab === "overview" && <SummaryCard character={character}  />}
-      {activeTab === "actions" && stats && (
+      {activeTab === "combat" && stats && (
         <CombatTab
           character={character}
           stats={stats}
@@ -425,9 +444,44 @@ const CharacterDetailPage: React.FC = () => {
           onCharacterUpdated={loadCharacter}
         />
       )}
+
+      {stats && (
+        <LongRestModal
+          isOpen={activeModal === "longRest"}
+          onClose={() => setActiveModal(null)}
+          character={character}
+          stats={stats}
+          onCharacterUpdated={loadCharacter}
+        />
+      )}
+      {stats && (
+        <ShortRestModal
+          isOpen={activeModal === "shortRest"}
+          onClose={() => setActiveModal(null)}
+          character={character}
+          stats={stats}
+          onCharacterUpdated={loadCharacter}
+        />
+      )}
+      <LevelUpModal isOpen={activeModal === "levelUp"} onClose={() => setActiveModal(null)} />
     </div>
   );
 };
+
+const CharacterActionButton: React.FC<{
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}> = ({ label, icon, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} w-full justify-start gap-2`}
+  >
+    {icon}
+    {label}
+  </button>
+);
 
 const TabButton: React.FC<{
   label: string;

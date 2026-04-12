@@ -8,13 +8,13 @@ import {
   Shield,
   Sparkles,
   Swords,
-  UserCheck,
-  UserRound,
 } from "lucide-react";
 import StatsBar, { buildStatsFromCharacter } from "../../../common/components/StatsBar";
 import styles from "../../../common/types/cssColor";
 import { Character } from "../../../common/types/Character";
 import H2 from "../../../common/components/H2";
+import SplitBar from "../../../common/components/SplitBar";
+import { Badge } from "../../../common/components/Badge";
 
 type SummaryCardProps = {
   character: Character;
@@ -68,26 +68,15 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
   ]
     .filter(Boolean)
     .join(" / ");
-
-    console.log("experience", character.experiences);
     
-
   return (
     <div className="flex flex-col gap-6">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <section className="overflow-hidden rounded-[2rem] border border-amber-300/70 bg-white/85 shadow-[0_30px_80px_-40px_rgba(120,53,15,0.5)] backdrop-blur">
+        <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
           <div className="grid gap-6 px-6 py-6 sm:px-8 lg:grid-cols-[1.2fr_0.8fr] lg:px-10 lg:py-8">
             <div className="relative overflow-hidden rounded-[1.75rem] bg-[linear-gradient(135deg,_rgba(120,53,15,0.96),_rgba(180,83,9,0.94)_55%,_rgba(245,158,11,0.9)_100%)] p-6 text-white">
               <div className="absolute -right-10 top-0 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
               <div className="absolute bottom-0 left-8 h-24 w-24 rounded-full bg-amber-200/20 blur-2xl" />
               <div className="relative flex h-full flex-col justify-between gap-6">
-                <div className="flex items-center gap-2 text-amber-100">
-                  <UserCheck size={16} />
-                  <span className="text-xs font-semibold uppercase tracking-[0.28em]">
-                    Final Character Preview
-                  </span>
-                </div>
-
                 <div>
                   <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
                     {character.name || "Unnamed Hero"}
@@ -113,9 +102,9 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             </div>
           </div>
 
-          <div className="border-t border-amber-100/80 bg-white/70 px-6 py-5 sm:px-8 lg:px-10">
-            <StatsBar stats={stats} currentStats={character.currentStats} />
-          </div>
+          <SplitBar />
+
+          <StatsBar stats={stats} currentStats={character.currentStats} />
         </section>
 
         <div className="grid gap-4 lg:grid-cols-2">
@@ -201,7 +190,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             <div className="grid gap-3">
               {character.experiences.map((experience, index) => (
                 <div key={index} className="border-b border-slate-200 pb-3">
-                  <DetailRow label={(index + 1) + ". Experience"} value={experience.name} />
+                  <DetailRow label={(index + 1) + ". Experience"} value={experience.name + (experience.bonus ? ` (+${experience.bonus})` : "")} />
                   {experience.description && (
                     <p className="text-sm leading-6 text-slate-600">
                       {experience.description}
@@ -247,7 +236,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
               </div>
             </SummarySection>
           )}
-        </div>
       </div>
     </div>
   );

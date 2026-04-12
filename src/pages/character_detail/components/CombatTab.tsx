@@ -7,6 +7,7 @@ import { Character } from "../../../common/types/Character";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import H2 from "../../../common/components/H2";
+import SplitBar from "../../../common/components/SplitBar";
 
 type CombatTabProps = {
   character: Character;
@@ -19,158 +20,159 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
   <div className="flex flex-col gap-6">
     <section className={`${styles.tokens.page.section} p-5 sm:p-6 lg:p-8`}>
       <div className="mb-5 text-center">
-        <Eyebrow eyebrow="Action Actions" />
+        <Eyebrow eyebrow="Action Loadout" />
         <H2>Action Loadout</H2>
       </div>
+
+      <div className="mb-4 flex items-center gap-2">
+        <Shield size={18} />
+        <div>
+          <h3 className="text-xl font-bold">Combat Tracker</h3>
+        </div>
+      </div>
+
       <div className="grid gap-4">
         <StatsBar
           stats={stats}
           currentStats={character.currentStats}
         />
       </div>
-    </section>
 
-      <section className={styles.tokens.panel.base}>
-        <div className="mb-4 flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
+      <SplitBar />
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <ResourceAdjustCard
+          label="HP"
+          value={`${character.currentStats.hp}/${stats.maxHp}`}
+          onDecrease={() => void onAdjustCurrentStat("health", "remove")}
+          onIncrease={() => void onAdjustCurrentStat("health", "add")}
+          disabled={isAdjustingStat}
+        />
+        <ResourceAdjustCard
+          label="Armor"
+          value={`${character.currentStats.armor}/${stats.maxArmor}`}
+          onDecrease={() => void onAdjustCurrentStat("armor", "remove")}
+          onIncrease={() => void onAdjustCurrentStat("armor", "add")}
+          disabled={isAdjustingStat}
+        />
+        <ResourceAdjustCard
+          label="Stress"
+          value={`${character.currentStats.stress}/${stats.maxStress}`}
+          onDecrease={() => void onAdjustCurrentStat("stress", "remove")}
+          onIncrease={() => void onAdjustCurrentStat("stress", "add")}
+          disabled={isAdjustingStat}
+        />
+        <ResourceAdjustCard
+          label="Hope"
+          value={`${character.currentStats.hope}/${stats.maxHope}`}
+          onDecrease={() => void onAdjustCurrentStat("hope", "remove")}
+          onIncrease={() => void onAdjustCurrentStat("hope", "add")}
+          disabled={isAdjustingStat}
+        />
+      </div>
+
+      <SplitBar />
+
+      <div className="grid gap-4 lg:grid-cols-2">
+
+        <div className="p-5 sm:p-6">
+          <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
+            <Swords size={18} />
+            <h3 className="text-xl font-bold">Equipped Weapons</h3>
+          </div>
+          <div className="grid gap-4">
+            {character.weapons.primary ? (
+              <WeaponCard weapon={character.weapons.primary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+            ) : (
+              <EmptyState text="No primary weapon equipped." />
+            )}
+            {character.weapons.secondary ? (
+              <WeaponCard weapon={character.weapons.secondary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+            ) : (
+              <EmptyState text="No secondary weapon equipped." />
+            )}
+          </div>
+        </div>
+
+        <div className="p-5 sm:p-6">
+          <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
             <Shield size={18} />
+            <h3 className="text-xl font-bold">Armor & Thresholds</h3>
           </div>
-          <div>
-            <div className={styles.tokens.text.label}>Combat Tracker</div>
-            <h3 className="text-lg font-bold text-slate-950">Current Resources</h3>
+          <div className="grid gap-4">
+            {character.armor ? (
+              <ArmorCard armor={character.armor} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+            ) : (
+              <EmptyState text="No armor equipped." />
+            )}
           </div>
         </div>
+      </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <ResourceAdjustCard
-            label="HP"
-            value={`${character.currentStats.hp}/${stats.maxHp}`}
-            onDecrease={() => void onAdjustCurrentStat("health", "remove")}
-            onIncrease={() => void onAdjustCurrentStat("health", "add")}
-            disabled={isAdjustingStat}
-          />
-          <ResourceAdjustCard
-            label="Armor"
-            value={`${character.currentStats.armor}/${stats.maxArmor}`}
-            onDecrease={() => void onAdjustCurrentStat("armor", "remove")}
-            onIncrease={() => void onAdjustCurrentStat("armor", "add")}
-            disabled={isAdjustingStat}
-          />
-          <ResourceAdjustCard
-            label="Stress"
-            value={`${character.currentStats.stress}/${stats.maxStress}`}
-            onDecrease={() => void onAdjustCurrentStat("stress", "remove")}
-            onIncrease={() => void onAdjustCurrentStat("stress", "add")}
-            disabled={isAdjustingStat}
-          />
-          <ResourceAdjustCard
-            label="Hope"
-            value={`${character.currentStats.hope}/${stats.maxHope}`}
-            onDecrease={() => void onAdjustCurrentStat("hope", "remove")}
-            onIncrease={() => void onAdjustCurrentStat("hope", "add")}
-            disabled={isAdjustingStat}
-          />
-        </div>
-      </section>
+      <SplitBar />
 
-    <div className="grid gap-4 lg:grid-cols-2">
-      <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
-          <Swords size={18} />
-          <h3 className="text-xl font-bold">Equipped Weapons</h3>
-        </div>
-        <div className="grid gap-4">
-          {character.weapons.primary ? (
-            <WeaponCard weapon={character.weapons.primary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
-          ) : (
-            <EmptyState text="No primary weapon equipped." />
-          )}
-          {character.weapons.secondary ? (
-            <WeaponCard weapon={character.weapons.secondary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
-          ) : (
-            <EmptyState text="No secondary weapon equipped." />
-          )}
-        </div>
-      </section>
+      <div className="grid gap-4 lg:grid-cols-2">
 
-      <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
-          <Shield size={18} />
-          <h3 className="text-xl font-bold">Armor & Thresholds</h3>
-        </div>
-        <div className="grid gap-4">
-          {character.armor ? (
-            <ArmorCard armor={character.armor} selected={false} onSelect={() => {}} onDeselect={() => {}} />
-          ) : (
-            <EmptyState text="No armor equipped." />
-          )}
-        </div>
-      </section>
-    </div>
-
-    <div className="grid gap-4 lg:grid-cols-2">
-      <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
-          <Sparkles size={18} />
-          <h3 className="text-xl font-bold">Hope Feature</h3>
-        </div>
-
-        {character.class?.hopeFeature ? (
-          <div className={styles.tokens.panel.accent}>
-            <div className={styles.tokens.page.eyebrow}>
-              {character.class.name}
-            </div>
-            <h4 className="mt-2 text-xl font-black text-amber-950">{character.class.hopeFeature}</h4>
-            <p className="mt-3 text-sm leading-6 text-amber-900/85">
-              {character.class.hopeFeatureDescription || "No hope feature description available."}
-            </p>
-            <div className="mt-4">
-              <button
-                type="button"
-                className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
-              >
-                Use Hope Feature
-              </button>
-            </div>
+        <div className="p-5 sm:p-6">
+          <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
+            <Sparkles size={18} />
+            <h3 className="text-xl font-bold">Hope Feature</h3>
           </div>
-        ) : (
-          <EmptyState text="No hope feature available." />
-        )}
-      </section>
 
-      <section className={`${styles.tokens.page.section} p-5 sm:p-6`}>
-        <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
-          <ScrollText size={18} />
-          <h3 className="text-xl font-bold">Domain Cards</h3>
-        </div>
-
-        <div className="grid gap-3">
-          {character.domainCards.length > 0 ? (
-            character.domainCards.map((domainCard) => (
-              <div
-                key={domainCard.id}
-                className={styles.tokens.panel.base}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className={styles.tokens.text.label}>
-                      Domain Card
-                    </div>
-                    <h4 className="mt-1 text-lg font-bold text-slate-950">{domainCard.name}</h4>
-                  </div>
-                  <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
-                    Level {domainCard.level}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{domainCard.description}</p>
+          {character.class?.hopeFeature ? (
+            <div>
+              <h4 className="mt-2 text-xl font-black">{character.class.hopeFeature}</h4>
+              <p className="mt-3 text-sm leading-6 text-amber-900/85">
+                {character.class.hopeFeatureDescription || "No hope feature description available."}
+              </p>
+              <div className="mt-4">
+                <button
+                  type="button"
+                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
+                >
+                  Use Hope Feature
+                </button>
               </div>
-            ))
+            </div>
           ) : (
-            <EmptyState text="No domain cards equipped." />
+            <EmptyState text="No hope feature available." />
           )}
         </div>
-      </section>
-    </div>
+
+        <div className="p-5 sm:p-6">
+          <div className={`mb-4 flex items-center gap-2 ${styles.tokens.text.heading}`}>
+            <ScrollText size={18} />
+            <h3 className="text-xl font-bold">Domain Cards</h3>
+          </div>
+
+          <div className="grid gap-3">
+            {character.domainCards.length > 0 ? (
+              character.domainCards.map((domainCard) => (
+                <div
+                  key={domainCard.id}
+                  className={styles.tokens.panel.base}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className={styles.tokens.text.label}>
+                        Domain Card
+                      </div>
+                      <h4 className="mt-1 text-lg font-bold text-slate-950">{domainCard.name}</h4>
+                    </div>
+                    <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
+                      Level {domainCard.level}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{domainCard.description}</p>
+                </div>
+              ))
+            ) : (
+              <EmptyState text="No domain cards equipped." />
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 );
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield } from "lucide-react";
+import { Brain, Crosshair, Drama, Droplets, Eye, Footprints, HandFist, LucideIcon, Rabbit, Shield, Sparkles } from "lucide-react";
 import { Character, CurrentStats, Stats } from "../types/Character";
 import { StatModifiers } from "../types/StatModifiers";
 import styles from "../types/cssColor";
@@ -136,12 +136,38 @@ type StatCardProps = {
   value: number | string;
 };
 
-const StatCard: React.FC<StatCardProps> = ({ label, value }) => (
+const statMeta: Record<string, { icon: LucideIcon; tone: string; iconColor: string }> = {
+  Evasion: { icon: Rabbit, tone: "bg-sky-50 border-sky-200", iconColor: "text-sky-600" },
+  Thresholds: { icon: Crosshair, tone: "bg-amber-50 border-amber-200", iconColor: "text-amber-600" },
+  Agility: { icon: Footprints, tone: "bg-emerald-50 border-emerald-200", iconColor: "text-emerald-600" },
+  Strength: { icon: HandFist, tone: "bg-rose-50 border-rose-200", iconColor: "text-rose-600" },
+  Finesse: { icon: Crosshair, tone: "bg-violet-50 border-violet-200", iconColor: "text-violet-600" },
+  Instinct: { icon: Eye, tone: "bg-cyan-50 border-cyan-200", iconColor: "text-cyan-600" },
+  Presence: { icon: Drama, tone: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600" },
+  Knowledge: { icon: Brain, tone: "bg-indigo-50 border-indigo-200", iconColor: "text-indigo-600" },
+  Armor: { icon: Shield, tone: "bg-amber-50 border-amber-200", iconColor: "text-amber-600" },
+  HP: { icon: Droplets, tone: "bg-rose-50 border-rose-200", iconColor: "text-rose-600" },
+  Stress: { icon: Brain, tone: "bg-violet-50 border-violet-200", iconColor: "text-violet-600" },
+  Hope: { icon: Sparkles, tone: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600" },
+};
+
+const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
+  const meta = statMeta[label];
+  const Icon = meta?.icon;
+
+  return (
   <div className="rounded-xl border border-slate-200 bg-white/88 px-1.5 py-2 shadow-[0_6px_14px_-12px_rgba(15,23,42,0.18)]">
     <div className="flex min-h-[48px] flex-col items-center justify-center gap-2">
-      <span className={`text-[10px] ${styles.gray.lightText} uppercase tracking-[0.1em] text-center`}>
+      <div className="flex items-center gap-1.5">
+        {Icon ? (
+          <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border ${meta.tone}`}>
+            <Icon size={11} className={meta.iconColor} />
+          </span>
+        ) : null}
+        <span className={`text-[10px] ${styles.gray.lightText} uppercase tracking-[0.1em] text-center`}>
         {label}
-      </span>
+        </span>
+      </div>
 
       {label === "Armor" && typeof value === "number" ? (
         <ArmorDisplay value={value} />
@@ -152,7 +178,8 @@ const StatCard: React.FC<StatCardProps> = ({ label, value }) => (
       )}
     </div>
   </div>
-);
+  );
+};
 
 type StatsBarProps = {
   stats: Stats;

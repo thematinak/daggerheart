@@ -9,6 +9,9 @@ import { AuthProvider } from "./common/contexts/AuthProvider";
 import ProtectedRoute from "./common/components/ProtectedRoute";
 import RegisterPage from "./pages/register/RegisterPage";
 import { CommonDataProvider } from "./common/contexts/CommonDataProvider";
+import CreateItemPage from "./pages/content_tools/CreateItemPage";
+import CreateWeaponPage from "./pages/content_tools/CreateWeaponPage";
+import CreateArmorPage from "./pages/content_tools/CreateArmorPage";
 
 function App() {
   return (
@@ -25,6 +28,9 @@ function App() {
               <Route path="/" element={<CharacterListPage />} />
               <Route path="/character/:id" element={<CharacterDetailPage />} />
               <Route path="/create" element={<CharacterCreatorPage />} />
+              <Route path="/tools/items/new" element={<CreateItemPage />} />
+              <Route path="/tools/weapons/new" element={<CreateWeaponPage />} />
+              <Route path="/tools/armor/new" element={<CreateArmorPage />} />
 
             </Route>
 

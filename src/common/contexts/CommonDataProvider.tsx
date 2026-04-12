@@ -26,6 +26,7 @@ const reduceListById = (l: any[]) => l.reduce((acc, item) => {
 
 type CommonDataContextType = {
   commonData: CommonData;
+  refreshCommonData: () => Promise<void>;
 };
 
 const CommonDataContext = createContext<CommonDataContextType>({
@@ -38,7 +39,8 @@ const CommonDataContext = createContext<CommonDataContextType>({
       backpackItems: {},
       weapons: {},
       armor: {}
-    }
+    },
+    refreshCommonData: async () => {},
 });
 
 export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -55,71 +57,71 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     };
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [
-          ancestriesRes,
-          classesRes,
-          communitiesRes,
-          domainCardsRes,
-          specializationsRes,
-          backpackItemsRes,
-          weaponsRes,
-          armorRes
-        ] = await Promise.all([
-          fetch("http://pecen.eu/daggerheart/api1/ancestries.php"),
-          fetch("http://pecen.eu/daggerheart/api1/classes.php"),
-          fetch("http://pecen.eu/daggerheart/api1/communities.php"),
-          fetch("http://pecen.eu/daggerheart/api1/domain_cards.php"),
-          fetch("http://pecen.eu/daggerheart/api1/specializations.php"),
-          fetch("http://pecen.eu/daggerheart/api1/backpack_items.php"),
-          fetch("http://pecen.eu/daggerheart/api1/weapons.php"),
-          fetch("http://pecen.eu/daggerheart/api1/armor.php")
-        ]);
+  const refreshCommonData = React.useCallback(async () => {
+    try {
+      const [
+        ancestriesRes,
+        classesRes,
+        communitiesRes,
+        domainCardsRes,
+        specializationsRes,
+        backpackItemsRes,
+        weaponsRes,
+        armorRes
+      ] = await Promise.all([
+        fetch("http://pecen.eu/daggerheart/api1/ancestries.php"),
+        fetch("http://pecen.eu/daggerheart/api1/classes.php"),
+        fetch("http://pecen.eu/daggerheart/api1/communities.php"),
+        fetch("http://pecen.eu/daggerheart/api1/domain_cards.php"),
+        fetch("http://pecen.eu/daggerheart/api1/specializations.php"),
+        fetch("http://pecen.eu/daggerheart/api1/backpack_items.php"),
+        fetch("http://pecen.eu/daggerheart/api1/weapons.php"),
+        fetch("http://pecen.eu/daggerheart/api1/armor.php")
+      ]);
 
-        const [
-          ancestries,
-          classes,
-          communities,
-          domainCards,
-          specializations,
-          backpackItems,
-          weapons,
-          armor
-        ] = await Promise.all([
-          ancestriesRes.json(),
-          classesRes.json(),
-          communitiesRes.json(),
-          domainCardsRes.json(),
-          specializationsRes.json(),
-          backpackItemsRes.json(),
-          weaponsRes.json(),
-          armorRes.json()
-        ]);
+      const [
+        ancestries,
+        classes,
+        communities,
+        domainCards,
+        specializations,
+        backpackItems,
+        weapons,
+        armor
+      ] = await Promise.all([
+        ancestriesRes.json(),
+        classesRes.json(),
+        communitiesRes.json(),
+        domainCardsRes.json(),
+        specializationsRes.json(),
+        backpackItemsRes.json(),
+        weaponsRes.json(),
+        armorRes.json()
+      ]);
 
-        setCommonData({
-          ancestries: reduceListById(ancestries),
-          characterClasses: reduceListById(classes),
-          communities: reduceListById(communities),
-          domainCards: domainCards,
-          specializations: reduceListById(specializations),
-          backpackItems: reduceListById(backpackItems),
-          weapons: reduceListById(weapons),
-          armor: reduceListById(armor)
-        });
+      setCommonData({
+        ancestries: reduceListById(ancestries),
+        characterClasses: reduceListById(classes),
+        communities: reduceListById(communities),
+        domainCards: domainCards,
+        specializations: reduceListById(specializations),
+        backpackItems: reduceListById(backpackItems),
+        weapons: reduceListById(weapons),
+        armor: reduceListById(armor)
+      });
 
-      } catch (error) {
-        console.error("Failed to fetch common data:", error);
-      }
-    };
-
-    fetchData();
+    } catch (error) {
+      console.error("Failed to fetch common data:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    refreshCommonData();
+  }, [refreshCommonData]);
 
 
   return (
-    <CommonDataContext.Provider value={{commonData}}>
+    <CommonDataContext.Provider value={{commonData, refreshCommonData}}>
       {children}
     </CommonDataContext.Provider>
   );

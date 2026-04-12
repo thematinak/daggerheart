@@ -11,6 +11,7 @@ import { useCommonData } from "../../../common/contexts/CommonDataProvider";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import H2 from "../../../common/components/H2";
+import SplitBar from "../../../common/components/SplitBar";
 
 type BackpackTabProps = {
   character: Character;
@@ -342,7 +343,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <section className={styles.tokens.panel.base}>
+          <div>
             <h3 className="mb-4 text-xl font-bold text-slate-950">Backpack Items</h3>
             <div className="grid gap-3">
               {character.backpack.length > 0 ? (
@@ -351,9 +352,9 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                 <EmptyState text="Backpack is empty." />
               )}
             </div>
-          </section>
+          </div>
 
-          <section className={`${styles.tokens.panel.base}`}>
+          <div>
             <h3 className="mb-4 text-xl font-bold text-slate-950">Stored Equipment</h3>
             <div className="grid gap-4">
               {character.weaponInventory.length > 0 ? (
@@ -412,9 +413,13 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                 <EmptyState text="No stored armor." />
               )}
             </div>
-          </section>
+          </div>
+        </div>
 
-          <section className={`${styles.tokens.panel.base} col-span-2`}>
+        <SplitBar />
+
+        <div>
+          <div>
             <h3 className="mb-4 text-xl font-bold text-slate-950">Add To Character</h3>
             <div className="grid gap-4">
               <div className="grid gap-3 sm:grid-cols-3">
@@ -550,49 +555,49 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                 </div>
               </div>
             </div>
-          </section>
+          </div>
         </div>
 
-        <section className={`${styles.tokens.panel.base} mt-4 lg:mt-6`}>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
-              <p className={`mt-1 ${styles.tokens.text.muted}`}>
-                Total value: {character.bank} handful
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <BankUnitCard
-                icon={<Package size={18} />}
-                label="Chests"
-                value={bankBreakdown.chests}
-                note="1 chest = 13 bags"
-                onAdd={() => handleBankChange("add", BANK_VALUES.chest)}
-                onRemove={() => handleBankChange("remove", BANK_VALUES.chest)}
-                disabled={isSavingBank}
-              />
-              <BankUnitCard
-                icon={<ShoppingBag size={18} />}
-                label="Bags"
-                value={bankBreakdown.bags}
-                note="1 bag = 10 handful"
-                onAdd={() => handleBankChange("add", BANK_VALUES.bag)}
-                onRemove={() => handleBankChange("remove", BANK_VALUES.bag)}
-                disabled={isSavingBank}
-              />
-              <BankUnitCard
-                icon={<Coins size={18} />}
-                label="Handful"
-                value={bankBreakdown.handful}
-                note="Loose coin"
-                onAdd={() => handleBankChange("add", BANK_VALUES.handful)}
-                onRemove={() => handleBankChange("remove", BANK_VALUES.handful)}
-                disabled={isSavingBank}
-              />
-            </div>
+        <SplitBar />
+        
+        <div className="grid gap-4">
+          <div>
+            <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
+            <p className={`mt-1 ${styles.tokens.text.muted}`}>
+              Total value: {character.bank} handful
+            </p>
           </div>
-        </section>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <BankUnitCard
+              icon={<Package size={18} />}
+              label="Chests"
+              value={bankBreakdown.chests}
+              note="1 chest = 13 bags"
+              onAdd={() => handleBankChange("add", BANK_VALUES.chest)}
+              onRemove={() => handleBankChange("remove", BANK_VALUES.chest)}
+              disabled={isSavingBank}
+            />
+            <BankUnitCard
+              icon={<ShoppingBag size={18} />}
+              label="Bags"
+              value={bankBreakdown.bags}
+              note="1 bag = 10 handful"
+              onAdd={() => handleBankChange("add", BANK_VALUES.bag)}
+              onRemove={() => handleBankChange("remove", BANK_VALUES.bag)}
+              disabled={isSavingBank}
+            />
+            <BankUnitCard
+              icon={<Coins size={18} />}
+              label="Handful"
+              value={bankBreakdown.handful}
+              note="Loose coin"
+              onAdd={() => handleBankChange("add", BANK_VALUES.handful)}
+              onRemove={() => handleBankChange("remove", BANK_VALUES.handful)}
+              disabled={isSavingBank}
+            />
+          </div>
+        </div>
       </section>
 
       <ModalCardPicker
