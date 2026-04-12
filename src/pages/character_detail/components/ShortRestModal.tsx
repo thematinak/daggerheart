@@ -10,6 +10,7 @@ import {
   resolveShortRest,
   getTierFromLevel,
 } from "../../../common/utils/shortRest";
+import { useNotifications } from "../../../common/contexts/CommonDataProvider";
 
 type ShortRestModalProps = {
   isOpen: boolean;
@@ -25,7 +26,7 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
   const [selectedMoves, setSelectedMoves] = useState<Array<ShortRestMove | "">>(DEFAULT_MOVES);
   const [prepareWithParty, setPrepareWithParty] = useState([false, false]);
   const [isApplying, setIsApplying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { showError } = useNotifications();
   const [results, setResults] = useState<ReturnType<typeof resolveShortRest>["results"]>([]);
 
   useEffect(() => {
@@ -33,7 +34,6 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
       setSelectedMoves(DEFAULT_MOVES);
       setPrepareWithParty([false, false]);
       setIsApplying(false);
-      setError(null);
       setResults([]);
     }
   }, [isOpen]);
@@ -70,7 +70,7 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
 
   const handleApplyShortRest = async () => {
     if (!hasValidSelection) {
-      setError("Choose two short rest moves.");
+      showError("Choose two short rest moves.");
       return;
     }
 
@@ -88,7 +88,6 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
 
     try {
       setIsApplying(true);
-      setError(null);
 
       if (resolution.commands.length > 0) {
         await postCommands(resolution.commands);
@@ -98,7 +97,7 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
       setResults(resolution.results);
       onClose();
     } catch (applyError: any) {
-      setError(applyError.message || "Failed to apply short rest.");
+      showError(applyError.message || "Failed to apply short rest.");
     } finally {
       setIsApplying(false);
     }
@@ -211,12 +210,6 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
               ))}
             </div>
           </section>
-        ) : null}
-
-        {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {error}
-          </div>
         ) : null}
       </div>
 

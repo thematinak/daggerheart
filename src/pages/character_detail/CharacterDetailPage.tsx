@@ -2,19 +2,15 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowUp, Backpack, Clock3, Moon, ScrollText, Swords } from "lucide-react";
 import SummaryCard from "../create_character/components/SummaryCard";
-import { useCommonData } from "../../common/contexts/CommonDataProvider";
-import { Character, CurrentStats } from "../../common/types/Character";
+import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
+import { Character } from "../../common/types/Character";
 import { CharacterClass } from "../../common/types/CharacterClass";
 import { SpecializationsItem } from "../../common/types/Specializations";
 import { Ancestries } from "../../common/types/Ancestries";
 import { CommunityItem } from "../../common/types/Community";
 import { Domain } from "../../common/types/Domain";
-import { WeaponItem } from "../../common/types/Weapon";
-import { ArmorItem } from "../../common/types/Armor";
-import { BackpackItem } from "../../common/types/BackpackItem";
 import { Attributes } from "../create_character/components/AttributeGrid";
 import { Experience } from "../../common/types/Experience";
-import { StatModifiers } from "../../common/types/StatModifiers";
 import styles from "../../common/types/cssColor";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
 import CombatTab from "./components/CombatTab";
@@ -24,62 +20,7 @@ import LongRestModal from "./components/LongRestModal";
 import ShortRestModal from "./components/ShortRestModal";
 import Eyebrow from "../../common/components/Eyebrow";
 import H2 from "../../common/components/H2";
-
-type CharacterDetailResponse = {
-  id: string;
-  userId: number;
-  level: number;
-  bank: number;
-  name: string;
-  description: string;
-  class: {
-    id: string;
-    name: string;
-    description: string;
-    baseHp: number;
-    baseEvasion: number;
-    modifiers: StatModifiers;
-    hopeFeature: string;
-    hopeFeatureDescription: string;
-    classItem: string;
-  };
-  specialization: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  ancestry: {
-    id: string;
-    name: string;
-    description: string;
-    modifiers: StatModifiers;
-  };
-  community: {
-    id: string;
-    name: string;
-    description: string;
-    modifiers: StatModifiers;
-  };
-  attributes: Partial<Attributes>;
-  customAttributes: StatModifiers;
-  experiences: Experience[];
-  weapons: {
-    primary: WeaponItem | null;
-    secondary: WeaponItem | null;
-  };
-  armor: ArmorItem | null;
-  weaponInventory: WeaponItem[];
-  armorInventory: ArmorItem[];
-  domainCards: Array<{
-    id: string | number;
-    level: number;
-    name: string;
-    description: string;
-    domainId: string;
-  }>;
-  backpack: BackpackItem[];
-  currentStats: CurrentStats;
-};
+import { CharacterDetailResponse, fetchUserCharacters } from "../../common/endponts/common";
 
 const emptyCharacterClass = (data: NonNullable<CharacterDetailResponse["class"]>): CharacterClass => ({
   id: data.id,
@@ -165,47 +106,33 @@ type CharacterActionModal = "longRest" | "shortRest" | "levelUp" | null;
 const CharacterDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { commonData } = useCommonData();
+  const { commonData: { byId: { characterClasses, specializations, ancestries, communities, domainCards } } } = useCommonData();
   const [characterResponse, setCharacterResponse] = useState<CharacterDetailResponse | null>(null);
+  const { showError } = useNotifications();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>("overview");
   const [isAdjustingStat, setIsAdjustingStat] = useState(false);
   const [activeModal, setActiveModal] = useState<CharacterActionModal>(null);
 
   const loadCharacter = useCallback(async () => {
     if (!id) {
-      setError("Character id is missing.");
+      showError("Character id is missing.");
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      setError(null);
-
-      const response = await fetch(`http://pecen.eu/daggerheart/api1/character_detail.php?id=${id}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to load character");
-      }
-
+      const data = await fetchUserCharacters(id);
       setCharacterResponse(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load character");
+      showError(err.message || "Failed to load character");
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, showError]);
 
   useEffect(() => {
-    if (!id) {
-      setError("Character id is missing.");
-      setLoading(false);
-      return;
-    }
-
     loadCharacter();
   }, [id, loadCharacter]);
 
@@ -215,26 +142,24 @@ const CharacterDetailPage: React.FC = () => {
     }
 
     const resolvedClass =
-      (characterResponse.class?.id && commonData.characterClasses[characterResponse.class.id]) ||
+      (characterResponse.class?.id && characterClasses[characterResponse.class.id]) ||
       (characterResponse.class ? emptyCharacterClass(characterResponse.class) : null);
 
     const resolvedSpecialization =
       (characterResponse.specialization?.id &&
-        commonData.specializations[characterResponse.specialization.id]) ||
+        specializations[characterResponse.specialization.id]) ||
       (characterResponse.specialization ? emptySpecialization(characterResponse.specialization) : null);
 
     const resolvedAncestry =
-      (characterResponse.ancestry?.id && commonData.ancestries[characterResponse.ancestry.id]) ||
+      (characterResponse.ancestry?.id && ancestries[characterResponse.ancestry.id]) ||
       (characterResponse.ancestry ? emptyAncestry(characterResponse.ancestry) : null);
 
     const resolvedCommunity =
-      (characterResponse.community?.id && commonData.communities[characterResponse.community.id]) ||
+      (characterResponse.community?.id && communities[characterResponse.community.id]) ||
       (characterResponse.community ? emptyCommunity(characterResponse.community) : null);
 
     const resolvedDomains = characterResponse.domainCards.map((domainCard) => {
-      const fromCommonData = commonData.domainCards.find(
-        (commonDomain) => String(commonDomain.id) === String(domainCard.id)
-      );
+      const fromCommonData = domainCards[domainCard.id];
       return fromCommonData || emptyDomain(domainCard);
     });
 
@@ -281,7 +206,7 @@ const CharacterDetailPage: React.FC = () => {
       },
       currentStats: characterResponse.currentStats || {},
     };
-  }, [characterResponse, commonData]);
+  }, [characterResponse, characterClasses, specializations, ancestries, communities, domainCards]);
 
   const stats = useMemo(() => (character ? buildStatsFromCharacter(character) : null), [character]);
 
@@ -341,12 +266,12 @@ const CharacterDetailPage: React.FC = () => {
 
         await loadCharacter();
       } catch (err: any) {
-        setError(err.message || "Failed to update current stat");
+        showError(err.message || "Failed to update current stat");
       } finally {
         setIsAdjustingStat(false);
       }
     },
-    [character, stats, loadCharacter]
+    [character, stats, loadCharacter, showError]
   );
 
   if (loading) {
@@ -360,13 +285,12 @@ const CharacterDetailPage: React.FC = () => {
     );
   }
 
-  if (error || !character) {
+  if (!character) {
     return (
       <div className={`${styles.tokens.page.section} p-8 text-center`}>
         <div className="text-sm font-semibold uppercase tracking-[0.24em] text-rose-600">
           Unable To Load
         </div>
-        <p className="mt-2 text-sm text-slate-600">{error || "Character not found."}</p>
         <div className="mt-5">
           <button
             onClick={() => navigate("/")}

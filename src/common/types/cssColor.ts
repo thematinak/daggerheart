@@ -74,6 +74,15 @@ export type ComponentTokens = {
     accent: string;
     info: string;
   };
+  notification: {
+    viewport: string;
+    card: string;
+    iconWrap: string;
+    closeButton: string;
+    title: string;
+    message: string;
+    progressTrack: string;
+  };
   emptyState: string;
 };
 
@@ -190,6 +199,15 @@ const tokens: ComponentTokens = {
     muted: "border-slate-200 bg-slate-100 text-slate-600",
     accent: "border-amber-200 bg-amber-50 text-amber-800",
     info: "border-amber-200 bg-white text-amber-800",
+  },
+  notification: {
+    viewport: "pointer-events-none fixed right-4 top-4 z-50 flex w-[min(100vw-2rem,24rem)] flex-col gap-3 sm:right-6 sm:top-6",
+    card: "pointer-events-auto overflow-hidden rounded-[1.5rem] border bg-white/95 p-4 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.45)] backdrop-blur transition-all duration-300",
+    iconWrap: "flex h-11 w-11 items-center justify-center rounded-2xl border",
+    closeButton: "rounded-full border border-transparent p-2 text-slate-500 transition hover:border-slate-200 hover:bg-white/80 hover:text-slate-800",
+    title: "text-sm font-black tracking-tight text-slate-950",
+    message: "text-sm leading-6 text-slate-600",
+    progressTrack: "mt-4 h-1 overflow-hidden rounded-full bg-white/70",
   },
   emptyState: "rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-6 text-center text-sm text-slate-500",
 };

@@ -22,9 +22,7 @@ import { BackpackSelectorCard } from "./components/BackpackSelectorCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
-import styles from "../../common/types/cssColor";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
-import Section from "../../common/components/Section";
 
 /* ---------- TYPES ---------- */
 
@@ -42,7 +40,7 @@ const attributes: AttributeItem[] = [
 
 const CharacterCreatorPage: React.FC = () => {
   const [step, setStep] = useState(1);
-  const { commonData } = useCommonData();
+  const { commonData:{list: {characterClasses, specializations, ancestries, communities, domainCards}} } = useCommonData();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -154,7 +152,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CharacterClass>
             title="Select Class"
-            items={Object.keys(commonData.characterClasses).map((key) => commonData.characterClasses[key])}
+            items={characterClasses}
             selectedId={character.class?.id}
             onSelect={(selected, pos) => select("class", selected)}
             renderItem={(cls, selected) => <ClassCard item={cls} selected={selected} />}
@@ -169,7 +167,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<SpecializationsItem>
             title="Select Specialization"
-            items={Object.keys(commonData.specializations).map((key) => commonData.specializations[key]).filter((spec) => spec.classId === character.class?.id)}
+            items={specializations.filter((spec) => spec.classId === character.class?.id)}
             selectedId={character.specialization?.id}
             onSelect={(id, pos) => select("specialization", id)}
             renderItem={(spec, selected) => <SpecializationsCard item={spec} selected={selected} />}
@@ -186,7 +184,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Ancestries>
             title="Select Ancestry"
-            items={Object.keys(commonData.ancestries).map((key) => commonData.ancestries[key])}
+            items={ancestries}
             selectedId={character.ancestry?.id}
             onSelect={(selected, pos) => select("ancestry", selected)}
             renderItem={(ans, selected) => <AncestriesCard item={ans} selected={selected} />}
@@ -204,7 +202,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<CommunityItem>
             title="Select Community"
-            items={Object.keys(commonData.communities).map((key) => commonData.communities[key])}
+            items={communities}
             selectedId={character.community?.id}
             onSelect={(selected, pos) => select("community", selected)}
             renderItem={(ans, selected) => <CommunityCard item={ans} selected={selected} />}
@@ -282,7 +280,7 @@ const CharacterCreatorPage: React.FC = () => {
         <>
           <GridSelector<Domain>
             title="Select 2 Domain Cards"
-            items={commonData.domainCards.filter(card => card.level === 1 && character.class?.domains.includes(card.domainId))}
+            items={domainCards.filter(card => card.level === 1 && character.class?.domains.includes(card.domainId))}
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}

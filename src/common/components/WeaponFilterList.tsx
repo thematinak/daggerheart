@@ -23,7 +23,7 @@ const WeaponFilterList: React.FC<Props> = ({
   forcedSlot,
   onSelect,
 }) => {
-  const { commonData } = useCommonData();
+  const { commonData: { list: { weapons } } } = useCommonData();
   const [filters, setFilters] = useState<WeaponFilters>({tier: 1});
 
   const items = useMemo(() => {
@@ -32,7 +32,7 @@ const WeaponFilterList: React.FC<Props> = ({
       ...(forcedSlot ? { slot: forcedSlot } : {}),
     };
 
-    return Object.values(commonData.weapons).filter((weapon) => {
+    return weapons.filter((weapon) => {
       if (appliedFilters.attribute && weapon.attribute !== appliedFilters.attribute) {
         return false;
       }
@@ -55,7 +55,7 @@ const WeaponFilterList: React.FC<Props> = ({
 
       return true;
     });
-  }, [commonData.weapons, filters, forcedSlot]);
+  }, [weapons, filters, forcedSlot]);
 
   return (
     <div className="flex flex-col gap-5">

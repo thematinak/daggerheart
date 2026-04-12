@@ -10,6 +10,7 @@ import {
   getTierFromLevel,
   resolveLongRest,
 } from "../../../common/utils/shortRest";
+import { useNotifications } from "../../../common/contexts/CommonDataProvider";
 
 type LongRestModalProps = {
   isOpen: boolean;
@@ -25,7 +26,7 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
   const [selectedMoves, setSelectedMoves] = useState<Array<LongRestMove | "">>(DEFAULT_MOVES);
   const [prepareWithParty, setPrepareWithParty] = useState([false, false]);
   const [isApplying, setIsApplying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { showError } = useNotifications();
   const [results, setResults] = useState<ReturnType<typeof resolveLongRest>["results"]>([]);
 
   useEffect(() => {
@@ -33,7 +34,6 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
       setSelectedMoves(DEFAULT_MOVES);
       setPrepareWithParty([false, false]);
       setIsApplying(false);
-      setError(null);
       setResults([]);
     }
   }, [isOpen]);
@@ -70,7 +70,7 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
 
   const handleApplyLongRest = async () => {
     if (!hasValidSelection) {
-      setError("Choose two long rest moves.");
+      showError("Choose two long rest moves.");
       return;
     }
 
@@ -88,7 +88,6 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
 
     try {
       setIsApplying(true);
-      setError(null);
 
       if (resolution.commands.length > 0) {
         await postCommands(resolution.commands);
@@ -98,7 +97,7 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
       setResults(resolution.results);
       onClose();
     } catch (applyError: any) {
-      setError(applyError.message || "Failed to apply long rest.");
+      showError(applyError.message || "Failed to apply long rest.");
     } finally {
       setIsApplying(false);
     }
@@ -209,12 +208,6 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
               ))}
             </div>
           </section>
-        ) : null}
-
-        {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {error}
-          </div>
         ) : null}
       </div>
 

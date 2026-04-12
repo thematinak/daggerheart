@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ContentToolShell from "../../common/components/ContentToolShell";
-import { useCommonData } from "../../common/contexts/CommonDataProvider";
+import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
 
 const CreateItemPage: React.FC = () => {
@@ -14,20 +14,17 @@ const CreateItemPage: React.FC = () => {
     modifiers: "{}",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showError, showInfo } = useNotifications();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setMessage(null);
-    setError(null);
 
     let modifiers: Record<string, number> = {};
 
     try {
       modifiers = form.modifiers.trim() ? JSON.parse(form.modifiers) : {};
     } catch {
-      setError("Modifiers must be valid JSON.");
+      showError("Modifiers must be valid JSON.", "Invalid Form Data");
       return;
     }
 
@@ -53,7 +50,7 @@ const CreateItemPage: React.FC = () => {
       }
 
       await refreshCommonData();
-      setMessage(`Item "${form.name}" was created.`);
+      showInfo(`Item "${form.name}" was created.`, "Item Created");
       setForm({
         id: "",
         name: "",
@@ -63,7 +60,7 @@ const CreateItemPage: React.FC = () => {
         modifiers: "{}",
       });
     } catch (err: any) {
-      setError(err.message || "Failed to create item");
+      showError(err.message || "Failed to create item", "Create Item Failed");
     } finally {
       setIsSaving(false);
     }
@@ -111,10 +108,6 @@ const CreateItemPage: React.FC = () => {
           <span className={styles.tokens.text.label}>Modifiers JSON</span>
           <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[120px] resize-y font-mono text-sm`} value={form.modifiers} onChange={(e) => setForm((state) => ({ ...state, modifiers: e.target.value }))} />
         </label>
-
-        {message ? <div className={`${styles.tokens.panel.accent} py-3 text-sm ${styles.green.text}`}>{message}</div> : null}
-        {error ? <div className={`${styles.tokens.panel.muted} border-rose-200 bg-rose-50/80 py-3 text-sm text-rose-700`}>{error}</div> : null}
-
         <div className="flex justify-end">
           <button type="submit" disabled={isSaving} className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}>
             {isSaving ? "Saving..." : "Create Item"}

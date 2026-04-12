@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { NextPreviousButton } from "../../pages/create_character/components/NextButton";
 import styles from "../types/cssColor";
-import H2 from "./H2";
-import Eyebrow from "./Eyebrow";
 import Section from "./Section";
+import { useNotifications } from "../contexts/CommonDataProvider";
 
 type GridSelectorProps<T> = {
   endpoint?: string;
@@ -36,7 +35,7 @@ export function GridSelector<T extends { id: string | number }>({
 }: GridSelectorProps<T>) {
   const [loadedItems, setLoadedItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { showError } = useNotifications();
   
 
   useEffect(() => {
@@ -46,7 +45,6 @@ export function GridSelector<T extends { id: string | number }>({
       const loadData = async () => {
         try {
           setLoading(true);
-          setError(null);
 
           const res = await fetch(endpoint);
 
@@ -61,7 +59,7 @@ export function GridSelector<T extends { id: string | number }>({
           }
         } catch (err: any) {
           if (isMounted) {
-            setError(err.message || "Failed to load data");
+            showError("Failed to load data: " + (err.message || "Unknown error"));
           }
         } finally {
           if (isMounted) {
@@ -77,7 +75,7 @@ export function GridSelector<T extends { id: string | number }>({
     return () => {
       isMounted = false;
     };
-  }, [endpoint, items]);
+  }, [endpoint, items, showError]);
 
   // --- Loading ---
   if (loading) {
@@ -87,15 +85,6 @@ export function GridSelector<T extends { id: string | number }>({
           Loading
         </div>
         <p className={`mt-2 ${styles.semantic.muted.text}`}>Preparing your selection...</p>
-      </div>
-    );
-  }
-
-  // --- Error ---
-  if (error) {
-    return (
-      <div className={`${styles.tokens.page.section} p-8 text-center ${styles.red.lightText}`}>
-        Error: {error}
       </div>
     );
   }

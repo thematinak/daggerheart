@@ -2,28 +2,26 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import styles from "../../common/types/cssColor";
+import { useNotifications } from "../../common/contexts/CommonDataProvider";
+import { registerUser } from "../../common/endponts/common";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const { showError } = useNotifications();
   const { login } = useAuth();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch(`http://pecen.eu/daggerheart/api1/create_user.php`, {
-      method: "POST",
-      body: JSON.stringify({ username: name })
-    });
 
-    const result = await response.json();
+    const result = await registerUser(name);
 
     if (result.id && result.username) {
         login({ id: result.id, name: result.username });
       navigate("/");
     } else {
-      setError(result.error || "Registration failed");
+      showError(result.error || "Registration failed");
     }
   };
 
@@ -42,12 +40,6 @@ const RegisterPage: React.FC = () => {
           <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
           <p className={`mt-2 ${styles.tokens.page.subtitle}`}>Create your account</p>
         </div>
-
-        {error && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">

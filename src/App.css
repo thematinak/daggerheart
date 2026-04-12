@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+@keyframes notification-shrink {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}

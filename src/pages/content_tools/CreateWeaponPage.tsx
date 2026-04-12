@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ContentToolShell from "../../common/components/ContentToolShell";
-import { useCommonData } from "../../common/contexts/CommonDataProvider";
+import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
 
 const CreateWeaponPage: React.FC = () => {
@@ -20,13 +20,10 @@ const CreateWeaponPage: React.FC = () => {
     modifiers: "{}",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showError, showInfo } = useNotifications();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setMessage(null);
-    setError(null);
 
     let damage: Record<string, number> = {};
     let modifiers: Record<string, number> = {};
@@ -35,7 +32,7 @@ const CreateWeaponPage: React.FC = () => {
       damage = form.damage.trim() ? JSON.parse(form.damage) : {};
       modifiers = form.modifiers.trim() ? JSON.parse(form.modifiers) : {};
     } catch {
-      setError("Damage and modifiers must be valid JSON.");
+      showError("Damage and modifiers must be valid JSON.", "Invalid Form Data");
       return;
     }
 
@@ -67,7 +64,7 @@ const CreateWeaponPage: React.FC = () => {
       }
 
       await refreshCommonData();
-      setMessage(`Weapon "${form.name}" was created.`);
+      showInfo(`Weapon "${form.name}" was created.`, "Weapon Created");
       setForm({
         id: "",
         name: "",
@@ -83,7 +80,7 @@ const CreateWeaponPage: React.FC = () => {
         modifiers: "{}",
       });
     } catch (err: any) {
-      setError(err.message || "Failed to create weapon");
+      showError(err.message || "Failed to create weapon", "Create Weapon Failed");
     } finally {
       setIsSaving(false);
     }
@@ -169,10 +166,6 @@ const CreateWeaponPage: React.FC = () => {
             <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[110px] resize-y`} value={form.abilityDescription} onChange={(e) => setForm((state) => ({ ...state, abilityDescription: e.target.value }))} />
           </label>
         </div>
-
-        {message ? <div className={`${styles.tokens.panel.accent} py-3 text-sm ${styles.green.text}`}>{message}</div> : null}
-        {error ? <div className={`${styles.tokens.panel.muted} border-rose-200 bg-rose-50/80 py-3 text-sm text-rose-700`}>{error}</div> : null}
-
         <div className="flex justify-end">
           <button type="submit" disabled={isSaving} className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}>
             {isSaving ? "Saving..." : "Create Weapon"}

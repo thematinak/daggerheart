@@ -14,7 +14,6 @@ import styles from "../../../common/types/cssColor";
 import { Character } from "../../../common/types/Character";
 import H2 from "../../../common/components/H2";
 import SplitBar from "../../../common/components/SplitBar";
-import { Badge } from "../../../common/components/Badge";
 
 type SummaryCardProps = {
   character: Character;

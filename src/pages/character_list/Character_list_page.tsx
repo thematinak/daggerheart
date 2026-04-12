@@ -23,7 +23,7 @@ type CharacterListItem = {
 
 const CharacterListPage: React.FC = () => {
   const { user } = useAuth();
-  const { commonData } = useCommonData();
+  const { commonData: { byId } } = useCommonData();
   const navigate = useNavigate();
   const userId = user?.id ?? -1;
   const queryString = new URLSearchParams({ user_id: String(userId) }).toString();
@@ -47,7 +47,7 @@ const CharacterListPage: React.FC = () => {
       endpoint={`http://pecen.eu/daggerheart/api1/character.php?${queryString}`}
       onSelect={(character) => navigate(`/character/${character.id}`)}
       renderItem={(character) => (
-        <CharacterCard character={character} commonData={commonData} onDelete={handleDelete} />
+        <CharacterCard character={character} commonData={byId} onDelete={handleDelete} />
       )}
     />
   );
@@ -55,14 +55,13 @@ const CharacterListPage: React.FC = () => {
 
 const CharacterCard: React.FC<{
   character: CharacterListItem;
-  commonData: CommonData;
+  commonData: CommonData["byId"];
   onDelete: (id: string) => void;
-}> = ({ character, commonData, onDelete }) => {
-  const ancestryName = commonData.ancestries[character.ancestryId]?.name || "Unknown";
-  const className = commonData.characterClasses[character.classId]?.name || "Unknown";
-  const specializationName =
-    commonData.specializations[character.specializationId]?.name || "Unknown";
-  const communityName = commonData.communities[character.communityId]?.name || "Unknown";
+}> = ({ character, commonData: { characterClasses, specializations, ancestries, communities }, onDelete }) => {
+  const ancestryName = ancestries[character.ancestryId]?.name || "Unknown";
+  const className = characterClasses[character.classId]?.name || "Unknown";
+  const specializationName = specializations[character.specializationId]?.name || "Unknown";
+  const communityName = communities[character.communityId]?.name || "Unknown";
 
   return (
     <GameCard>

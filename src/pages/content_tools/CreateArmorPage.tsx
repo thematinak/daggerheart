@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ContentToolShell from "../../common/components/ContentToolShell";
-import { useCommonData } from "../../common/contexts/CommonDataProvider";
+import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
 
 const CreateArmorPage: React.FC = () => {
@@ -17,20 +17,17 @@ const CreateArmorPage: React.FC = () => {
     modifiers: "{}",
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showError, showInfo } = useNotifications();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setMessage(null);
-    setError(null);
 
     let modifiers: Record<string, number> = {};
 
     try {
       modifiers = form.modifiers.trim() ? JSON.parse(form.modifiers) : {};
     } catch {
-      setError("Modifiers must be valid JSON.");
+      showError("Modifiers must be valid JSON.", "Invalid Form Data");
       return;
     }
 
@@ -59,7 +56,7 @@ const CreateArmorPage: React.FC = () => {
       }
 
       await refreshCommonData();
-      setMessage(`Armor "${form.name}" was created.`);
+      showInfo(`Armor "${form.name}" was created.`, "Armor Created");
       setForm({
         id: "",
         name: "",
@@ -72,7 +69,7 @@ const CreateArmorPage: React.FC = () => {
         modifiers: "{}",
       });
     } catch (err: any) {
-      setError(err.message || "Failed to create armor");
+      showError(err.message || "Failed to create armor", "Create Armor Failed");
     } finally {
       setIsSaving(false);
     }
@@ -130,10 +127,6 @@ const CreateArmorPage: React.FC = () => {
           <span className={styles.tokens.text.label}>Modifiers JSON</span>
           <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[120px] resize-y font-mono text-sm`} value={form.modifiers} onChange={(e) => setForm((state) => ({ ...state, modifiers: e.target.value }))} />
         </label>
-
-        {message ? <div className={`${styles.tokens.panel.accent} py-3 text-sm ${styles.green.text}`}>{message}</div> : null}
-        {error ? <div className={`${styles.tokens.panel.muted} border-rose-200 bg-rose-50/80 py-3 text-sm text-rose-700`}>{error}</div> : null}
-
         <div className="flex justify-end">
           <button type="submit" disabled={isSaving} className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}>
             {isSaving ? "Saving..." : "Create Armor"}

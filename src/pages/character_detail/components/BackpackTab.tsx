@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { Coins, Package, ShoppingBag } from "lucide-react";
 import WeaponCard from "../../../common/components/WeaponCard";
 import ArmorCard from "../../../common/components/ArmorCard";
 import ModalCardPicker, { ModalCardPickerFilter } from "../../../common/components/ModalCardPicker";
@@ -7,50 +6,45 @@ import { Character } from "../../../common/types/Character";
 import { BackpackItem } from "../../../common/types/BackpackItem";
 import { WeaponItem } from "../../../common/types/Weapon";
 import { ArmorItem } from "../../../common/types/Armor";
-import { useCommonData } from "../../../common/contexts/CommonDataProvider";
+import { useCommonData, useNotifications } from "../../../common/contexts/CommonDataProvider";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import H2 from "../../../common/components/H2";
 import SplitBar from "../../../common/components/SplitBar";
+import { BURDENS, ITEM_TYPES, RANGES, SLOTS, TIERS, WEIGHTS } from "../../../common/utils/filters";
+import { mapArmorWeight } from "../../../common/utils/funks";
+import { CharacterCommand, postCharacterCommands } from "../../../common/endponts/common";
+import Bank from "./Bank";
 
 type BackpackTabProps = {
   character: Character;
   onCharacterUpdated: () => Promise<void>;
 };
 
-type CharacterCommand =
-  | { action: "add" | "remove"; target: "bank"; value: number }
-  | { action: "add"; target: "item"; id: string; quantity: number }
-  | { action: "add" | "remove" | "equip"; target: "weapon" | "armor"; id: string };
+type PickerState = {
+  item: boolean;
+  weapon: boolean;
+  armor: boolean;
+};
+
+type PendingSelectionsState = {
+  items: BackpackItem[];
+  weapons: WeaponItem[];
+  armor: ArmorItem[];
+};
+
+type ActionState = {
+  savePending: boolean;
+  equipEquipment: boolean;
+  removeEquipment: boolean;
+};
 
 const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated }) => {
-  const { commonData } = useCommonData();
-  const [isItemPickerOpen, setIsItemPickerOpen] = useState(false);
-  const [isWeaponPickerOpen, setIsWeaponPickerOpen] = useState(false);
-  const [isArmorPickerOpen, setIsArmorPickerOpen] = useState(false);
-  const [pendingItems, setPendingItems] = useState<BackpackItem[]>([]);
-  const [pendingWeapons, setPendingWeapons] = useState<WeaponItem[]>([]);
-  const [pendingArmor, setPendingArmor] = useState<ArmorItem[]>([]);
-  const [isSavingBank, setIsSavingBank] = useState(false);
-  const [isSavingPending, setIsSavingPending] = useState(false);
-  const [isEquippingEquipment, setIsEquippingEquipment] = useState(false);
-  const [isRemovingEquipment, setIsRemovingEquipment] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  const availableItems = useMemo(
-    () => Object.values(commonData.backpackItems).sort((a, b) => a.name.localeCompare(b.name)),
-    [commonData.backpackItems]
-  );
-  const availableWeapons = useMemo(
-    () => Object.values(commonData.weapons).sort((a, b) => a.name.localeCompare(b.name)),
-    [commonData.weapons]
-  );
-  const availableArmor = useMemo(
-    () => Object.values(commonData.armor).sort((a, b) => a.name.localeCompare(b.name)),
-    [commonData.armor]
-  );
-  const bankBreakdown = useMemo(() => getBankBreakdown(character.bank), [character.bank]);
+  const { commonData: { list: { backpackItems, weapons, armor } } } = useCommonData();
+  const [pickerState, setPickerState] = useState<PickerState>({ item: false, weapon: false, armor: false });
+  const [pendingSelections, setPendingSelections] = useState<PendingSelectionsState>({ items: [], weapons: [], armor: []});
+  const [actionState, setActionState] = useState<ActionState>({ savePending: false, equipEquipment: false, removeEquipment: false});
+  const { showError, showInfo, showWarning } = useNotifications();
 
   const itemPickerFilters = useMemo<Array<ModalCardPickerFilter<BackpackItem>>>(
     () => [
@@ -74,10 +68,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         id: "type",
         label: "Type",
         type: "select",
-        options: [
-          { label: "Loot", value: "loot" },
-          { label: "Consumables", value: "consumables" },
-        ],
+        options: ITEM_TYPES,
         getValue: (item) => item.type || "loot",
       },
     ],
@@ -98,43 +89,28 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         id: "tier",
         label: "Tier",
         type: "select",
-        options: [
-          { label: "T1", value: "1" },
-          { label: "T2", value: "2" },
-          { label: "T3", value: "3" },
-          { label: "T4", value: "4" },
-        ],
+        options: TIERS,
         getValue: (weapon) => weapon.tier,
       },
       {
         id: "burden",
         label: "Burden",
         type: "select",
-        options: [
-          { label: "One Handed", value: "one-handed" },
-          { label: "Two Handed", value: "two-handed" },
-        ],
+        options: BURDENS,
         getValue: (weapon) => weapon.burden,
       },
       {
         id: "range",
         label: "Range",
         type: "select",
-        options: [
-          { label: "Melee", value: "melee" },
-          { label: "Near", value: "near" },
-          { label: "Far", value: "far" },
-        ],
+        options: RANGES,
         getValue: (weapon) => weapon.range,
       },
       {
         id: "slot",
         label: "Slot",
         type: "select",
-        options: [
-          { label: "Primary", value: "primary" },
-          { label: "Secondary", value: "secondary" },
-        ],
+        options: SLOTS,
         getValue: (weapon) => weapon.slot,
       },
     ],
@@ -155,97 +131,71 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         id: "tier",
         label: "Tier",
         type: "select",
-        options: [
-          { label: "T1", value: "1" },
-          { label: "T2", value: "2" },
-          { label: "T3", value: "3" },
-          { label: "T4", value: "4" },
-        ],
+        options: TIERS,
         getValue: (armor) => armor.tier,
       },
       {
         id: "weight",
         label: "Weight",
         type: "select",
-        options: [
-          { label: "Light", value: "light" },
-          { label: "Medium", value: "medium" },
-          { label: "Heavy", value: "heavy" },
-        ],
-        getValue: (armor) => getArmorWeight(armor.baseScore),
+        options: WEIGHTS,
+        getValue: (armor) => mapArmorWeight(armor.baseScore),
       },
     ],
     []
   );
 
   const addPendingItem = (selectedItem: BackpackItem, quantity: number) => {
-    setPendingItems((current) => [...current, { ...selectedItem, quantity }]);
-    setIsItemPickerOpen(false);
+    setPendingSelections((current) => ({
+      ...current,
+      items: [...current.items, { ...selectedItem, quantity }],
+    }));
+    setPickerState((current) => ({ ...current, item: false }));
   };
 
   const addPendingWeapon = (selectedWeapon: WeaponItem) => {
-    setPendingWeapons((current) => [...current, selectedWeapon]);
-    setIsWeaponPickerOpen(false);
+    setPendingSelections((current) => ({
+      ...current,
+      weapons: [...current.weapons, selectedWeapon],
+    }));
+    setPickerState((current) => ({ ...current, weapon: false }));
   };
 
   const addPendingArmor = (selectedArmor: ArmorItem) => {
-    setPendingArmor((current) => [...current, selectedArmor]);
-    setIsArmorPickerOpen(false);
+    setPendingSelections((current) => ({
+      ...current,
+      armor: [...current.armor, selectedArmor],
+    }));
+    setPickerState((current) => ({ ...current, armor: false }));
   };
 
   const removePendingItem = (indexToRemove: number) => {
-    setPendingItems((current) => current.filter((_, index) => index !== indexToRemove));
+    setPendingSelections((current) => ({
+      ...current,
+      items: current.items.filter((_, index) => index !== indexToRemove),
+    }));
   };
   const removePendingWeapon = (indexToRemove: number) => {
-    setPendingWeapons((current) => current.filter((_, index) => index !== indexToRemove));
+    setPendingSelections((current) => ({
+      ...current,
+      weapons: current.weapons.filter((_, index) => index !== indexToRemove),
+    }));
   };
   const removePendingArmor = (indexToRemove: number) => {
-    setPendingArmor((current) => current.filter((_, index) => index !== indexToRemove));
+    setPendingSelections((current) => ({
+      ...current,
+      armor: current.armor.filter((_, index) => index !== indexToRemove),
+    }));
   };
 
-  const hasPendingChanges = pendingItems.length > 0 || pendingWeapons.length > 0 || pendingArmor.length > 0;
+  const hasPendingChanges =
+    pendingSelections.items.length > 0 ||
+    pendingSelections.weapons.length > 0 ||
+    pendingSelections.armor.length > 0;
 
   const postCommands = async (commands: CharacterCommand[]) => {
-    const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        character_id: character.id,
-        commands,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to save character changes");
-    }
-
+    await postCharacterCommands(character.id, commands)
     await onCharacterUpdated();
-  };
-
-  const handleBankChange = async (action: "add" | "remove", value: number) => {
-    try {
-      setIsSavingBank(true);
-      setSaveError(null);
-      setSaveMessage(null);
-
-      await postCommands([
-        {
-          action,
-          target: "bank",
-          value,
-        },
-      ]);
-
-      setSaveMessage(`Bank was ${action === "add" ? "updated" : "reduced"}.`);
-    } catch (error: any) {
-      setSaveError(error.message || "Failed to update bank.");
-    } finally {
-      setIsSavingBank(false);
-    }
   };
 
   const handleSavePending = async () => {
@@ -254,18 +204,18 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
     }
 
     const commands: CharacterCommand[] = [
-      ...pendingItems.map((item) => ({
+      ...pendingSelections.items.map((item) => ({
         action: "add" as const,
         target: "item" as const,
         id: item.id,
         quantity: Math.max(1, item.quantity ?? 1),
       })),
-      ...pendingWeapons.map((weapon) => ({
+      ...pendingSelections.weapons.map((weapon) => ({
         action: "add" as const,
         target: "weapon" as const,
         id: weapon.id,
       })),
-      ...pendingArmor.map((armor) => ({
+      ...pendingSelections.armor.map((armor) => ({
         action: "add" as const,
         target: "armor" as const,
         id: armor.id,
@@ -273,28 +223,26 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
     ];
 
     try {
-      setIsSavingPending(true);
-      setSaveError(null);
-      setSaveMessage(null);
+      setActionState((current) => ({ ...current, savePending: true }));
 
       await postCommands(commands);
 
-      setPendingItems([]);
-      setPendingWeapons([]);
-      setPendingArmor([]);
-      setSaveMessage("Pending additions were saved.");
+      setPendingSelections({
+        items: [],
+        weapons: [],
+        armor: [],
+      });
+      showInfo("Pending additions were saved to the character.", "Inventory Saved");
     } catch (error: any) {
-      setSaveError(error.message || "Failed to save pending additions.");
+      showError(error.message || "Failed to save pending additions.", "Inventory Save Failed");
     } finally {
-      setIsSavingPending(false);
+      setActionState((current) => ({ ...current, savePending: false }));
     }
   };
 
   const handleEquipEquipment = async (target: "weapon" | "armor", id: string) => {
     try {
-      setIsEquippingEquipment(true);
-      setSaveError(null);
-      setSaveMessage(null);
+      setActionState((current) => ({ ...current, equipEquipment: true }));
 
       await postCommands([
         {
@@ -303,20 +251,17 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
           id,
         },
       ]);
-
-      setSaveMessage(`${target === "weapon" ? "Weapon" : "Armor"} equipped.`);
+      showInfo(`${target === "weapon" ? "Weapon" : "Armor"} equipped successfully.`, "Equipment Updated");
     } catch (error: any) {
-      setSaveError(error.message || `Failed to equip ${target}.`);
+      showError(error.message || `Failed to equip ${target}.`, "Equip Failed");
     } finally {
-      setIsEquippingEquipment(false);
+      setActionState((current) => ({ ...current, equipEquipment: false }));
     }
   };
 
   const handleRemoveEquipment = async (target: "weapon" | "armor", id: string) => {
     try {
-      setIsRemovingEquipment(true);
-      setSaveError(null);
-      setSaveMessage(null);
+      setActionState((current) => ({ ...current, removeEquipment: true }));
 
       await postCommands([
         {
@@ -325,12 +270,11 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
           id,
         },
       ]);
-
-      setSaveMessage(`${target === "weapon" ? "Weapon" : "Armor"} removed.`);
+      showWarning(`${target === "weapon" ? "Weapon" : "Armor"} removed from storage.`, "Equipment Removed");
     } catch (error: any) {
-      setSaveError(error.message || `Failed to remove ${target}.`);
+      showError(error.message || `Failed to remove ${target}.`, "Remove Failed");
     } finally {
-      setIsRemovingEquipment(false);
+      setActionState((current) => ({ ...current, removeEquipment: false }));
     }
   };
 
@@ -365,18 +309,18 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                       <button
                         type="button"
                         onClick={() => handleRemoveEquipment("weapon", weapon.id)}
-                        disabled={isRemovingEquipment || isEquippingEquipment}
+                        disabled={actionState.removeEquipment || actionState.equipEquipment}
                         className={`${styles.tokens.button.base} ${styles.tokens.button.danger} mr-2 disabled:cursor-not-allowed disabled:opacity-60`}
                       >
-                        {isRemovingEquipment ? "Removing..." : "Remove"}
+                        {actionState.removeEquipment ? "Removing..." : "Remove"}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleEquipEquipment("weapon", weapon.id)}
-                        disabled={isEquippingEquipment || isRemovingEquipment}
+                        disabled={actionState.equipEquipment || actionState.removeEquipment}
                         className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} disabled:cursor-not-allowed disabled:opacity-60`}
                       >
-                        {isEquippingEquipment ? "Equipping..." : "Equip"}
+                        {actionState.equipEquipment ? "Equipping..." : "Equip"}
                       </button>
                     </div>
                   </div>
@@ -393,18 +337,18 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                       <button
                         type="button"
                         onClick={() => handleRemoveEquipment("armor", armor.id)}
-                        disabled={isRemovingEquipment || isEquippingEquipment}
+                        disabled={actionState.removeEquipment || actionState.equipEquipment}
                         className={`${styles.tokens.button.base} ${styles.tokens.button.danger} mr-2 disabled:cursor-not-allowed disabled:opacity-60`}
                       >
-                        {isRemovingEquipment ? "Removing..." : "Remove"}
+                        {actionState.removeEquipment ? "Removing..." : "Remove"}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleEquipEquipment("armor", armor.id)}
-                        disabled={isEquippingEquipment || isRemovingEquipment}
+                        disabled={actionState.equipEquipment || actionState.removeEquipment}
                         className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} disabled:cursor-not-allowed disabled:opacity-60`}
                       >
-                        {isEquippingEquipment ? "Equipping..." : "Equip"}
+                        {actionState.equipEquipment ? "Equipping..." : "Equip"}
                       </button>
                     </div>
                   </div>
@@ -425,21 +369,21 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
               <div className="grid gap-3 sm:grid-cols-3">
                 <button
                   type="button"
-                  onClick={() => setIsItemPickerOpen(true)}
+                  onClick={() => setPickerState((current) => ({ ...current, item: true }))}
                   className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
                 >
                   Add item
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsWeaponPickerOpen(true)}
+                  onClick={() => setPickerState((current) => ({ ...current, weapon: true }))}
                   className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
                 >
                   Add weapon
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsArmorPickerOpen(true)}
+                  onClick={() => setPickerState((current) => ({ ...current, armor: true }))}
                   className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
                 >
                   Add armor
@@ -452,8 +396,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                   <p className="mt-1 text-sm text-slate-500">Prepared additions can be saved straight to the character.</p>
                 </div>
 
-                {pendingItems.length > 0 ? (
-                  pendingItems.map((item, index) => (
+                {pendingSelections.items.length > 0 ? (
+                  pendingSelections.items.map((item, index) => (
                     <div
                       key={`${item.id}-pending-${index}`}
                       className="rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 px-4 py-3"
@@ -480,8 +424,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
               <div className="grid gap-3">
                 <div className="text-sm font-semibold text-slate-950">Pending weapon additions</div>
-                {pendingWeapons.length > 0 ? (
-                  pendingWeapons.map((weapon, index) => (
+                {pendingSelections.weapons.length > 0 ? (
+                  pendingSelections.weapons.map((weapon, index) => (
                     <div key={`${weapon.id}-pending-weapon-${index}`} className="grid gap-2">
                       <WeaponCard
                         weapon={weapon}
@@ -507,8 +451,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
               <div className="grid gap-3">
                 <div className="text-sm font-semibold text-slate-950">Pending armor additions</div>
-                {pendingArmor.length > 0 ? (
-                  pendingArmor.map((armor, index) => (
+                {pendingSelections.armor.length > 0 ? (
+                  pendingSelections.armor.map((armor, index) => (
                     <div key={`${armor.id}-pending-armor-${index}`} className="grid gap-2">
                       <ArmorCard
                         armor={armor}
@@ -544,14 +488,11 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                   <button
                     type="button"
                     onClick={handleSavePending}
-                    disabled={!hasPendingChanges || isSavingPending}
+                    disabled={!hasPendingChanges || actionState.savePending}
                     className={`${styles.tokens.button.base} ${styles.tokens.button.primary} disabled:cursor-not-allowed disabled:opacity-60`}
                   >
-                    {isSavingPending ? "Saving additions..." : "Save pending"}
+                    {actionState.savePending ? "Saving additions..." : "Save pending"}
                   </button>
-
-                  {saveMessage ? <span className="text-sm font-medium text-emerald-700">{saveMessage}</span> : null}
-                  {saveError ? <span className="text-sm font-medium text-rose-700">{saveError}</span> : null}
                 </div>
               </div>
             </div>
@@ -560,54 +501,18 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
         <SplitBar />
         
-        <div className="grid gap-4">
-          <div>
-            <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
-            <p className={`mt-1 ${styles.tokens.text.muted}`}>
-              Total value: {character.bank} handful
-            </p>
-          </div>
+        <Bank character={character} onCharacterUpdated={onCharacterUpdated} />
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <BankUnitCard
-              icon={<Package size={18} />}
-              label="Chests"
-              value={bankBreakdown.chests}
-              note="1 chest = 13 bags"
-              onAdd={() => handleBankChange("add", BANK_VALUES.chest)}
-              onRemove={() => handleBankChange("remove", BANK_VALUES.chest)}
-              disabled={isSavingBank}
-            />
-            <BankUnitCard
-              icon={<ShoppingBag size={18} />}
-              label="Bags"
-              value={bankBreakdown.bags}
-              note="1 bag = 10 handful"
-              onAdd={() => handleBankChange("add", BANK_VALUES.bag)}
-              onRemove={() => handleBankChange("remove", BANK_VALUES.bag)}
-              disabled={isSavingBank}
-            />
-            <BankUnitCard
-              icon={<Coins size={18} />}
-              label="Handful"
-              value={bankBreakdown.handful}
-              note="Loose coin"
-              onAdd={() => handleBankChange("add", BANK_VALUES.handful)}
-              onRemove={() => handleBankChange("remove", BANK_VALUES.handful)}
-              disabled={isSavingBank}
-            />
-          </div>
-        </div>
       </section>
 
       <ModalCardPicker
-        isOpen={isItemPickerOpen}
+        isOpen={pickerState.item}
         eyebrow="Backpack Items"
         title="Select Item"
-        items={availableItems}
+        items={backpackItems}
         filters={itemPickerFilters}
         getItemId={(item) => item.id}
-        onClose={() => setIsItemPickerOpen(false)}
+        onClose={() => setPickerState((current) => ({ ...current, item: false }))}
         onConfirm={addPendingItem}
         emptyText="No items match the selected filters."
         detailEmptyText="Select a card to see item detail and set quantity."
@@ -633,14 +538,14 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
       />
 
       <ModalCardPicker
-        isOpen={isWeaponPickerOpen}
+        isOpen={pickerState.weapon}
         eyebrow="Weapons"
         title="Select Weapon"
-        items={availableWeapons}
+        items={weapons}
         cardsGridClassName="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
         filters={weaponPickerFilters}
         getItemId={(weapon) => weapon.id}
-        onClose={() => setIsWeaponPickerOpen(false)}
+        onClose={() => setPickerState((current) => ({ ...current, weapon: false }))}
         onConfirm={(weapon) => addPendingWeapon(weapon)}
         emptyText="No weapons match the selected filters."
         detailEmptyText="Select a weapon to see more detail."
@@ -655,14 +560,14 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
       />
 
       <ModalCardPicker
-        isOpen={isArmorPickerOpen}
+        isOpen={pickerState.armor}
         eyebrow="Armor"
         title="Select Armor"
-        items={availableArmor}
+        items={armor}
         cardsGridClassName="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
         filters={armorPickerFilters}
         getItemId={(armor) => armor.id}
-        onClose={() => setIsArmorPickerOpen(false)}
+        onClose={() => setPickerState((current) => ({ ...current, armor: false }))}
         onConfirm={(armor) => addPendingArmor(armor)}
         emptyText="No armor matches the selected filters."
         detailEmptyText="Select armor to see more detail."
@@ -678,79 +583,6 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
     </div>
   );
 };
-
-const getArmorWeight = (baseScore: number) => {
-  if (baseScore <= 2) {
-    return "light";
-  }
-
-  if (baseScore <= 4) {
-    return "medium";
-  }
-
-  return "heavy";
-};
-
-const getBankBreakdown = (bank: number) => {
-  const handfulPerBag = 10;
-  const bagsPerChest = 13;
-  const handfulPerChest = handfulPerBag * bagsPerChest;
-
-  const normalizedBank = Math.max(0, bank);
-  const chests = Math.floor(normalizedBank / handfulPerChest);
-  const remainingAfterChests = normalizedBank % handfulPerChest;
-  const bags = Math.floor(remainingAfterChests / handfulPerBag);
-  const handful = remainingAfterChests % handfulPerBag;
-
-  return { chests, bags, handful };
-};
-
-const BANK_VALUES = {
-  chest: 130,
-  bag: 10,
-  handful: 1,
-};
-
-const BankUnitCard: React.FC<{
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  note: string;
-  onAdd: () => void;
-  onRemove: () => void;
-  disabled?: boolean;
-}> = ({ icon, label, value, note, onAdd, onRemove, disabled = false }) => (
-  <div className={`${styles.tokens.panel.muted} min-w-[11rem]`}>
-    <div className="flex items-center gap-2">
-      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
-        {icon}
-      </div>
-      <div>
-        <div className={styles.tokens.text.label}>{label}</div>
-        <div className="text-2xl font-black text-slate-950">{value}</div>
-      </div>
-    </div>
-    <p className={`mt-3 ${styles.tokens.text.muted}`}>{note}</p>
-    <div className="mt-4 flex gap-2">
-      <button
-        type="button"
-        onClick={onRemove}
-        disabled={disabled}
-        className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        -
-      </button>
-      <button
-        type="button"
-        onClick={onAdd}
-        disabled={disabled}
-        className="flex-1 rounded-xl border border-amber-300 bg-amber-100 px-3 py-2 text-sm font-bold text-amber-900 transition hover:border-amber-400 hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        +
-      </button>
-    </div>
-  </div>
-);
 
 const PickerCard: React.FC<{ item: BackpackItem; selected: boolean }> = ({ item, selected }) => (
   <div

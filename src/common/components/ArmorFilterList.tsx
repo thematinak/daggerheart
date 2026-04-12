@@ -16,11 +16,11 @@ type Props = {
 };
 
 const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
-  const { commonData } = useCommonData();
+  const { commonData: { list: { armor } } } = useCommonData();
   const [filters, setFilters] = useState<ArmorFilters>({tier: 1});
 
   const items = useMemo(() => {
-    return Object.values(commonData.armor).filter((armor) => {
+    return armor.filter((armor) => {
       if (filters.name && !armor.name.toLowerCase().includes(filters.name.toLowerCase())) {
         return false;
       }
@@ -43,7 +43,7 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
 
       return true;
     });
-  }, [commonData.armor, filters]);
+  }, [armor, filters]);
 
   return (
     <div className="flex flex-col gap-5">

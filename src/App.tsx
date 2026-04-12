@@ -12,6 +12,7 @@ import { CommonDataProvider } from "./common/contexts/CommonDataProvider";
 import CreateItemPage from "./pages/content_tools/CreateItemPage";
 import CreateWeaponPage from "./pages/content_tools/CreateWeaponPage";
 import CreateArmorPage from "./pages/content_tools/CreateArmorPage";
+import "./App.css";
 
 function App() {
   return (
