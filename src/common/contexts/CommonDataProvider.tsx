@@ -207,17 +207,40 @@ export const useCommonData = () => {
 
 export const useNotifications = () => {
   const { notifications, showNotification, removeNotification, clearNotifications } = useCommonData();
-
-  return {
-    notifications,
-    showNotification,
-    removeNotification,
-    clearNotifications,
-    showInfo: (message: string, title?: string) =>
+  const showInfo = React.useCallback(
+    (message: string, title?: string) =>
       showNotification({ type: "info", message, title }),
-    showWarning: (message: string, title?: string) =>
+    [showNotification]
+  );
+  const showWarning = React.useCallback(
+    (message: string, title?: string) =>
       showNotification({ type: "warning", message, title }),
-    showError: (message: string, title?: string) =>
+    [showNotification]
+  );
+  const showError = React.useCallback(
+    (message: string, title?: string) =>
       showNotification({ type: "error", message, title }),
-  };
+    [showNotification]
+  );
+
+  return React.useMemo(
+    () => ({
+      notifications,
+      showNotification,
+      removeNotification,
+      clearNotifications,
+      showInfo,
+      showWarning,
+      showError,
+    }),
+    [
+      notifications,
+      showNotification,
+      removeNotification,
+      clearNotifications,
+      showInfo,
+      showWarning,
+      showError,
+    ]
+  );
 };

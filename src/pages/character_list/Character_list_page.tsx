@@ -26,11 +26,9 @@ const CharacterListPage: React.FC = () => {
   const { commonData: { byId } } = useCommonData();
   const navigate = useNavigate();
   const userId = user?.id ?? -1;
-  const queryString = new URLSearchParams({ user_id: String(userId) }).toString();
 
   const handleDelete = async (id: string) => {
-    const deleteQueryString = new URLSearchParams({ id }).toString();
-    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?${deleteQueryString}`, {
+    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?user_id=${id}`, {
       method: "DELETE",
     });
     const resJson = await response.json();
@@ -44,7 +42,7 @@ const CharacterListPage: React.FC = () => {
       title="Your Characters"
       eyebrow="Campaign Hub"
       description="Review your adventurers, jump back into a build, or clear out retired heroes."
-      endpoint={`http://pecen.eu/daggerheart/api1/character.php?${queryString}`}
+      endpoint={`http://pecen.eu/daggerheart/api1/character.php?user_id=${userId}`}
       onSelect={(character) => navigate(`/character/${character.id}`)}
       renderItem={(character) => (
         <CharacterCard character={character} commonData={byId} onDelete={handleDelete} />
