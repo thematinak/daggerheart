@@ -23,7 +23,7 @@ function renderDamage(damage: WeaponItem["damage"], proficiency: number) {
   const parts: string[] = [];
   Object.entries(damage).forEach(([key, value]) => {
     if (key === "flat") return;
-    if (value > 0) parts.push(`${value * proficiency}d${key}`);
+    if (value > 0) parts.push(`${value}d${Number(key) * proficiency}`);
   });
   if (damage.flat) parts.push(`${damage.flat}`);
   return parts.join(" + ");
