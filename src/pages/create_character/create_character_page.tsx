@@ -46,8 +46,9 @@ const CharacterCreatorPage: React.FC = () => {
 
   const [character, setCharacter] = useState<Character>({
     id: "",
-     user_id: user?.id || 0,
+    user_id: user.id,
     level: 1,
+    proficiency: 1,
     bank: 0,
     class: null,
     backpack: [],
@@ -105,7 +106,7 @@ const CharacterCreatorPage: React.FC = () => {
           method: "POST",
           body: JSON.stringify({
             ...character,
-            user_id: user?.id,
+            user_id: user.id,
             currentStats: {hp: stats.maxHp, stress: 0, armor: stats.maxArmor, hope: 0},
           }),
         });
@@ -234,6 +235,7 @@ const CharacterCreatorPage: React.FC = () => {
       {step === 6 && (
         <>
           <GearCard 
+            proficiency={character.proficiency}
             selected={{weapons: character.weapons, armor: character.armor}}
             showBack={true}
             onBack={back}

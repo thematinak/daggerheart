@@ -15,12 +15,14 @@ type WeaponFilters = {
 type Props = {
   selected: WeaponItem | null;
   forcedSlot?: "primary" | "secondary";
+  proficiency: number;
   onSelect: (w: WeaponItem | null) => void;
 };
 
 const WeaponFilterList: React.FC<Props> = ({
   selected,
   forcedSlot,
+  proficiency,
   onSelect,
 }) => {
   const { commonData: { list: { weapons } } } = useCommonData();
@@ -131,6 +133,7 @@ const WeaponFilterList: React.FC<Props> = ({
           <WeaponCard
             key={w.id}
             weapon={w}
+            proficiency={proficiency}
             selected={selected?.id === w.id}
             onSelect={() => onSelect(w)}
             onDeselect={() => onSelect(null)}

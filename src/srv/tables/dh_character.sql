@@ -2,6 +2,7 @@ CREATE TABLE dh_character (
     id VARCHAR(50) PRIMARY KEY,
     user_id INT NOT NULL,
     level INT NOT NULL DEFAULT 1,
+    proficiency INT NOT NULL DEFAULT 1 CHECK (proficiency BETWEEN 1 AND 15),
 
     class_id VARCHAR(50),
     bank INT DEFAULT 0,

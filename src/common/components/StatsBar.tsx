@@ -1,5 +1,5 @@
 import React from "react";
-import { Brain, Crosshair, Drama, Droplets, Eye, Footprints, HandFist, LucideIcon, Rabbit, Shield, Sparkles } from "lucide-react";
+import { Brain, Crosshair, Drama, Droplets, Eye, Footprints, HandFist, LucideIcon, Rabbit, Shield, Sparkles, Swords } from "lucide-react";
 import { Character, CurrentStats, Stats } from "../types/Character";
 import { StatModifiers } from "../types/StatModifiers";
 import styles from "../types/cssColor";
@@ -149,6 +149,7 @@ const statMeta: Record<string, { icon: LucideIcon; tone: string; iconColor: stri
   HP: { icon: Droplets, tone: "bg-rose-50 border-rose-200", iconColor: "text-rose-600" },
   Stress: { icon: Brain, tone: "bg-violet-50 border-violet-200", iconColor: "text-violet-600" },
   Hope: { icon: Sparkles, tone: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600" },
+  Proficiency: { icon: Swords, tone: "bg-orange-50 border-orange-200", iconColor: "text-orange-600" },
 };
 
 const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
@@ -184,6 +185,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
 type StatsBarProps = {
   stats: Stats;
   currentStats: CurrentStats;
+  proficiency: number;
   adjustableStats?: Partial<Record<AdjustableStatKey, {
     onDecrease: () => void;
     onIncrease: () => void;
@@ -191,7 +193,7 @@ type StatsBarProps = {
   }>>;
 };
 
-const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, adjustableStats }) => {
+const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, proficiency, adjustableStats }) => {
   const normalizedCurrentStats: CurrentStats = {
     hp: currentStats.hp ?? 0,
     stress: currentStats.stress ?? 0,
@@ -215,6 +217,7 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, adjustableStat
     { label: "HP", value: `${normalizedCurrentStats.hp}/${stats.maxHp}`, controls: adjustableStats?.hp },
     { label: "Stress", value: `${normalizedCurrentStats.stress}/${stats.maxStress}`, controls: adjustableStats?.stress },
     { label: "Hope", value: `${normalizedCurrentStats.hope}/${stats.maxHope}`, controls: adjustableStats?.hope },
+    { label: "Proficiency", value: proficiency },
   ];
 
   return (

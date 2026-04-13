@@ -49,6 +49,12 @@ function normalize_experiences($value)
     return $experiences;
 }
 
+function normalize_proficiency($value)
+{
+    $proficiency = isset($value) ? (int)$value : 1;
+    return max(1, min(15, $proficiency));
+}
+
 try {
     $pdo->beginTransaction();
 
@@ -73,14 +79,14 @@ try {
     // =========================
     $stmt = $pdo->prepare("
         INSERT INTO dh_character (
-            id, user_id, level,
+            id, user_id, level, proficiency,
             class_id, specialization_id,
             ancestry_id, community_id,
             bank,
             attributes, customAttributes, current_stats,
             name, description, experiences
         ) VALUES (
-            ?, ?, ?,
+            ?, ?, ?, ?,
             ?, ?, ?, ?,
             ?,
             ?, ?, ?,
@@ -92,6 +98,7 @@ try {
         $characterId,
         $input['user_id'],
         $input['level'] ?? 1,
+        normalize_proficiency($input['proficiency'] ?? 1),
         $input['class']['id'] ?? null,
         $input['specialization']['id'] ?? null,
         $input['ancestry']['id'] ?? null,

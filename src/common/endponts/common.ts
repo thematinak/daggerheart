@@ -91,6 +91,7 @@ export type CharacterDetailResponse = {
   id: string;
   userId: number;
   level: number;
+  proficiency: number;
   bank: number;
   name: string;
   description: string;

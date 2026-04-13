@@ -304,7 +304,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
               {character.weaponInventory.length > 0 ? (
                 character.weaponInventory.map((weapon) => (
                   <div key={weapon.id} className="grid gap-2">
-                    <WeaponCard weapon={weapon} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+                    <WeaponCard weapon={weapon} proficiency={character.proficiency} selected={false} onSelect={() => {}} onDeselect={() => {}} />
                     <div className="flex justify-end">
                       <button
                         type="button"
@@ -429,6 +429,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                     <div key={`${weapon.id}-pending-weapon-${index}`} className="grid gap-2">
                       <WeaponCard
                         weapon={weapon}
+                        proficiency={character.proficiency}
                         selected={false}
                         onSelect={() => {}}
                         onDeselect={() => {}}
@@ -552,10 +553,10 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         quantityEnabled={false}
         confirmLabel={(weapon) => `Add ${weapon.name}`}
         renderCard={(weapon, selected) => (
-          <WeaponCard weapon={weapon} selected={selected} onSelect={() => {}} onDeselect={() => {}} />
+          <WeaponCard weapon={weapon} proficiency={character.proficiency} selected={selected} onSelect={() => {}} onDeselect={() => {}} />
         )}
         renderDetail={(weapon) => (
-          <WeaponCard weapon={weapon} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+          <WeaponCard weapon={weapon} proficiency={character.proficiency} selected={false} onSelect={() => {}} onDeselect={() => {}} />
         )}
       />
 

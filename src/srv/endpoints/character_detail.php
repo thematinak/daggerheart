@@ -36,6 +36,12 @@ function decode_json_or_default($value, $default)
     return $decoded !== null ? $decoded : $default;
 }
 
+function normalize_proficiency($value)
+{
+    $proficiency = isset($value) ? (int)$value : 1;
+    return max(1, min(15, $proficiency));
+}
+
 function decode_character_experiences($character)
 {
     $decoded = decode_json_or_default($character["experiences"] ?? null, null);
@@ -257,6 +263,7 @@ try {
         "id" => $character["id"],
         "userId" => (int)$character["user_id"],
         "level" => (int)$character["level"],
+        "proficiency" => normalize_proficiency($character["proficiency"] ?? 1),
         "bank" => (int)$character["bank"],
         "name" => $character["name"],
         "description" => $character["description"],

@@ -103,7 +103,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
 
           <SplitBar />
 
-          <StatsBar stats={stats} currentStats={character.currentStats} />
+          <StatsBar stats={stats} currentStats={character.currentStats} proficiency={character.proficiency} />
         </section>
 
         <div className="grid gap-4 lg:grid-cols-2">

@@ -26,6 +26,12 @@ function decode_json_object($value)
     return is_array($decoded) ? $decoded : [];
 }
 
+function normalize_proficiency($value)
+{
+    $proficiency = isset($value) ? (int)$value : 1;
+    return max(1, min(15, $proficiency));
+}
+
 function decode_character_experiences($row)
 {
     $decoded = decode_json_object($row['experiences'] ?? null);
@@ -509,11 +515,11 @@ if ($method === 'POST') {
 // ==========================
 if ($method === 'DELETE') {
 
-    $id = $_GET['id'] ?? null;
+    $id = $_GET['character_id'] ?? null;
 
     if (!$id) {
         http_response_code(400);
-        echo json_encode(["error" => "id is required"]);
+        echo json_encode(["error" => "character_id is required"]);
         exit;
     }
 
@@ -571,6 +577,7 @@ try {
             "id" => $row["id"],
             "userId" => (int)$row["user_id"],
             "level" => (int)$row["level"],
+            "proficiency" => normalize_proficiency($row["proficiency"] ?? 1),
 
             "classId" => $row["class_id"],
             "specializationId" => $row["specialization_id"],

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Swords, Castle, BadgeCheck } from "lucide-react";
+import { Swords, Castle, BadgeCheck, Star } from "lucide-react";
 import { GiTrashCan } from "react-icons/gi";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { CommonData, useCommonData } from "../../common/contexts/CommonDataProvider";
@@ -15,6 +15,7 @@ type CharacterListItem = {
   id: string;
   name: string;
   level: number;
+  proficiency: number;
   classId: string;
   specializationId: string;
   ancestryId: string;
@@ -25,10 +26,10 @@ const CharacterListPage: React.FC = () => {
   const { user } = useAuth();
   const { commonData: { byId } } = useCommonData();
   const navigate = useNavigate();
-  const userId = user?.id ?? -1;
+  const userId = user.id;
 
   const handleDelete = async (id: string) => {
-    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?user_id=${id}`, {
+    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?character_id=${id}`, {
       method: "DELETE",
     });
     const resJson = await response.json();
@@ -85,6 +86,7 @@ const CharacterCard: React.FC<{
             label="Specialization"
             value={specializationName}
           />
+          <DetailPill icon={<Star size={14} />} label="Proficiency" value={String(character.proficiency)} />
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-200/80 pt-4">

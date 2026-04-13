@@ -7,17 +7,23 @@ import styles from "../types/cssColor";
 
 type WeaponCardProps = {
   weapon: WeaponItem;
+  proficiency: number;
   selected: boolean;
   onSelect: () => void;
   onDeselect: () => void;
 };
 
+function normalizeProficiency(proficiency?: number) {
+  const parsed = typeof proficiency === "number" ? proficiency : 1;
+  return Math.max(1, Math.min(15, parsed));
+}
+
 // render damage ako text
-function renderDamage(damage: WeaponItem["damage"]) {
+function renderDamage(damage: WeaponItem["damage"], proficiency: number) {
   const parts: string[] = [];
   Object.entries(damage).forEach(([key, value]) => {
     if (key === "flat") return;
-    if (value > 0) parts.push(`${value}d${key}`);
+    if (value > 0) parts.push(`${value * proficiency}d${key}`);
   });
   if (damage.flat) parts.push(`${damage.flat}`);
   return parts.join(" + ");
@@ -25,10 +31,14 @@ function renderDamage(damage: WeaponItem["damage"]) {
 
 export const WeaponCard: React.FC<WeaponCardProps> = ({
   weapon,
+  proficiency = 1,
   selected,
   onSelect,
   onDeselect,
-}) => (
+}) => {
+  const effectiveProficiency = normalizeProficiency(proficiency);
+
+  return (
   <GameCard selected={selected} onClick={selected ? onDeselect : onSelect}>
     {/* Header */}
     <div className="flex justify-between items-start gap-2">
@@ -55,7 +65,7 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
 
     {/* Damage */}
     <div className="flex items-center gap-1 text-sm mt-2">
-      <Sword size={14} /> {renderDamage(weapon.damage)}
+      <Sword size={14} /> {renderDamage(weapon.damage, effectiveProficiency)}
     </div>
 
     {/* Ability */}
@@ -76,6 +86,7 @@ export const WeaponCard: React.FC<WeaponCardProps> = ({
       <p className={`text-xs ${styles.gray.text} mt-1`}>{weapon.description}</p>
     )}
   </GameCard>
-);
+  );
+};
 
 export default WeaponCard;

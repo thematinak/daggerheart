@@ -167,6 +167,7 @@ const CharacterDetailPage: React.FC = () => {
       id: characterResponse.id,
       user_id: characterResponse.userId,
       level: characterResponse.level,
+      proficiency: characterResponse.proficiency,
       bank: characterResponse.bank,
       name: characterResponse.name,
       description: characterResponse.description || "",

@@ -14,6 +14,7 @@ export type Character = {
   id: string;
   user_id: number;
   level: number;
+  proficiency: number;
   bank: number;
   name: string;
   description: string;

@@ -6,7 +6,7 @@ export type User = {
 };
 
 type AuthContextType = {
-  user: User | null;
+  user: User;
   isAuthenticated: boolean;
   login: (user: User) => void;
   logout: () => void;
@@ -17,9 +17,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // 🔹 TU patrí localStorage inicializácia
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User>(() => {
     const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
+    return stored ? JSON.parse(stored) : { id: -1, name: "" };
   });
 
   const login = (userData: User) => {
@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    setUser(null);
+    setUser({ id: -1, name: "" });
     localStorage.removeItem("user");
   };
 
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated: user.id !== -1,
         login,
         logout,
       }}

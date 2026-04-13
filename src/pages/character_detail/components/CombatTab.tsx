@@ -35,6 +35,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
         <StatsBar
           stats={stats}
           currentStats={character.currentStats}
+          proficiency={character.proficiency}
         />
       </div>
 
@@ -82,12 +83,12 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
           </div>
           <div className="grid gap-4">
             {character.weapons.primary ? (
-              <WeaponCard weapon={character.weapons.primary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+              <WeaponCard weapon={character.weapons.primary} proficiency={character.proficiency} selected={false} onSelect={() => {}} onDeselect={() => {}} />
             ) : (
               <EmptyState text="No primary weapon equipped." />
             )}
             {character.weapons.secondary ? (
-              <WeaponCard weapon={character.weapons.secondary} selected={false} onSelect={() => {}} onDeselect={() => {}} />
+              <WeaponCard weapon={character.weapons.secondary} proficiency={character.proficiency} selected={false} onSelect={() => {}} onDeselect={() => {}} />
             ) : (
               <EmptyState text="No secondary weapon equipped." />
             )}

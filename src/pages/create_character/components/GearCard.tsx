@@ -4,13 +4,10 @@ import ArmorFilterList from "../../../common/components/ArmorFilterList";
 import { NextPreviousButton } from "./NextButton";
 import { SelectedWeapons, WeaponItem } from "../../../common/types/Weapon";
 import { ArmorItem } from "../../../common/types/Armor";
-import styles from "../../../common/types/cssColor";
-import Eyebrow from "../../../common/components/Eyebrow";
-import H2 from "../../../common/components/H2";
-import Subtitle from "../../../common/components/Subtitle";
 import Section from "../../../common/components/Section";
 
 type GearCardProps = {
+  proficiency: number;
   selected: {
     weapons: SelectedWeapons;
     armor: ArmorItem | null;
@@ -28,6 +25,7 @@ type GearCardProps = {
 };
 
 const GearCard: React.FC<GearCardProps> = ({
+  proficiency,
   selected,
   onSelect,
   showNext = false,
@@ -84,6 +82,7 @@ const GearCard: React.FC<GearCardProps> = ({
 
           <WeaponFilterList
             selected={primary}
+            proficiency={proficiency}
             onSelect={setPrimary}
             forcedSlot="primary"
           />
@@ -100,6 +99,7 @@ const GearCard: React.FC<GearCardProps> = ({
 
             <WeaponFilterList
               selected={secondary}
+              proficiency={proficiency}
               onSelect={setSecondary}
               forcedSlot="secondary"
             />
