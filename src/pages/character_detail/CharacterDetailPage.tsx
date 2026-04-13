@@ -187,6 +187,7 @@ const CharacterDetailPage: React.FC = () => {
       armorInventory: characterResponse.armorInventory || [],
       experiences: normalizeExperiences(characterResponse.experiences),
       domainCards: resolvedDomains,
+      levelingData: characterResponse.levelingData || {},
       countedStats: {
         evasion: 0,
         maxArmor: 0,
@@ -388,7 +389,14 @@ const CharacterDetailPage: React.FC = () => {
           onCharacterUpdated={loadCharacter}
         />
       )}
-      <LevelUpModal isOpen={activeModal === "levelUp"} onClose={() => setActiveModal(null)} />
+      {character && (
+        <LevelUpModal
+          isOpen={activeModal === "levelUp"}
+          onClose={() => setActiveModal(null)}
+          character={character}
+          onCharacterUpdated={loadCharacter}
+        />
+      )}
     </div>
   );
 };

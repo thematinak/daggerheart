@@ -54,6 +54,8 @@ export function buildStatsFromCharacter(character: Character): Stats {
 
     stats.maxHp += levelBonus;
     stats.maxStress += levelBonus;
+    stats.threshold1 += character.level;
+    stats.threshold2 += character.level;
   }
 
   // -------- ATTRIBUTES --------

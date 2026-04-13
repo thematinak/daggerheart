@@ -6,6 +6,7 @@ import { CharacterClass } from "./CharacterClass";
 import { CommunityItem } from "./Community";
 import { Domain } from "./Domain";
 import { Experience } from "./Experience";
+import { LevelingData } from "./Leveling";
 import { SpecializationsItem } from "./Specializations";
 import { StatModifiers } from "./StatModifiers";
 import { SelectedWeapons, WeaponItem } from "./Weapon";
@@ -31,6 +32,7 @@ export type Character = {
   armorInventory: ArmorItem[];
   experiences: Experience[];
   domainCards: Domain[];
+  levelingData: LevelingData;
   countedStats: Stats;
   currentStats: CurrentStats;
 };

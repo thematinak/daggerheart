@@ -84,13 +84,13 @@ try {
             ancestry_id, community_id,
             bank,
             attributes, customAttributes, current_stats,
-            name, description, experiences
+            name, description, experiences, leveling_data
         ) VALUES (
             ?, ?, ?, ?,
             ?, ?, ?, ?,
             ?,
             ?, ?, ?,
-            ?, ?, ?
+            ?, ?, ?, ?
         )
     ");
 
@@ -109,7 +109,8 @@ try {
         json_encode($input['currentStats'] ?? []),
         $input['name'],
         $input['description'] ?? null,
-        json_encode(normalize_experiences($input['experiences'] ?? []))
+        json_encode(normalize_experiences($input['experiences'] ?? [])),
+        json_encode($input['levelingData'] ?? (object)[])
     ]);
 
     // =========================

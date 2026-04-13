@@ -7,6 +7,7 @@ import { CharacterClass } from "../types/CharacterClass";
 import { CommunityItem } from "../types/Community";
 import { Domain } from "../types/Domain";
 import { Experience } from "../types/Experience";
+import { LevelingData } from "../types/Leveling";
 import { SpecializationsItem } from "../types/Specializations";
 import { StatModifiers } from "../types/StatModifiers";
 import { WeaponItem } from "../types/Weapon";
@@ -141,6 +142,7 @@ export type CharacterDetailResponse = {
     domainId: string;
   }>;
   backpack: BackpackItem[];
+  levelingData: LevelingData;
   currentStats: CurrentStats;
 };
 

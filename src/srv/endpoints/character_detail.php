@@ -42,6 +42,12 @@ function normalize_proficiency($value)
     return max(1, min(15, $proficiency));
 }
 
+function normalize_leveling_data($value)
+{
+    $decoded = decode_json_or_default($value, []);
+    return is_array($decoded) ? $decoded : [];
+}
+
 function decode_character_experiences($character)
 {
     $decoded = decode_json_or_default($character["experiences"] ?? null, null);
@@ -299,6 +305,7 @@ try {
         "customAttributes" => decode_json_or_default($character["customAttributes"], new stdClass()),
         "currentStats" => decode_json_or_default($character["current_stats"], new stdClass()),
         "experiences" => decode_character_experiences($character),
+        "levelingData" => normalize_leveling_data($character["leveling_data"] ?? null),
         "weapons" => [
             "primary" => $primaryWeapon,
             "secondary" => $secondaryWeapon,

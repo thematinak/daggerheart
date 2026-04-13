@@ -15,6 +15,7 @@ CREATE TABLE dh_character (
     customAttributes JSON DEFAULT ('{}'),
     current_stats JSON DEFAULT ('{}'),
     experiences JSON DEFAULT ('[]'),
+    leveling_data JSON DEFAULT ('{}'),
 
     name VARCHAR(50) NOT NULL,
     description VARCHAR(1000),
