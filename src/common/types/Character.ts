@@ -3,6 +3,7 @@ import { Ancestries } from "./Ancestries";
 import { ArmorItem } from "./Armor";
 import { BackpackItem } from "./BackpackItem";
 import { CharacterClass } from "./CharacterClass";
+import { Condition } from "./Condition";
 import { CommunityItem } from "./Community";
 import { Domain } from "./Domain";
 import { Experience } from "./Experience";
@@ -31,6 +32,7 @@ export type Character = {
   armor: ArmorItem | null;
   armorInventory: ArmorItem[];
   experiences: Experience[];
+  conditions: Condition[];
   domainCards: Domain[];
   levelingData: LevelingData;
   countedStats: Stats;

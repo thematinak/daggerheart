@@ -55,6 +55,22 @@ function normalize_proficiency($value)
     return max(1, min(15, $proficiency));
 }
 
+function normalize_conditions($value)
+{
+    if (!is_array($value)) {
+        return [];
+    }
+
+    return array_values(array_filter(array_map(function ($condition) {
+        if (!is_array($condition) || !isset($condition["id"])) {
+            return null;
+        }
+
+        $id = trim((string)$condition["id"]);
+        return $id !== "" ? $id : null;
+    }, $value)));
+}
+
 try {
     $pdo->beginTransaction();
 
@@ -144,6 +160,35 @@ try {
             $stmt->execute([
                 $characterId,
                 $card['id'] // domain_card_id (VARCHAR)
+            ]);
+        }
+    }
+
+    // =========================
+    // CONDITIONS
+    // =========================
+    $conditionIds = normalize_conditions($input['conditions'] ?? []);
+    if (count($conditionIds) > 0) {
+        $conditionCheckStmt = $pdo->prepare("
+            SELECT id
+            FROM dh_conditions
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $conditionInsertStmt = $pdo->prepare("
+            INSERT INTO dh_character_conditions (character_id, condition_id)
+            VALUES (?, ?)
+        ");
+
+        foreach ($conditionIds as $conditionId) {
+            $conditionCheckStmt->execute([$conditionId]);
+            if (!$conditionCheckStmt->fetch(PDO::FETCH_ASSOC)) {
+                throw new Exception("Unknown condition '{$conditionId}'");
+            }
+
+            $conditionInsertStmt->execute([
+                $characterId,
+                $conditionId,
             ]);
         }
     }

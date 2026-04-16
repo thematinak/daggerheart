@@ -107,6 +107,11 @@ export function buildStatsFromCharacter(character: Character): Stats {
     safeApply(card.modifiers);
   });
 
+  // -------- CONDITIONS --------
+  character.conditions?.forEach((condition) => {
+    safeApply(condition.modifiers);
+  });
+
   // -------- CUSTOM ATTRIBUTES --------
   safeApply(character.customAttributes);
 

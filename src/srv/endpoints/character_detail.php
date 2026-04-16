@@ -265,6 +265,27 @@ try {
         ];
     }, $backpackStmt->fetchAll(PDO::FETCH_ASSOC));
 
+    $conditionsStmt = $pdo->prepare("
+        SELECT
+            c.id,
+            c.name,
+            c.description,
+            c.modifiers
+        FROM dh_character_conditions cc
+        INNER JOIN dh_conditions c ON c.id = cc.condition_id
+        WHERE cc.character_id = ?
+        ORDER BY c.name ASC
+    ");
+    $conditionsStmt->execute([$characterId]);
+    $conditions = array_map(function ($row) {
+        return [
+            "id" => $row["id"],
+            "name" => $row["name"],
+            "description" => $row["description"],
+            "modifiers" => decode_json_or_default($row["modifiers"] ?? null, new stdClass()),
+        ];
+    }, $conditionsStmt->fetchAll(PDO::FETCH_ASSOC));
+
     $response = [
         "id" => $character["id"],
         "userId" => (int)$character["user_id"],
@@ -305,6 +326,7 @@ try {
         "customAttributes" => decode_json_or_default($character["customAttributes"], new stdClass()),
         "currentStats" => decode_json_or_default($character["current_stats"], new stdClass()),
         "experiences" => decode_character_experiences($character),
+        "conditions" => $conditions,
         "levelingData" => normalize_leveling_data($character["leveling_data"] ?? null),
         "weapons" => [
             "primary" => $primaryWeapon,

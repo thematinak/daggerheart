@@ -127,6 +127,41 @@ function update_bank(PDO $pdo, $characterId, $delta)
     }
 }
 
+function update_condition(PDO $pdo, $characterId, $conditionId, $action)
+{
+    $conditionStmt = $pdo->prepare("
+        SELECT id
+        FROM dh_conditions
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $conditionStmt->execute([$conditionId]);
+
+    if (!$conditionStmt->fetch(PDO::FETCH_ASSOC)) {
+        throw new Exception("Unknown condition '{$conditionId}'");
+    }
+
+    if ($action === 'add') {
+        $insertStmt = $pdo->prepare("
+            INSERT IGNORE INTO dh_character_conditions (character_id, condition_id)
+            VALUES (?, ?)
+        ");
+        $insertStmt->execute([$characterId, $conditionId]);
+        return;
+    }
+
+    if ($action === 'remove') {
+        $deleteStmt = $pdo->prepare("
+            DELETE FROM dh_character_conditions
+            WHERE character_id = ? AND condition_id = ?
+        ");
+        $deleteStmt->execute([$characterId, $conditionId]);
+        return;
+    }
+
+    throw new Exception("Unsupported action '{$action}' for target 'condition'");
+}
+
 function upsert_backpack_item(PDO $pdo, $characterId, $itemId, $delta)
 {
     $selectStmt = $pdo->prepare("
@@ -451,6 +486,16 @@ function apply_command(PDO $pdo, $characterId, $command)
         }
 
         throw new Exception("Unsupported action '{$action}' for target '{$target}'");
+    }
+
+    if ($target === 'condition' && $hasId) {
+        if (!in_array($action, ['add', 'remove'], true)) {
+            throw new Exception("Unsupported action '{$action}' for target 'condition'");
+        }
+
+        $conditionId = require_string_value($command['id'] ?? null, 'id');
+        update_condition($pdo, $characterId, $conditionId, $action);
+        return;
     }
 
     throw new Exception("Unsupported target '{$target}'");

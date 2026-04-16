@@ -4,6 +4,7 @@ import { ArmorItem } from "../types/Armor";
 import { BackpackItem } from "../types/BackpackItem";
 import { CurrentStats } from "../types/Character";
 import { CharacterClass } from "../types/CharacterClass";
+import { Condition } from "../types/Condition";
 import { CommunityItem } from "../types/Community";
 import { Domain } from "../types/Domain";
 import { Experience } from "../types/Experience";
@@ -15,7 +16,8 @@ import { WeaponItem } from "../types/Weapon";
 export type CharacterCommand =
   | { action: "add" | "remove"; target: "bank"; value: number }
   | { action: "add"; target: "item"; id: string; quantity: number }
-  | { action: "add" | "remove" | "equip"; target: "weapon" | "armor"; id: string };
+  | { action: "add" | "remove" | "equip"; target: "weapon" | "armor"; id: string }
+  | { action: "add" | "remove"; target: "condition"; id: string };
 
 export const postCharacterCommands = async (characterId: string, commands: CharacterCommand[]) => {
   const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
@@ -50,6 +52,11 @@ export const fetchCharacterClasses: () => Promise<CharacterClass[]> = async () =
 
 export const fetchCommunities: () => Promise<CommunityItem[]> = async () => {
   const res = await fetch("http://pecen.eu/daggerheart/api1/communities.php");
+  return res.json();
+}
+
+export const fetchConditions: () => Promise<Condition[]> = async () => {
+  const res = await fetch("http://pecen.eu/daggerheart/api1/conditions.php");
   return res.json();
 }
 
@@ -127,6 +134,7 @@ export type CharacterDetailResponse = {
   attributes: Partial<Attributes>;
   customAttributes: StatModifiers;
   experiences: Experience[];
+  conditions: Condition[];
   weapons: {
     primary: WeaponItem | null;
     secondary: WeaponItem | null;

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { CharacterClass } from "../types/CharacterClass";
+import { Condition } from "../types/Condition";
 import { Ancestries } from "../types/Ancestries";
 import { CommunityItem } from "../types/Community";
 import { Domain } from "../types/Domain";
@@ -7,7 +8,7 @@ import { SpecializationsItem } from "../types/Specializations";
 import { BackpackItem } from "../types/BackpackItem";
 import { WeaponItem } from "../types/Weapon";
 import { ArmorItem } from "../types/Armor";
-import { fetchAncestries, fetchArmor, fetchBackpackItems, fetchCharacterClasses, fetchCommunities, fetchDomainCards, fetchSpecializations, fetchWeapons } from "../endponts/common";
+import { fetchAncestries, fetchArmor, fetchBackpackItems, fetchCharacterClasses, fetchCommunities, fetchConditions, fetchDomainCards, fetchSpecializations, fetchWeapons } from "../endponts/common";
 import { reduceListById } from "../utils/funks";
 import NotificationCenter from "../components/NotificationCenter";
 
@@ -15,6 +16,7 @@ export type CommonData = {
   list: {
     ancestries: Ancestries[],
     characterClasses: CharacterClass[],
+    conditions: Condition[],
     communities: CommunityItem[],
     domainCards: Domain[],
     specializations: SpecializationsItem[],
@@ -25,6 +27,7 @@ export type CommonData = {
   byId: {
     ancestries: {[key: string]: Ancestries};
     characterClasses: {[key: string]: CharacterClass};
+    conditions: {[key: string]: Condition};
     communities: {[key: string]: CommunityItem};
     domainCards: {[key: string]: Domain};
     specializations: {[key: string]: SpecializationsItem};
@@ -64,6 +67,7 @@ const COMMON_DATA_DEFAULT: CommonData = {
   list: {
       ancestries: [],
       characterClasses: [],
+      conditions: [],
       communities: [],
       domainCards: [],
       specializations: [],
@@ -74,6 +78,7 @@ const COMMON_DATA_DEFAULT: CommonData = {
     byId: {
       ancestries: {},
       characterClasses: {},
+      conditions: {},
       communities: {},
       domainCards: {},
       specializations: {},
@@ -103,6 +108,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const [
         ancestries,
         classes,
+        conditions,
         communities,
         domainCards,
         specializations,
@@ -112,6 +118,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       ] = await Promise.all([
         fetchAncestries(),
         fetchCharacterClasses(),
+        fetchConditions(),
         fetchCommunities(),
         fetchDomainCards(),
         fetchSpecializations(),
@@ -124,6 +131,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         list: {
           ancestries: ancestries,
           characterClasses: classes,
+          conditions: conditions,
           communities: communities,
           domainCards: domainCards,
           specializations: specializations,
@@ -134,6 +142,7 @@ export const CommonDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         byId: {
           ancestries: reduceListById(ancestries),
           characterClasses: reduceListById(classes),
+          conditions: reduceListById(conditions),
           communities: reduceListById(communities),
           domainCards: reduceListById(domainCards),
           specializations: reduceListById(specializations),

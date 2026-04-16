@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowUp, Backpack, Clock3, Moon, ScrollText, Swords } from "lucide-react";
+import { ArrowUp, Backpack, Clock3, Moon, Plus, ScrollText, Swords } from "lucide-react";
 import SummaryCard from "../create_character/components/SummaryCard";
 import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import { Character } from "../../common/types/Character";
 import { CharacterClass } from "../../common/types/CharacterClass";
+import { Condition } from "../../common/types/Condition";
 import { SpecializationsItem } from "../../common/types/Specializations";
 import { Ancestries } from "../../common/types/Ancestries";
 import { CommunityItem } from "../../common/types/Community";
@@ -20,7 +21,8 @@ import LongRestModal from "./components/LongRestModal";
 import ShortRestModal from "./components/ShortRestModal";
 import Eyebrow from "../../common/components/Eyebrow";
 import H2 from "../../common/components/H2";
-import { CharacterDetailResponse, fetchUserCharacters } from "../../common/endponts/common";
+import { CharacterDetailResponse, fetchUserCharacters, postCharacterCommands } from "../../common/endponts/common";
+import ConditionsPanel from "./components/ConditionsPanel";
 
 const emptyCharacterClass = (data: NonNullable<CharacterDetailResponse["class"]>): CharacterClass => ({
   id: data.id,
@@ -79,6 +81,13 @@ const emptyDomain = (data: CharacterDetailResponse["domainCards"][number]): Doma
   modifiers: {},
 });
 
+const emptyCondition = (data: CharacterDetailResponse["conditions"][number]): Condition => ({
+  id: data.id,
+  name: data.name,
+  description: data.description,
+  modifiers: data.modifiers || {},
+});
+
 const normalizeAttributes = (attributes?: Partial<Attributes>): Attributes => ({
   agility: attributes?.agility ?? null,
   strength: attributes?.strength ?? null,
@@ -101,17 +110,18 @@ const normalizeExperiences = (experiences?: Experience[]): Experience[] => {
 };
 
 type DetailTab = "overview" | "combat" | "backpack";
-type CharacterActionModal = "longRest" | "shortRest" | "levelUp" | null;
+type CharacterActionModal = "longRest" | "shortRest" | "levelUp" | "conditions" | null;
 
 const CharacterDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { commonData: { byId: { characterClasses, specializations, ancestries, communities, domainCards } } } = useCommonData();
+  const { commonData: { list: { conditions: availableConditions }, byId: { characterClasses, conditions, specializations, ancestries, communities, domainCards } } } = useCommonData();
   const [characterResponse, setCharacterResponse] = useState<CharacterDetailResponse | null>(null);
   const { showError } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<DetailTab>("overview");
   const [isAdjustingStat, setIsAdjustingStat] = useState(false);
+  const [isUpdatingCondition, setIsUpdatingCondition] = useState(false);
   const [activeModal, setActiveModal] = useState<CharacterActionModal>(null);
 
   const loadCharacter = useCallback(async () => {
@@ -163,6 +173,11 @@ const CharacterDetailPage: React.FC = () => {
       return fromCommonData || emptyDomain(domainCard);
     });
 
+    const resolvedConditions = characterResponse.conditions.map((condition) => {
+      const fromCommonData = conditions[condition.id];
+      return fromCommonData || emptyCondition(condition);
+    });
+
     return {
       id: characterResponse.id,
       user_id: characterResponse.userId,
@@ -186,6 +201,7 @@ const CharacterDetailPage: React.FC = () => {
       armor: characterResponse.armor || null,
       armorInventory: characterResponse.armorInventory || [],
       experiences: normalizeExperiences(characterResponse.experiences),
+      conditions: resolvedConditions,
       domainCards: resolvedDomains,
       levelingData: characterResponse.levelingData || {},
       countedStats: {
@@ -208,7 +224,7 @@ const CharacterDetailPage: React.FC = () => {
       },
       currentStats: characterResponse.currentStats || {},
     };
-  }, [characterResponse, characterClasses, specializations, ancestries, communities, domainCards]);
+  }, [characterResponse, characterClasses, conditions, specializations, ancestries, communities, domainCards]);
 
   const stats = useMemo(() => (character ? buildStatsFromCharacter(character) : null), [character]);
 
@@ -276,6 +292,31 @@ const CharacterDetailPage: React.FC = () => {
     [character, stats, loadCharacter, showError]
   );
 
+  const handleToggleCondition = useCallback(
+    async (conditionId: string, isActive: boolean) => {
+      if (!character) {
+        return;
+      }
+
+      try {
+        setIsUpdatingCondition(true);
+        await postCharacterCommands(character.id, [
+          {
+            action: isActive ? "remove" : "add",
+            target: "condition",
+            id: conditionId,
+          },
+        ]);
+        await loadCharacter();
+      } catch (err: any) {
+        showError(err.message || "Failed to update condition");
+      } finally {
+        setIsUpdatingCondition(false);
+      }
+    },
+    [character, loadCharacter, showError]
+  );
+
   if (loading) {
     return (
       <div className={`${styles.tokens.page.section} p-8 text-center`}>
@@ -312,6 +353,22 @@ const CharacterDetailPage: React.FC = () => {
           <div>
             <Eyebrow eyebrow="Character Detail" />
             <H2>{character.name}</H2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {character.conditions.length > 0 ? (
+                character.conditions.map((condition) => (
+                  <span
+                    key={condition.id}
+                    className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}
+                  >
+                    {condition.name}
+                  </span>
+                ))
+              ) : (
+                <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.muted}`}>
+                  No active conditions
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-3 lg:w-56 lg:items-stretch">
@@ -329,6 +386,11 @@ const CharacterDetailPage: React.FC = () => {
               label="Level Up"
               icon={<ArrowUp size={16} />}
               onClick={() => setActiveModal("levelUp")}
+            />
+            <CharacterActionButton
+              label="Manage Conditions"
+              icon={<Plus size={16} />}
+              onClick={() => setActiveModal("conditions")}
             />
           </div>
         </div>
@@ -395,6 +457,16 @@ const CharacterDetailPage: React.FC = () => {
           onClose={() => setActiveModal(null)}
           character={character}
           onCharacterUpdated={loadCharacter}
+        />
+      )}
+      {character && (
+        <ConditionsPanel
+          isOpen={activeModal === "conditions"}
+          onClose={() => setActiveModal(null)}
+          character={character}
+          availableConditions={availableConditions}
+          onToggleCondition={handleToggleCondition}
+          disabled={isUpdatingCondition}
         />
       )}
     </div>

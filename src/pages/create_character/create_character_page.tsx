@@ -69,6 +69,7 @@ const CharacterCreatorPage: React.FC = () => {
       { name: "", description: "", bonus: 2 },
       { name: "", description: "", bonus: 2 },
     ],
+    conditions: [],
     domainCards: [],
     levelingData: {},
     weapons: {primary: null, secondary: null},
