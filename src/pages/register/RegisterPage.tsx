@@ -4,6 +4,7 @@ import { useAuth } from "../../common/contexts/AuthProvider";
 import styles from "../../common/types/cssColor";
 import { useNotifications } from "../../common/contexts/CommonDataProvider";
 import { registerUser } from "../../common/endponts/common";
+import ThemeToggleButton from "../../common/components/ThemeToggleButton";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,13 +32,16 @@ const RegisterPage: React.FC = () => {
         <div className="absolute left-[10%] top-20 h-44 w-44 rounded-full bg-amber-200/20 blur-3xl" />
         <div className="absolute right-[12%] bottom-16 h-56 w-56 rounded-full bg-sky-200/20 blur-3xl" />
       </div>
-      <div className={`${styles.tokens.page.section} relative z-10 flex w-full max-w-md flex-col gap-6 p-8`}>
+      <div className={`${styles.tokens.page.section} relative z-10 flex w-full max-w-md flex-col gap-6 p-6 sm:p-8`}>
+        <div className="flex justify-end">
+          <ThemeToggleButton />
+        </div>
 
         <div className="text-center">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[var(--text-accent)]">
             New Adventurer
           </div>
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-[var(--text-primary)]">DaggerHeart MP</h1>
           <p className={`mt-2 ${styles.tokens.page.subtitle}`}>Create your account</p>
         </div>
 

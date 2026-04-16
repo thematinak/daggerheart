@@ -144,19 +144,19 @@ type StatCardProps = {
 };
 
 const statMeta: Record<string, { icon: LucideIcon; tone: string; iconColor: string }> = {
-  Evasion: { icon: Rabbit, tone: "bg-sky-50 border-sky-200", iconColor: "text-sky-600" },
-  Thresholds: { icon: Crosshair, tone: "bg-amber-50 border-amber-200", iconColor: "text-amber-600" },
-  Agility: { icon: Footprints, tone: "bg-emerald-50 border-emerald-200", iconColor: "text-emerald-600" },
-  Strength: { icon: HandFist, tone: "bg-rose-50 border-rose-200", iconColor: "text-rose-600" },
-  Finesse: { icon: Crosshair, tone: "bg-violet-50 border-violet-200", iconColor: "text-violet-600" },
-  Instinct: { icon: Eye, tone: "bg-cyan-50 border-cyan-200", iconColor: "text-cyan-600" },
-  Presence: { icon: Drama, tone: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600" },
-  Knowledge: { icon: Brain, tone: "bg-indigo-50 border-indigo-200", iconColor: "text-indigo-600" },
-  Armor: { icon: Shield, tone: "bg-amber-50 border-amber-200", iconColor: "text-amber-600" },
-  HP: { icon: Droplets, tone: "bg-rose-50 border-rose-200", iconColor: "text-rose-600" },
-  Stress: { icon: Brain, tone: "bg-violet-50 border-violet-200", iconColor: "text-violet-600" },
-  Hope: { icon: Sparkles, tone: "bg-yellow-50 border-yellow-200", iconColor: "text-yellow-600" },
-  Proficiency: { icon: Swords, tone: "bg-orange-50 border-orange-200", iconColor: "text-orange-600" },
+  Evasion: { icon: Rabbit, tone: "bg-sky-50/90 border-sky-200", iconColor: "text-sky-600" },
+  Thresholds: { icon: Crosshair, tone: "bg-amber-50/90 border-amber-200", iconColor: "text-amber-600" },
+  Agility: { icon: Footprints, tone: "bg-emerald-50/90 border-emerald-200", iconColor: "text-emerald-600" },
+  Strength: { icon: HandFist, tone: "bg-rose-50/90 border-rose-200", iconColor: "text-rose-600" },
+  Finesse: { icon: Crosshair, tone: "bg-violet-50/90 border-violet-200", iconColor: "text-violet-600" },
+  Instinct: { icon: Eye, tone: "bg-cyan-50/90 border-cyan-200", iconColor: "text-cyan-600" },
+  Presence: { icon: Drama, tone: "bg-yellow-50/90 border-yellow-200", iconColor: "text-yellow-600" },
+  Knowledge: { icon: Brain, tone: "bg-indigo-50/90 border-indigo-200", iconColor: "text-indigo-600" },
+  Armor: { icon: Shield, tone: "bg-amber-50/90 border-amber-200", iconColor: "text-amber-600" },
+  HP: { icon: Droplets, tone: "bg-rose-50/90 border-rose-200", iconColor: "text-rose-600" },
+  Stress: { icon: Brain, tone: "bg-violet-50/90 border-violet-200", iconColor: "text-violet-600" },
+  Hope: { icon: Sparkles, tone: "bg-yellow-50/90 border-yellow-200", iconColor: "text-yellow-600" },
+  Proficiency: { icon: Swords, tone: "bg-orange-50/90 border-orange-200", iconColor: "text-orange-600" },
 };
 
 const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
@@ -164,7 +164,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
   const Icon = meta?.icon;
 
   return (
-  <div className="rounded-xl border border-slate-200 bg-white/88 px-1.5 py-2 shadow-[0_6px_14px_-12px_rgba(15,23,42,0.18)]">
+  <div className="rounded-xl border border-[color:var(--border-soft)] bg-[var(--surface-panel)] px-1.5 py-2 shadow-[var(--shadow-card)]">
     <div className="flex min-h-[48px] flex-col items-center justify-center gap-2">
       <div className="flex items-center gap-1.5">
         {Icon ? (
@@ -229,7 +229,7 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, proficiency, a
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="grid grid-cols-8 gap-1.5">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 xl:grid-cols-8">
         {attributeItems.map((stat) => (
           <div key={stat.label} className="min-w-0">
             <StatCard label={stat.label} value={stat.value} />
@@ -237,7 +237,7 @@ const StatsBar: React.FC<StatsBarProps> = ({ stats, currentStats, proficiency, a
         ))}
       </div>
 
-      <div className="grid grid-cols-8 gap-1.5">
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 xl:grid-cols-8">
         {defenseItems.map((stat) => (
           <div key={stat.label} className="min-w-0">
             <StatCard label={stat.label} value={stat.value} />

@@ -31,18 +31,18 @@ const ModalCard: React.FC<ModalCardProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[var(--surface-overlay)] p-3 backdrop-blur-sm sm:p-4">
       <div className="flex min-h-full items-center justify-center">
         <div
           className={[
-            "w-full rounded-[2rem] border border-white/70 bg-[linear-gradient(180deg,_rgba(255,251,235,0.98),_rgba(255,255,255,0.98))] shadow-[0_24px_80px_-30px_rgba(15,23,42,0.45)]",
+            "w-full max-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[image:var(--surface-modal)] shadow-[var(--shadow-soft)] sm:max-h-[calc(100vh-2rem)] sm:rounded-[2rem]",
             maxWidthClassName,
           ].join(" ")}
         >
-          <div className="flex items-start justify-between gap-4 border-b border-slate-200/80 px-6 py-5">
+          <div className="flex items-start justify-between gap-4 border-b border-[color:var(--border-soft)] px-4 py-4 sm:px-6 sm:py-5">
             <div>
               {eyebrow ? <Eyebrow eyebrow={eyebrow} /> : null}
-              <h3 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{title}</h3>
+              <h3 className="mt-2 text-xl font-black tracking-tight text-[var(--text-primary)] sm:text-2xl">{title}</h3>
             </div>
 
             {showCloseButton ? (

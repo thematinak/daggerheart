@@ -12,33 +12,36 @@ import { CommonDataProvider } from "./common/contexts/CommonDataProvider";
 import CreateItemPage from "./pages/content_tools/CreateItemPage";
 import CreateWeaponPage from "./pages/content_tools/CreateWeaponPage";
 import CreateArmorPage from "./pages/content_tools/CreateArmorPage";
+import { ThemeProvider } from "./common/contexts/ThemeProvider";
 import "./App.css";
 
 function App() {
   return (
-    <AuthProvider>
-      <CommonDataProvider>
-        <BrowserRouter>
-          <Routes>
+    <ThemeProvider>
+      <AuthProvider>
+        <CommonDataProvider>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <Routes>
 
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
 
-              <Route path="/" element={<CharacterListPage />} />
-              <Route path="/character/:id" element={<CharacterDetailPage />} />
-              <Route path="/create" element={<CharacterCreatorPage />} />
-              <Route path="/tools/items/new" element={<CreateItemPage />} />
-              <Route path="/tools/weapons/new" element={<CreateWeaponPage />} />
-              <Route path="/tools/armor/new" element={<CreateArmorPage />} />
+                <Route path="/" element={<CharacterListPage />} />
+                <Route path="/character/:id" element={<CharacterDetailPage />} />
+                <Route path="/create" element={<CharacterCreatorPage />} />
+                <Route path="/tools/items/new" element={<CreateItemPage />} />
+                <Route path="/tools/weapons/new" element={<CreateWeaponPage />} />
+                <Route path="/tools/armor/new" element={<CreateArmorPage />} />
 
-            </Route>
+              </Route>
 
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
         </CommonDataProvider>
       </AuthProvider>
+    </ThemeProvider>
   );
 
 

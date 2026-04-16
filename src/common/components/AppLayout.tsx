@@ -3,6 +3,7 @@ import { Outlet, Link, NavLink, useLocation } from "react-router-dom";
 import { ChevronRight, PanelLeftClose, PanelLeftOpen, PlusSquare, Shield, Swords } from "lucide-react";
 import { useAuth } from "../contexts/AuthProvider";
 import styles from "../types/cssColor";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 const AppLayout = () => {
   const { logout } = useAuth();
@@ -44,39 +45,40 @@ const AppLayout = () => {
         <div className="absolute bottom-10 left-1/3 h-40 w-40 rounded-full bg-orange-200/20 blur-3xl" />
       </div>
 
-      <header className="sticky top-0 z-20 border-b border-white/60 bg-white/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-20 border-b border-[color:var(--border-soft)] bg-[var(--surface-header)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-screen-2xl flex-col gap-3 px-3 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
 
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[var(--text-accent)]">
               With Love
             </div>
-            <h1 className="text-xl font-black tracking-tight text-slate-950">DaggerHeart MP</h1>
+            <h1 className="text-xl font-black tracking-tight text-[var(--text-shell-strong)]">DaggerHeart MP</h1>
           </div>
 
-          <nav className="flex items-center gap-2 rounded-full border border-amber-200/80 bg-white/75 p-1 text-sm shadow-sm">
-            <NavLink to="/" className={({ isActive }) => `rounded-full px-4 py-2 font-medium transition ${isActive ? "bg-amber-100 text-amber-900" : "text-slate-700 hover:bg-amber-50 hover:text-amber-900"}`}>Characters</NavLink>
-            <NavLink to="/create" className={({ isActive }) => `rounded-full px-4 py-2 font-medium transition ${isActive ? "bg-amber-100 text-amber-900" : "text-slate-700 hover:bg-amber-50 hover:text-amber-900"}`}>Create</NavLink>
+          <nav className="flex w-full flex-wrap items-center gap-2 rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[var(--surface-panel)] p-1.5 text-sm shadow-sm lg:w-auto lg:rounded-full">
+            <NavLink to="/" className={({ isActive }) => `rounded-full px-3 py-2 font-medium transition sm:px-4 ${isActive ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}>Characters</NavLink>
+            <NavLink to="/create" className={({ isActive }) => `rounded-full px-3 py-2 font-medium transition sm:px-4 ${isActive ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}>Create</NavLink>
             <button
               type="button"
               onClick={() => setIsToolsOpen((state) => !state)}
-              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 font-medium transition ${isToolRoute || isToolsOpen ? "bg-amber-100 text-amber-900" : "text-slate-700 hover:bg-amber-50 hover:text-amber-900"}`}
+              className={`inline-flex items-center gap-2 rounded-full px-3 py-2 font-medium transition sm:px-4 ${isToolRoute || isToolsOpen ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}
             >
               {isToolsOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
               Tools
             </button>
-            <Link to="/login" onClick={logout} className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-rose-50 hover:text-rose-700">Logout</Link>
+            <ThemeToggleButton className="min-w-[92px] rounded-full px-3 py-2 sm:px-4" />
+            <Link to="/login" onClick={logout} className="rounded-full px-3 py-2 font-medium text-[var(--text-secondary)] transition hover:bg-rose-50 hover:text-rose-700 sm:px-4">Logout</Link>
           </nav>
 
         </div>
 
         <div
-          className={`mx-auto w-full max-w-6xl overflow-hidden px-4 transition-all duration-300 sm:px-6 lg:px-8 ${
+          className={`mx-auto w-full max-w-screen-2xl overflow-hidden px-3 transition-all duration-300 sm:px-5 lg:px-8 ${
             isToolsOpen ? "max-h-72 pb-4 opacity-100" : "max-h-0 pb-0 opacity-0"
           }`}
         >
-          <div className="ml-auto w-full max-w-md rounded-[1.5rem] border border-amber-200/80 bg-white/88 p-3 shadow-[0_24px_60px_-40px_rgba(120,53,15,0.45)] backdrop-blur">
-            <div className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-amber-700">
+          <div className="ml-auto w-full rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[var(--surface-panel)] p-3 shadow-[var(--shadow-card)] backdrop-blur lg:max-w-md">
+            <div className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-accent)]">
               Content Tools
             </div>
             <div className="grid gap-2">
@@ -92,7 +94,7 @@ const AppLayout = () => {
                       "flex items-center justify-between rounded-2xl border px-4 py-3 transition",
                       isActive
                         ? "border-amber-300 bg-amber-50 text-amber-900"
-                        : "border-slate-200 bg-white/90 text-slate-700 hover:border-amber-200 hover:bg-amber-50/60",
+                        : "border-[color:var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:border-amber-200 hover:bg-amber-50/60",
                     ].join(" ")}
                   >
                     <div className="flex items-center gap-3">
@@ -101,10 +103,10 @@ const AppLayout = () => {
                       </span>
                       <div>
                         <div className="text-sm font-semibold">{link.label}</div>
-                        <div className="text-xs text-slate-500">{link.description}</div>
+                        <div className="text-xs text-[var(--text-muted)]">{link.description}</div>
                       </div>
                     </div>
-                    <ChevronRight size={16} className="text-slate-400" />
+                    <ChevronRight size={16} className="text-[var(--text-muted)]" />
                   </NavLink>
                 );
               })}
@@ -120,8 +122,8 @@ const AppLayout = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="relative z-10 border-t border-white/60 bg-white/55 backdrop-blur-xl">
-        <div className={`mx-auto max-w-6xl px-4 py-4 text-center text-sm sm:px-6 lg:px-8 ${styles.semantic.muted.text}`}>
+      <footer className="relative z-10 border-t border-[color:var(--border-soft)] bg-[var(--surface-footer)] backdrop-blur-xl">
+        <div className="mx-auto max-w-screen-2xl px-3 py-4 text-center text-sm text-[var(--text-shell-muted)] sm:px-5 lg:px-8">
           © {new Date().getFullYear()} DaggerHeart MP
         </div>
       </footer>
