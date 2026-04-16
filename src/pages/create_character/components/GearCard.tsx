@@ -5,6 +5,7 @@ import { NextPreviousButton } from "./NextButton";
 import { SelectedWeapons, WeaponItem } from "../../../common/types/Weapon";
 import { ArmorItem } from "../../../common/types/Armor";
 import Section from "../../../common/components/Section";
+import styles from "../../../common/types/cssColor";
 
 type GearCardProps = {
   proficiency: number;
@@ -70,12 +71,15 @@ const GearCard: React.FC<GearCardProps> = ({
   const canUseSecondary = primary && primary.burden === "one-handed";
 
   return (
-    <Section title="Choose Your Gear" subtitle="Pick the weapons and armor that define how your character enters the fight.">
+    <Section
+      title="Choose Your Gear"
+      subtitle="Pick the weapons and armor that define how your character enters the fight."
+    >
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4">
-          <div className="text-center">
-            <h3 className="text-xl font-bold text-slate-950">Select Primary Weapon</h3>
-            <p className="mt-1 text-sm text-slate-500">
+        <div className={styles.tokens.panel.base}>
+          <div className="mb-4 text-center">
+            <h3 className="text-xl font-bold text-[var(--text-primary)]">Select Primary Weapon</h3>
+            <p className={`mt-1 ${styles.tokens.text.muted}`}>
               Your main weapon determines whether you can equip an off-hand option.
             </p>
           </div>
@@ -89,10 +93,10 @@ const GearCard: React.FC<GearCardProps> = ({
         </div>
 
         {canUseSecondary && (
-          <div className="flex flex-col gap-4">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-slate-950">Optional Secondary Weapon</h3>
-              <p className="mt-1 text-sm text-slate-500">
+          <div className={styles.tokens.panel.base}>
+            <div className="mb-4 text-center">
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">Optional Secondary Weapon</h3>
+              <p className={`mt-1 ${styles.tokens.text.muted}`}>
                 One-handed primary weapons let you carry a second option.
               </p>
             </div>
@@ -106,10 +110,10 @@ const GearCard: React.FC<GearCardProps> = ({
           </div>
         )}
 
-        <div className="flex flex-col gap-4">
-          <div className="text-center">
-            <h3 className="text-xl font-bold text-slate-950">Select Armor</h3>
-            <p className="mt-1 text-sm text-slate-500">
+        <div className={styles.tokens.panel.base}>
+          <div className="mb-4 text-center">
+            <h3 className="text-xl font-bold text-[var(--text-primary)]">Select Armor</h3>
+            <p className={`mt-1 ${styles.tokens.text.muted}`}>
               Balance protection, thresholds, and special armor abilities.
             </p>
           </div>

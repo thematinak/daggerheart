@@ -3,8 +3,8 @@ import { Experience } from "../../../common/types/Experience";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
-import H2 from "../../../common/components/H2";
 import Subtitle from "../../../common/components/Subtitle";
+import Section from "../../../common/components/Section";
 
 type ExperienceCardProps = {
   item: Experience[];
@@ -30,18 +30,16 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   const secondaryExperience = ensureExperience(item, 1);
 
   return (
-    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
-      <div className="text-center">
-        <Eyebrow eyebrow="Character Builder" />
-        <H2>Define Experiences</H2>
-        <Subtitle text="Add the two experiences that best reflect your character's history and expertise." />
-      </div>
-
+    <Section
+      eyebrow="Character Builder"
+      title="Define Experiences"
+      subtitle="Add the two experiences that best reflect your character's history and expertise."
+    >
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+        <div className={styles.tokens.panel.base}>
           <div className="mb-4">
             <Eyebrow eyebrow="Primary" />
-            <h3 className="mt-1 text-xl font-bold text-slate-950">Primary Experience</h3>
+            <h3 className="mt-1 text-xl font-bold text-[var(--text-primary)]">Primary Experience</h3>
             <Subtitle text="The experience your character leans on most often." />
           </div>
 
@@ -82,10 +80,10 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+        <div className={styles.tokens.panel.base}>
           <div className="mb-4">
             <Eyebrow eyebrow="Secondary" />
-            <h3 className="mt-1 text-xl font-bold text-slate-950">Secondary Experience</h3>
+            <h3 className="mt-1 text-xl font-bold text-[var(--text-primary)]">Secondary Experience</h3>
             <Subtitle text="A supporting experience that rounds out the character." />
           </div>
 
@@ -130,7 +128,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
       {(showBack || showNext) && (
         <NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
       )}
-    </div>
+    </Section>
   );
 };
 

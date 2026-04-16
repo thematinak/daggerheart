@@ -2,7 +2,6 @@ import React from "react";
 import GameCard from "../../../common/components/GameCard";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
-import H2 from "../../../common/components/H2";
 import Section from "../../../common/components/Section";
 
 export type Attributes = {
@@ -54,27 +53,27 @@ export const AttributesGrid: React.FC<AttributesGridProps> = ({
 
   return (
     <Section title="Assign Attributes" subtitle="Every modifier can be used only once. Pick the spread that fits your build best.">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {attributes.map((item) => (
-            <AttributeCard
-              key={item.id}
-              item={item}
-              usedIds={usedIds}
-              chosen={selected[item.name]}
-              onSelect={(value) => onSelect({ ...selected, [item.name]: value })}
-              onDeselect={() => onSelect({ ...selected, [item.name]: null })}
-            />
-          ))}
-        </div>
-
-        {(showBack || showNext) && (
-          <NextPreviousButton
-            showBack={showBack}
-            showNext={showNext}
-            onBack={onBack}
-            onNext={onNext}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {attributes.map((item) => (
+          <AttributeCard
+            key={item.id}
+            item={item}
+            usedIds={usedIds}
+            chosen={selected[item.name]}
+            onSelect={(value) => onSelect({ ...selected, [item.name]: value })}
+            onDeselect={() => onSelect({ ...selected, [item.name]: null })}
           />
-        )}
+        ))}
+      </div>
+
+      {(showBack || showNext) && (
+        <NextPreviousButton
+          showBack={showBack}
+          showNext={showNext}
+          onBack={onBack}
+          onNext={onNext}
+        />
+      )}
     </Section>
   );
 };
@@ -96,24 +95,27 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
 }) => {
   return (
     <GameCard selected={!!chosen} hover={false}>
-      <div className="flex min-h-[240px] flex-col">
+      <div className="flex min-h-[240px] flex-col gap-4">
         <div className="mb-4">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+          <div className={styles.tokens.text.label}>
             Attribute
           </div>
-          <h3 className="mt-1 text-xl font-black capitalize text-slate-950">{item.name}</h3>
+          <h3 className="mt-1 text-xl font-black capitalize text-[var(--text-primary)]">{item.name}</h3>
         </div>
 
-        <ul className={`mb-4 space-y-1 text-sm ${styles.gray.text}`}>
+        <ul className={`mb-4 space-y-2 text-sm ${styles.gray.text}`}>
           {item.skills.map((skill) => (
-            <li key={skill} className="rounded-xl bg-slate-50 px-3 py-2">
+            <li
+              key={skill}
+              className="rounded-xl border border-[color:var(--border-soft)] bg-[var(--surface-muted)] px-3 py-2"
+            >
               {skill}
             </li>
           ))}
         </ul>
 
         <div className="mt-auto">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+          <div className={`mb-2 ${styles.tokens.text.label}`}>
             Available Values
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -141,8 +143,8 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
                     isSelected
                       ? "border-emerald-400 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200"
                       : isUsedElsewhere
-                        ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 opacity-60"
-                        : "border-amber-300 bg-amber-50 text-amber-900 hover:-translate-y-0.5 hover:bg-amber-100",
+                        ? "cursor-not-allowed border-[color:var(--border-soft)] bg-[var(--surface-muted)] text-[var(--text-muted)] opacity-60"
+                        : "border-[color:var(--border-strong)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent-text)] hover:-translate-y-0.5 hover:brightness-110",
                   ].join(" ")}
                 >
                   {option.value > 0 ? `+${option.value}` : `${option.value}`}

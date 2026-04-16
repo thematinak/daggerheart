@@ -2,7 +2,7 @@ import React from "react";
 import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
-import H2 from "../../../common/components/H2";
+import Section from "../../../common/components/Section";
 
 export type InfoItem = {
   name: string;
@@ -27,17 +27,13 @@ const InfoCard: React.FC<InfoCardProps> = ({
   onBack,
 }) => {
   return (
-    <div className={`${styles.tokens.page.section} flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
-      <div className="text-center">
-        <Eyebrow eyebrow="Character Builder" />
-        <H2>Basic Character Details</H2>
-        <p className={styles.tokens.page.subtitle}>
-          Give your character a name and a short visual description to anchor the build.
-        </p>
-      </div>
-
+    <Section
+      eyebrow="Character Builder"
+      title="Basic Character Details"
+      subtitle="Give your character a name and a short visual description to anchor the build."
+    >
       <div className="grid gap-5">
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+        <div className={styles.tokens.panel.base}>
           <div className="mb-3">
             <Eyebrow eyebrow="Identity" />
             <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
@@ -52,7 +48,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           />
         </div>
 
-        <div className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-sm">
+        <div className={styles.tokens.panel.base}>
           <div className="mb-3">
             <Eyebrow eyebrow="Presence" />
             <label className={`mt-1 block text-sm font-semibold ${styles.gray.text}`}>
@@ -71,7 +67,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
       {(showBack || showNext) && (
         <NextPreviousButton showBack={showBack} showNext={showNext} onBack={onBack} onNext={onNext} />
       )}
-    </div>
+    </Section>
   );
 };
 

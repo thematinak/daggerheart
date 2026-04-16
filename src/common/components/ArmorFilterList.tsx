@@ -49,7 +49,7 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
     <div className="flex flex-col gap-5">
 
       {!selected && (
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className={`${styles.tokens.panel.muted} grid gap-3 md:grid-cols-3`}>
           <input
             placeholder="Name"
             onChange={(e) => setFilters({ ...filters, name: e.target.value })}
@@ -84,7 +84,11 @@ const ArmorFilterList: React.FC<Props> = ({ selected, onSelect }) => {
 
       {/* CARDS */}
       <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
-        {items.length === 0 && <p>No armor found</p>}
+        {items.length === 0 && (
+          <div className="md:col-span-2 lg:col-span-3">
+            <div className={styles.tokens.emptyState}>No armor found.</div>
+          </div>
+        )}
 
         {(selected ? [selected] : items).map((a) => (
           <ArmorCard

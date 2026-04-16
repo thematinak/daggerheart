@@ -175,8 +175,8 @@ const tokens: ComponentTokens = {
     bar: "relative h-2 w-full overflow-hidden rounded-full border border-[color:var(--border-soft)] bg-[var(--surface-panel)] shadow-inner",
     progress: "h-full rounded-full bg-[linear-gradient(90deg,_#b45309,_#f59e0b,_#fbbf24)] transition-all duration-300",
     stepBase: "flex h-11 w-11 items-center justify-center rounded-2xl border font-semibold shadow-sm transition-all",
-    active: "border-amber-500 bg-amber-100 text-amber-900 ring-2 ring-amber-200/80",
-    completed: "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100",
+    active: "border-[color:var(--border-strong)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent-text)] ring-2 ring-[var(--ring-accent)]",
+    completed: "border-[color:var(--border-strong)] bg-[var(--surface-accent)] text-[var(--pill-accent-text)] hover:brightness-105",
     upcoming: "border-[color:var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-muted)]",
   },
   input: {

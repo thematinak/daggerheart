@@ -63,7 +63,7 @@ const WeaponFilterList: React.FC<Props> = ({
     <div className="flex flex-col gap-5">
 
       {!selected && (
-        <div className="grid gap-3 md:grid-cols-5">
+        <div className={`${styles.tokens.panel.muted} grid gap-3 md:grid-cols-5`}>
           <select
             onChange={(e) => setFilters({ ...filters, attribute: e.target.value })}
             className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
@@ -127,7 +127,11 @@ const WeaponFilterList: React.FC<Props> = ({
 
       {/* CARDS */}
       <div className={selected ? "grid grid-cols-1" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
-        {items.length === 0 && <p>No weapons found</p>}
+        {items.length === 0 && (
+          <div className="md:col-span-2 lg:col-span-3">
+            <div className={styles.tokens.emptyState}>No weapons found.</div>
+          </div>
+        )}
 
         {(selected ? [selected] : items).map((w) => (
           <WeaponCard

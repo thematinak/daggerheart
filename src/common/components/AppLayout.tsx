@@ -32,6 +32,9 @@ const AppLayout = () => {
   ]), []);
 
   const isToolRoute = toolLinks.some((link) => location.pathname.startsWith(link.to.replace("/new", "")));
+  const navItemBase = "rounded-full px-3 py-2 font-medium transition sm:px-4";
+  const navItemActive = "border border-[color:var(--border-strong)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent-text)]";
+  const navItemInactive = "text-[var(--text-secondary)] hover:bg-[var(--surface-accent)] hover:text-[var(--pill-accent-text)]";
 
   useEffect(() => {
     setIsToolsOpen(false);
@@ -56,12 +59,12 @@ const AppLayout = () => {
           </div>
 
           <nav className="flex w-full flex-wrap items-center gap-2 rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[var(--surface-panel)] p-1.5 text-sm shadow-sm lg:w-auto lg:rounded-full">
-            <NavLink to="/" className={({ isActive }) => `rounded-full px-3 py-2 font-medium transition sm:px-4 ${isActive ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}>Characters</NavLink>
-            <NavLink to="/create" className={({ isActive }) => `rounded-full px-3 py-2 font-medium transition sm:px-4 ${isActive ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}>Create</NavLink>
+            <NavLink to="/" className={({ isActive }) => `${navItemBase} ${isActive ? navItemActive : navItemInactive}`}>Characters</NavLink>
+            <NavLink to="/create" className={({ isActive }) => `${navItemBase} ${isActive ? navItemActive : navItemInactive}`}>Create</NavLink>
             <button
               type="button"
               onClick={() => setIsToolsOpen((state) => !state)}
-              className={`inline-flex items-center gap-2 rounded-full px-3 py-2 font-medium transition sm:px-4 ${isToolRoute || isToolsOpen ? "bg-amber-100 text-amber-900" : "text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-900"}`}
+              className={`inline-flex items-center gap-2 ${navItemBase} ${isToolRoute || isToolsOpen ? navItemActive : navItemInactive}`}
             >
               {isToolsOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
               Tools
@@ -93,12 +96,12 @@ const AppLayout = () => {
                     className={({ isActive }) => [
                       "flex items-center justify-between rounded-2xl border px-4 py-3 transition",
                       isActive
-                        ? "border-amber-300 bg-amber-50 text-amber-900"
-                        : "border-[color:var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:border-amber-200 hover:bg-amber-50/60",
+                        ? "border-[color:var(--border-strong)] bg-[var(--surface-accent)] text-[var(--pill-accent-text)]"
+                        : "border-[color:var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:border-[color:var(--border-strong)] hover:bg-[var(--surface-accent)] hover:text-[var(--pill-accent-text)]",
                     ].join(" ")}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--border-soft)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent-text)]">
                         <Icon size={18} />
                       </span>
                       <div>
