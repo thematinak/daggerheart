@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowUp, Backpack, Clock3, Moon, Plus, ScrollText, Swords } from "lucide-react";
 import SummaryCard from "../create_character/components/SummaryCard";
@@ -123,6 +123,7 @@ const CharacterDetailPage: React.FC = () => {
   const [isAdjustingStat, setIsAdjustingStat] = useState(false);
   const [isUpdatingCondition, setIsUpdatingCondition] = useState(false);
   const [activeModal, setActiveModal] = useState<CharacterActionModal>(null);
+  const hasLoadedCharacterRef = useRef(false);
 
   const loadCharacter = useCallback(async () => {
     if (!id) {
@@ -132,9 +133,12 @@ const CharacterDetailPage: React.FC = () => {
     }
 
     try {
-      setLoading(true);
+      if (!hasLoadedCharacterRef.current) {
+        setLoading(true);
+      }
       const data = await fetchUserCharacters(id);
       setCharacterResponse(data);
+      hasLoadedCharacterRef.current = true;
     } catch (err: any) {
       showError(err.message || "Failed to load character");
     } finally {
@@ -143,6 +147,8 @@ const CharacterDetailPage: React.FC = () => {
   }, [id, showError]);
 
   useEffect(() => {
+    hasLoadedCharacterRef.current = false;
+    setLoading(true);
     loadCharacter();
   }, [id, loadCharacter]);
 

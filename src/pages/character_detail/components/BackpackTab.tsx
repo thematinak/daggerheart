@@ -288,7 +288,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
         <div className="grid gap-4 lg:grid-cols-2">
           <div>
-            <h3 className="mb-4 text-xl font-bold text-slate-950">Backpack Items</h3>
+            <h3 className="mb-4 text-xl font-bold text-[var(--text-primary)]">Backpack Items</h3>
             <div className="grid gap-3">
               {character.backpack.length > 0 ? (
                 character.backpack.map((item) => <BackpackItemCard key={`${item.id}-owned`} item={item} />)
@@ -299,7 +299,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
           </div>
 
           <div>
-            <h3 className="mb-4 text-xl font-bold text-slate-950">Stored Equipment</h3>
+            <h3 className="mb-4 text-xl font-bold text-[var(--text-primary)]">Stored Equipment</h3>
             <div className="grid gap-4">
               {character.weaponInventory.length > 0 ? (
                 character.weaponInventory.map((weapon) => (
@@ -364,7 +364,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
         <div>
           <div>
-            <h3 className="mb-4 text-xl font-bold text-slate-950">Add To Character</h3>
+            <h3 className="mb-4 text-xl font-bold text-[var(--text-primary)]">Add To Character</h3>
             <div className="grid gap-4">
               <div className="grid gap-3 sm:grid-cols-3">
                 <button
@@ -392,8 +392,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
               <div className="grid gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-slate-950">Pending item additions</div>
-                  <p className="mt-1 text-sm text-slate-500">Prepared additions can be saved straight to the character.</p>
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">Pending item additions</div>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">Prepared additions can be saved straight to the character.</p>
                 </div>
 
                 {pendingSelections.items.length > 0 ? (
@@ -404,13 +404,13 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="text-sm font-semibold text-slate-950">{item.name}</div>
-                          <p className="mt-1 text-sm text-slate-600">{item.description}</p>
+                          <div className="text-sm font-semibold text-[var(--text-primary)]">{item.name}</div>
+                          <p className="mt-1 text-sm text-[var(--text-secondary)]">{item.description}</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => removePendingItem(index)}
-                          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:border-slate-400 hover:bg-white"
+                          className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} rounded-full px-3 py-1 text-xs uppercase tracking-wide`}
                         >
                           Remove
                         </button>
@@ -423,7 +423,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
               </div>
 
               <div className="grid gap-3">
-                <div className="text-sm font-semibold text-slate-950">Pending weapon additions</div>
+                <div className="text-sm font-semibold text-[var(--text-primary)]">Pending weapon additions</div>
                 {pendingSelections.weapons.length > 0 ? (
                   pendingSelections.weapons.map((weapon, index) => (
                     <div key={`${weapon.id}-pending-weapon-${index}`} className="grid gap-2">
@@ -438,7 +438,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                         <button
                           type="button"
                           onClick={() => removePendingWeapon(index)}
-                          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:border-slate-400 hover:bg-white"
+                          className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} rounded-full px-3 py-1 text-xs uppercase tracking-wide`}
                         >
                           Remove
                         </button>
@@ -451,7 +451,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
               </div>
 
               <div className="grid gap-3">
-                <div className="text-sm font-semibold text-slate-950">Pending armor additions</div>
+                <div className="text-sm font-semibold text-[var(--text-primary)]">Pending armor additions</div>
                 {pendingSelections.armor.length > 0 ? (
                   pendingSelections.armor.map((armor, index) => (
                     <div key={`${armor.id}-pending-armor-${index}`} className="grid gap-2">
@@ -465,7 +465,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
                         <button
                           type="button"
                           onClick={() => removePendingArmor(index)}
-                          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700 transition hover:border-slate-400 hover:bg-white"
+                          className={`${styles.tokens.button.base} ${styles.tokens.button.secondary} rounded-full px-3 py-1 text-xs uppercase tracking-wide`}
                         >
                           Remove
                         </button>
@@ -479,8 +479,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
 
               <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                 <div className="flex flex-col gap-1">
-                  <div className="text-sm font-semibold text-slate-950">Save pending additions</div>
-                  <p className="text-sm text-slate-500">
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">Save pending additions</div>
+                  <p className="text-sm text-[var(--text-muted)]">
                     Items, weapons, and armor will be written to the database and refreshed into the page state.
                   </p>
                 </div>
@@ -524,8 +524,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
           <div className="grid gap-3 rounded-[1.5rem] border border-amber-200 bg-amber-50/60 p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-lg font-bold text-slate-950">{item.name}</div>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{item.description}</p>
+                <div className="text-lg font-bold text-[var(--text-primary)]">{item.name}</div>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p>
               </div>
               <TypeBadge type={item.type} />
             </div>
@@ -597,13 +597,13 @@ const PickerCard: React.FC<{ item: BackpackItem; selected: boolean }> = ({ item,
     <div className="flex h-full flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="text-base font-bold text-slate-950">{item.name}</div>
-          <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">{item.id}</div>
+          <div className="text-base font-bold text-[var(--text-primary)]">{item.name}</div>
+          <div className="mt-1 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">{item.id}</div>
         </div>
         <TypeBadge type={item.type} />
       </div>
 
-      <p className="text-sm leading-6 text-slate-600">{item.description}</p>
+      <p className="text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p>
 
       <div className="mt-auto flex flex-wrap gap-2">
         <InfoPill label={`Roll ${item.roll}`} />
@@ -616,8 +616,8 @@ const BackpackItemCard: React.FC<{ item: BackpackItem }> = ({ item }) => (
   <div className={styles.tokens.panel.muted}>
     <div className="flex items-start justify-between gap-3">
       <div>
-        <div className="text-sm font-semibold text-slate-950">{item.name}</div>
-        <p className="mt-1 text-sm text-slate-600">{item.description}</p>
+        <div className="text-sm font-semibold text-[var(--text-primary)]">{item.name}</div>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">{item.description}</p>
       </div>
       <div className="flex flex-col items-end gap-2">
         <TypeBadge type={item.type} />
@@ -625,7 +625,7 @@ const BackpackItemCard: React.FC<{ item: BackpackItem }> = ({ item }) => (
           Roll {item.roll}
         </span>
         {typeof item.quantity === "number" ? (
-          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Qty {item.quantity}</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">Qty {item.quantity}</span>
         ) : null}
       </div>
     </div>

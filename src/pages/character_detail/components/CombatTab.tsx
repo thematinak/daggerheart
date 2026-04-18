@@ -27,7 +27,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
       <div className="mb-4 flex items-center gap-2">
         <Shield size={18} />
         <div>
-          <h3 className="text-xl font-bold">Combat Tracker</h3>
+          <h3 className="text-xl font-bold text-[var(--text-primary)]">Combat Tracker</h3>
         </div>
       </div>
 
@@ -158,7 +158,7 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
                       <div className={styles.tokens.text.label}>
                         Domain Card
                       </div>
-                      <h4 className="mt-1 text-lg font-bold text-slate-950">{domainCard.name}</h4>
+                      <h4 className="mt-1 text-lg font-bold text-[var(--text-primary)]">{domainCard.name}</h4>
                     </div>
                     <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
                       Level {domainCard.level}
@@ -192,7 +192,7 @@ const ResourceAdjustCard: React.FC<{
     <div className="flex items-start justify-between gap-3">
       <div>
         <div className={styles.tokens.text.label}>{label}</div>
-        <div className="mt-1 text-2xl font-black text-slate-950">{value}</div>
+        <div className="mt-1 text-2xl font-black text-[var(--text-primary)]">{value}</div>
       </div>
 
       <div className="flex gap-2">

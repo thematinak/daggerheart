@@ -35,7 +35,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
       <div className="flex min-h-full items-center justify-center">
         <div
           className={[
-            "w-full max-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[image:var(--surface-modal)] shadow-[var(--shadow-soft)] sm:max-h-[calc(100vh-2rem)] sm:rounded-[2rem]",
+            "flex w-full max-h-[calc(100vh-1.5rem)] flex-col overflow-hidden rounded-[1.5rem] border border-[color:var(--border-soft)] bg-[image:var(--surface-modal)] shadow-[var(--shadow-soft)] sm:max-h-[calc(100vh-2rem)] sm:rounded-[2rem]",
             maxWidthClassName,
           ].join(" ")}
         >
@@ -57,7 +57,7 @@ const ModalCard: React.FC<ModalCardProps> = ({
             ) : null}
           </div>
 
-          <div className={bodyClassName}>{children}</div>
+          <div className={["min-h-0 flex-1 overflow-y-auto", bodyClassName].join(" ")}>{children}</div>
         </div>
       </div>
     </div>

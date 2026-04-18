@@ -50,11 +50,11 @@ const DetailRow: React.FC<{ label: string; value?: React.ReactNode; className?: 
   value,
   className = "",
 }) => (
-  <div className={`rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 ${className}`}>
+  <div className={`rounded-2xl border border-[color:var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 ${className}`}>
     <div className="text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-700">
       {label}
     </div>
-    <div className="mt-1 text-sm font-medium text-slate-900">{value || "-"}</div>
+    <div className="mt-1 text-sm font-medium text-[var(--text-primary)]">{value || "-"}</div>
   </div>
 );
 
@@ -111,11 +111,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             <div className="grid gap-3">
               <DetailRow label="Class" value={character.class?.name} />
               {character.class?.description && (
-                <p className="text-sm leading-6 text-slate-600">{character.class.description}</p>
+                <p className="text-sm leading-6 text-[var(--text-secondary)]">{character.class.description}</p>
               )}
               <DetailRow label="Specialization" value={character.specialization?.name} />
               {character.specialization?.description && (
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-sm leading-6 text-[var(--text-secondary)]">
                   {character.specialization.description}
                 </p>
               )}
@@ -126,11 +126,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             <div className="grid gap-3">
               <DetailRow label="Ancestry" value={character.ancestry?.name} />
               {character.ancestry?.description && (
-                <p className="text-sm leading-6 text-slate-600">{character.ancestry.description}</p>
+                <p className="text-sm leading-6 text-[var(--text-secondary)]">{character.ancestry.description}</p>
               )}
               <DetailRow label="Community" value={character.community?.name} />
               {character.community?.description && (
-                <p className="text-sm leading-6 text-slate-600">{character.community.description}</p>
+                <p className="text-sm leading-6 text-[var(--text-secondary)]">{character.community.description}</p>
               )}
             </div>
           </SummarySection>
@@ -148,7 +148,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">No domains selected.</p>
+              <p className="text-sm text-[var(--text-muted)]">No domains selected.</p>
             )}
           </SummarySection>
 
@@ -157,12 +157,12 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
               {Object.entries(character.attributes).map(([key, value]) => (
                 <div
                   key={key}
-                  className="rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-3 text-center shadow-sm"
+                  className="rounded-2xl border border-[color:var(--border-soft)] bg-[var(--surface-panel)] px-4 py-3 text-center shadow-sm"
                 >
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
                     {formatLabel(key)}
                   </div>
-                  <div className="mt-2 text-2xl font-black text-slate-900">{value?.value ?? "-"}</div>
+                  <div className="mt-2 text-2xl font-black text-[var(--text-primary)]">{value?.value ?? "-"}</div>
                 </div>
               ))}
             </div>
@@ -191,7 +191,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
                 <div key={index} className="border-b border-slate-200 pb-3">
                   <DetailRow label={(index + 1) + ". Experience"} value={experience.name + (experience.bonus ? ` (+${experience.bonus})` : "")} />
                   {experience.description && (
-                    <p className="text-sm leading-6 text-slate-600">
+                    <p className="text-sm leading-6 text-[var(--text-secondary)]">
                       {experience.description}
                     </p>
                   )}
@@ -207,7 +207,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
               className="lg:col-span-2"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <p className="max-w-2xl text-sm leading-6 text-slate-600">
+                <p className="max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
                   {onCreate
                     ? "This screen is now your final checkpoint. If everything feels right, create the character and send this build into the world."
                     : "Review the full build, stats, gear, and background details for this character."}

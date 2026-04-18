@@ -51,7 +51,7 @@ const Bank: React.FC<{character: Character; onCharacterUpdated: () => Promise<vo
     return (
         <div className="grid gap-4">
           <div>
-            <h3 className="mt-2 text-xl font-bold text-slate-950">Character Bank</h3>
+            <h3 className="mt-2 text-xl font-bold text-[var(--text-primary)]">Character Bank</h3>
             <p className={`mt-1 ${styles.tokens.text.muted}`}>
               Total value: {character.bank} handful
             </p>
@@ -112,7 +112,7 @@ const BankUnitCard: React.FC<{
       </div>
       <div>
         <div className={styles.tokens.text.label}>{label}</div>
-        <div className="text-2xl font-black text-slate-950">{value}</div>
+        <div className="text-2xl font-black text-[var(--text-primary)]">{value}</div>
       </div>
     </div>
     <p className={`mt-3 ${styles.tokens.text.muted}`}>{note}</p>
