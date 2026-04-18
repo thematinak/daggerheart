@@ -3,6 +3,7 @@ import ContentToolShell from "../../common/components/ContentToolShell";
 import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
 import ModifierListBuilder, { ModifierEntry, buildModifierRecord } from "../../common/components/ModifierListBuilder";
+import DamageListBuilder, { DamageEntry, buildDamageRecord } from "../../common/components/DamageListBuilder";
 
 const CreateWeaponPage: React.FC = () => {
   const { refreshCommonData } = useCommonData();
@@ -17,8 +18,8 @@ const CreateWeaponPage: React.FC = () => {
     slot: "primary" as "primary" | "secondary",
     ability: "",
     abilityDescription: "",
-    damage: "{\"flat\":1}",
   });
+  const [damageEntries, setDamageEntries] = useState<DamageEntry[]>([{ key: "flat", value: 1 }]);
   const [modifierEntries, setModifierEntries] = useState<ModifierEntry[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const { showError, showInfo } = useNotifications();
@@ -26,15 +27,8 @@ const CreateWeaponPage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    let damage: Record<string, number> = {};
+    const damage = buildDamageRecord(damageEntries);
     const modifiers = buildModifierRecord(modifierEntries);
-
-    try {
-      damage = form.damage.trim() ? JSON.parse(form.damage) : {};
-    } catch {
-      showError("Damage must be valid JSON.", "Invalid Form Data");
-      return;
-    }
 
     try {
       setIsSaving(true);
@@ -76,8 +70,8 @@ const CreateWeaponPage: React.FC = () => {
         slot: "primary",
         ability: "",
         abilityDescription: "",
-        damage: "{\"flat\":1}",
       });
+      setDamageEntries([{ key: "flat", value: 1 }]);
       setModifierEntries([]);
     } catch (err: any) {
       showError(err.message || "Failed to create weapon", "Create Weapon Failed");
@@ -93,7 +87,7 @@ const CreateWeaponPage: React.FC = () => {
       description="Add a custom weapon definition, including burden, slot, damage and modifiers, and use it right away in the game."
     >
       <form className="grid gap-4" onSubmit={handleSubmit}>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <label className="grid gap-2">
             <span className={styles.tokens.text.label}>Id</span>
             <input className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`} value={form.id} onChange={(e) => setForm((state) => ({ ...state, id: e.target.value }))} required />
@@ -101,6 +95,19 @@ const CreateWeaponPage: React.FC = () => {
           <label className="grid gap-2">
             <span className={styles.tokens.text.label}>Name</span>
             <input className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`} value={form.name} onChange={(e) => setForm((state) => ({ ...state, name: e.target.value }))} required />
+          </label>
+          <label className="grid gap-2">
+            <span className={styles.tokens.text.label}>Tier</span>
+            <select
+              className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`}
+              value={form.tier}
+              onChange={(e) => setForm((state) => ({ ...state, tier: Number(e.target.value) }))}
+            >
+              <option value={1}>Tier 1</option>
+              <option value={2}>Tier 2</option>
+              <option value={3}>Tier 3</option>
+              <option value={4}>Tier 4</option>
+            </select>
           </label>
         </div>
 
@@ -141,21 +148,13 @@ const CreateWeaponPage: React.FC = () => {
           </label>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-[160px_1fr]">
-          <label className="grid gap-2">
-            <span className={styles.tokens.text.label}>Tier</span>
-            <input type="number" min={1} max={4} className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`} value={form.tier} onChange={(e) => setForm((state) => ({ ...state, tier: Number(e.target.value) }))} required />
-          </label>
-          <label className="grid gap-2">
-            <span className={styles.tokens.text.label}>Damage JSON</span>
-            <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[110px] resize-y font-mono text-sm`} value={form.damage} onChange={(e) => setForm((state) => ({ ...state, damage: e.target.value }))} />
-          </label>
-          <ModifierListBuilder
-            className="md:col-span-2"
-            label="Modifiers"
-            entries={modifierEntries}
-            onChange={setModifierEntries}
+        <div className="grid gap-4 xl:grid-cols-2 xl:items-start">
+          <DamageListBuilder
+            label="Damage"
+            entries={damageEntries}
+            onChange={setDamageEntries}
           />
+          <ModifierListBuilder label="Modifiers" entries={modifierEntries} onChange={setModifierEntries} />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
