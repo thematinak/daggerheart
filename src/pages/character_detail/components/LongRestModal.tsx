@@ -114,10 +114,10 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
       <div className="grid gap-5">
         <div className={styles.tokens.panel.base}>
           <Eyebrow eyebrow="Rules" />
-          <p className="mt-3 text-sm leading-6 text-slate-600">
+          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
             Choose two long rest moves. You can pick the same move twice. Your current tier is
             {" "}
-            <span className="font-semibold text-slate-900">Tier {tier}</span>
+            <span className="font-semibold text-[var(--text-primary)]">Tier {tier}</span>
             {" "}
             and long rest recovery moves fully restore their matching resource.
           </p>
@@ -131,7 +131,7 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
               <section key={slotIndex} className={styles.tokens.panel.base}>
                 <div className="mb-4">
                   <div className={styles.tokens.text.label}>Move Slot {slotIndex + 1}</div>
-                  <h4 className="mt-2 text-lg font-bold text-slate-950">Choose a downtime move</h4>
+                  <h4 className="mt-2 text-lg font-bold text-[var(--text-primary)]">Choose a downtime move</h4>
                 </div>
 
                 <div className="grid gap-3">
@@ -150,15 +150,15 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
 
                   {selectedMove ? (
                     <div className={styles.tokens.panel.muted}>
-                      <div className="text-sm font-semibold text-slate-950">
+                      <div className="text-sm font-semibold text-[var(--text-primary)]">
                         {LONG_REST_MOVE_OPTIONS.find((option) => option.value === selectedMove)?.label}
                       </div>
-                      <p className="mt-1 text-sm leading-6 text-slate-600">
+                      <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
                         {LONG_REST_MOVE_OPTIONS.find((option) => option.value === selectedMove)?.description}
                       </p>
 
                       {selectedMove === "prepare" ? (
-                        <label className="mt-3 flex items-center gap-2 text-sm text-slate-700">
+                        <label className="mt-3 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                           <input
                             type="checkbox"
                             checked={prepareWithParty[slotIndex]}
@@ -183,7 +183,7 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
           <section className={styles.tokens.panel.base}>
             <div className="mb-4">
               <Eyebrow eyebrow="Result" />
-              <h4 className="mt-2 text-lg font-bold text-slate-950">Long rest outcome</h4>
+              <h4 className="mt-2 text-lg font-bold text-[var(--text-primary)]">Long rest outcome</h4>
             </div>
 
             <div className="grid gap-3">
@@ -191,8 +191,8 @@ const LongRestModal: React.FC<LongRestModalProps> = ({ isOpen, onClose, characte
                 <div key={`${result.move}-${index}`} className={styles.tokens.panel.muted}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-slate-950">{result.label}</div>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <div className="text-sm font-semibold text-[var(--text-primary)]">{result.label}</div>
+                      <p className="mt-1 text-sm text-[var(--text-secondary)]">
                         {result.move === "prepare"
                           ? `Prepared ${result.prepareWithParty ? "with the party" : "alone"} for ${result.applied} Hope.`
                           : result.move === "workOnProject"

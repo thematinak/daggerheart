@@ -254,7 +254,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
       <div className="grid gap-5">
         <section className={styles.tokens.panel.base}>
           <Eyebrow eyebrow="Overview" />
-          <p className="mt-3 text-sm leading-6 text-slate-600">
+          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
             Choose two advancement options with remaining slots, apply the level achievement for this level,
             and select your reward domain card.
           </p>
@@ -270,11 +270,11 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
 
         <section className={styles.tokens.panel.base}>
           <Eyebrow eyebrow="Automatic" />
-          <h4 className="mt-2 text-lg font-bold text-slate-950">Level achievements</h4>
+          <h4 className="mt-2 text-lg font-bold text-[var(--text-primary)]">Level achievements</h4>
 
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
             <div className={styles.tokens.panel.muted}>
-              <ul className="space-y-2 text-sm text-slate-600">
+              <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
                 <li>Level increases to {targetLevel}.</li>
                 <li>Damage thresholds increase naturally because thresholds include current level.</li>
                 <li>Choose one domain card of level {targetLevel} or lower from an accessible domain.</li>
@@ -285,7 +285,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
             </div>
 
             <div className={styles.tokens.panel.muted}>
-              <div className="text-sm font-semibold text-slate-950">Reward domain card</div>
+              <div className="text-sm font-semibold text-[var(--text-primary)]">Reward domain card</div>
               <select
                 value={rewardDomainCardId}
                 onChange={(event) => setRewardDomainCardId(event.target.value)}
@@ -323,7 +323,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
 
         <section className={styles.tokens.panel.base}>
           <Eyebrow eyebrow="Advancements" />
-          <h4 className="mt-2 text-lg font-bold text-slate-950">Choose two options</h4>
+          <h4 className="mt-2 text-lg font-bold text-[var(--text-primary)]">Choose two options</h4>
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {[0, 1].map((slotIndex) => {
@@ -336,7 +336,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
                 <section key={slotIndex} className={styles.tokens.panel.muted}>
                   <div className="mb-4">
                     <div className={styles.tokens.text.label}>Advancement Slot {slotIndex + 1}</div>
-                    <h5 className="mt-1 text-lg font-bold text-slate-950">Choose one advancement</h5>
+                    <h5 className="mt-1 text-lg font-bold text-[var(--text-primary)]">Choose one advancement</h5>
                   </div>
 
                   <div className="grid gap-3">
@@ -372,8 +372,8 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
                       <div className={styles.tokens.panel.base}>
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <div className="text-sm font-semibold text-slate-950">{selectedOption.label}</div>
-                            <p className="mt-1 text-sm leading-6 text-slate-600">{selectedOption.description}</p>
+                            <div className="text-sm font-semibold text-[var(--text-primary)]">{selectedOption.label}</div>
+                            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{selectedOption.description}</p>
                           </div>
                           <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
                             Tier {selectedOption.tier}
@@ -488,7 +488,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
 
         {character.level >= 10 ? (
           <section className={styles.tokens.panel.base}>
-            <div className="text-sm font-semibold text-slate-950">This character is already at level 10.</div>
+            <div className="text-sm font-semibold text-[var(--text-primary)]">This character is already at level 10.</div>
           </section>
         ) : null}
       </div>
@@ -515,9 +515,9 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
 };
 
 const SummaryPill: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
-    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{label}</div>
-    <div className="mt-1 text-sm font-bold text-slate-950">{value}</div>
+  <div className="rounded-2xl border border-[color:var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3">
+    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</div>
+    <div className="mt-1 text-sm font-bold text-[var(--text-primary)]">{value}</div>
   </div>
 );
 
