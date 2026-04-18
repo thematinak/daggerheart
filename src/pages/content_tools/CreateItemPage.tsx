@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ContentToolShell from "../../common/components/ContentToolShell";
 import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
+import ModifierListBuilder, { ModifierEntry, buildModifierRecord } from "../../common/components/ModifierListBuilder";
 
 const CreateItemPage: React.FC = () => {
   const { refreshCommonData } = useCommonData();
@@ -11,22 +12,15 @@ const CreateItemPage: React.FC = () => {
     description: "",
     roll: 1,
     type: "loot" as "loot" | "consumables",
-    modifiers: "{}",
   });
+  const [modifierEntries, setModifierEntries] = useState<ModifierEntry[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const { showError, showInfo } = useNotifications();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    let modifiers: Record<string, number> = {};
-
-    try {
-      modifiers = form.modifiers.trim() ? JSON.parse(form.modifiers) : {};
-    } catch {
-      showError("Modifiers must be valid JSON.", "Invalid Form Data");
-      return;
-    }
+    const modifiers = buildModifierRecord(modifierEntries);
 
     try {
       setIsSaving(true);
@@ -57,8 +51,8 @@ const CreateItemPage: React.FC = () => {
         description: "",
         roll: 1,
         type: "loot",
-        modifiers: "{}",
       });
+      setModifierEntries([]);
     } catch (err: any) {
       showError(err.message || "Failed to create item", "Create Item Failed");
     } finally {
@@ -104,10 +98,11 @@ const CreateItemPage: React.FC = () => {
           </div>
         </div>
 
-        <label className="grid gap-2">
-          <span className={styles.tokens.text.label}>Modifiers JSON</span>
-          <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[120px] resize-y font-mono text-sm`} value={form.modifiers} onChange={(e) => setForm((state) => ({ ...state, modifiers: e.target.value }))} />
-        </label>
+        <ModifierListBuilder
+          label="Modifiers"
+          entries={modifierEntries}
+          onChange={setModifierEntries}
+        />
         <div className="flex justify-end">
           <button type="submit" disabled={isSaving} className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}>
             {isSaving ? "Saving..." : "Create Item"}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ContentToolShell from "../../common/components/ContentToolShell";
 import { useCommonData, useNotifications } from "../../common/contexts/CommonDataProvider";
 import styles from "../../common/types/cssColor";
+import ModifierListBuilder, { ModifierEntry, buildModifierRecord } from "../../common/components/ModifierListBuilder";
 
 const CreateWeaponPage: React.FC = () => {
   const { refreshCommonData } = useCommonData();
@@ -17,8 +18,8 @@ const CreateWeaponPage: React.FC = () => {
     ability: "",
     abilityDescription: "",
     damage: "{\"flat\":1}",
-    modifiers: "{}",
   });
+  const [modifierEntries, setModifierEntries] = useState<ModifierEntry[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const { showError, showInfo } = useNotifications();
 
@@ -26,13 +27,12 @@ const CreateWeaponPage: React.FC = () => {
     event.preventDefault();
 
     let damage: Record<string, number> = {};
-    let modifiers: Record<string, number> = {};
+    const modifiers = buildModifierRecord(modifierEntries);
 
     try {
       damage = form.damage.trim() ? JSON.parse(form.damage) : {};
-      modifiers = form.modifiers.trim() ? JSON.parse(form.modifiers) : {};
     } catch {
-      showError("Damage and modifiers must be valid JSON.", "Invalid Form Data");
+      showError("Damage must be valid JSON.", "Invalid Form Data");
       return;
     }
 
@@ -77,8 +77,8 @@ const CreateWeaponPage: React.FC = () => {
         ability: "",
         abilityDescription: "",
         damage: "{\"flat\":1}",
-        modifiers: "{}",
       });
+      setModifierEntries([]);
     } catch (err: any) {
       showError(err.message || "Failed to create weapon", "Create Weapon Failed");
     } finally {
@@ -141,7 +141,7 @@ const CreateWeaponPage: React.FC = () => {
           </label>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-[160px_1fr_1fr]">
+        <div className="grid gap-4 md:grid-cols-[160px_1fr]">
           <label className="grid gap-2">
             <span className={styles.tokens.text.label}>Tier</span>
             <input type="number" min={1} max={4} className={`${styles.tokens.input.base} ${styles.tokens.input.focus}`} value={form.tier} onChange={(e) => setForm((state) => ({ ...state, tier: Number(e.target.value) }))} required />
@@ -150,10 +150,12 @@ const CreateWeaponPage: React.FC = () => {
             <span className={styles.tokens.text.label}>Damage JSON</span>
             <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[110px] resize-y font-mono text-sm`} value={form.damage} onChange={(e) => setForm((state) => ({ ...state, damage: e.target.value }))} />
           </label>
-          <label className="grid gap-2">
-            <span className={styles.tokens.text.label}>Modifiers JSON</span>
-            <textarea className={`${styles.tokens.input.base} ${styles.tokens.input.focus} min-h-[110px] resize-y font-mono text-sm`} value={form.modifiers} onChange={(e) => setForm((state) => ({ ...state, modifiers: e.target.value }))} />
-          </label>
+          <ModifierListBuilder
+            className="md:col-span-2"
+            label="Modifiers"
+            entries={modifierEntries}
+            onChange={setModifierEntries}
+          />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
