@@ -7,10 +7,10 @@ import {
   CharacterStatCommand,
   LONG_REST_MOVE_OPTIONS,
   LongRestMove,
-  getTierFromLevel,
   resolveLongRest,
 } from "../../../common/utils/shortRest";
 import { useNotifications } from "../../../common/contexts/CommonDataProvider";
+import { getTierFromLevel } from "../../../common/utils/funks";
 
 type LongRestModalProps = {
   isOpen: boolean;

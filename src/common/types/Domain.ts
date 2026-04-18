@@ -1,8 +1,9 @@
+import { Level } from "./Character";
 import { StatModifiers } from "./StatModifiers";
 
 export type Domain = {
   id: string;
-  level: number;
+  level: Level;
   name: string;
   description: string;
   domainId: string;

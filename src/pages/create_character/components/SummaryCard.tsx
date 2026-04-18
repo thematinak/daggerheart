@@ -14,6 +14,7 @@ import styles from "../../../common/types/cssColor";
 import { Character } from "../../../common/types/Character";
 import H2 from "../../../common/components/H2";
 import SplitBar from "../../../common/components/SplitBar";
+import HopeFeatureCard from "../../character_detail/components/HopeFeatureCard";
 
 type SummaryCardProps = {
   character: Character;
@@ -119,6 +120,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
                   {character.specialization.description}
                 </p>
               )}
+              <HopeFeatureCard
+                feature={character.class?.hopeFeature}
+                description={character.class?.hopeFeatureDescription}
+                usable={true}
+              />
             </div>
           </SummarySection>
 

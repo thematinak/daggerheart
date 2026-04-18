@@ -1,6 +1,7 @@
 import { Domain } from "../types/Domain";
-import { Character, Stats } from "../types/Character";
+import { Character, Level, Stats } from "../types/Character";
 import { CharacterTraitKey, LevelingData, LevelingOptionId, LevelingTier, LevelingTierKey } from "../types/Leveling";
+import { getTierFromLevel } from "./funks";
 
 export type LevelingOptionDefinition = {
   tier: LevelingTier;
@@ -61,14 +62,7 @@ export const TIER_OPTION_DEFINITIONS: Record<LevelingTier, LevelingOptionDefinit
   ],
 };
 
-export const getTierFromLevel = (level: number) => {
-  if (level <= 1) return 1;
-  if (level <= 4) return 2;
-  if (level <= 7) return 3;
-  return 4;
-};
-
-export const getEligibleOptionTiers = (targetLevel: number): LevelingTier[] => {
+export const getEligibleOptionTiers = (targetLevel: Level): LevelingTier[] => {
   const tier = getTierFromLevel(targetLevel);
   if (tier === 4) return [2, 3, 4];
   if (tier === 3) return [2, 3];

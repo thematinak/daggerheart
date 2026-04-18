@@ -2,7 +2,7 @@ import { Attributes } from "../../pages/create_character/components/AttributeGri
 import { Ancestries } from "../types/Ancestries";
 import { ArmorItem } from "../types/Armor";
 import { BackpackItem } from "../types/BackpackItem";
-import { CurrentStats } from "../types/Character";
+import { CurrentStats, Level } from "../types/Character";
 import { CharacterClass } from "../types/CharacterClass";
 import { Condition } from "../types/Condition";
 import { CommunityItem } from "../types/Community";
@@ -98,7 +98,7 @@ export const registerUser: (username: string) => Promise<{id: number, username: 
 export type CharacterDetailResponse = {
   id: string;
   userId: number;
-  level: number;
+  level: Level;
   proficiency: number;
   bank: number;
   name: string;
@@ -144,7 +144,7 @@ export type CharacterDetailResponse = {
   armorInventory: ArmorItem[];
   domainCards: Array<{
     id: string | number;
-    level: number;
+    level: Level;
     name: string;
     description: string;
     domainId: string;

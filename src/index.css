@@ -43,6 +43,48 @@
     --pill-accent-bg: rgba(255, 247, 237, 0.94);
     --pill-accent-text: #9a3412;
 
+    --color-gray-bg: rgba(241, 245, 249, 0.92);
+    --color-gray-bg-hover: rgba(226, 232, 240, 0.96);
+    --color-gray-border: rgba(148, 163, 184, 0.28);
+    --color-gray-fill: #64748b;
+    --color-gray-text: #334155;
+    --color-gray-light-text: #64748b;
+
+    --color-yellow-bg: rgba(254, 243, 199, 0.96);
+    --color-yellow-bg-hover: rgba(253, 230, 138, 0.98);
+    --color-yellow-border: rgba(180, 83, 9, 0.4);
+    --color-yellow-fill: #f59e0b;
+    --color-yellow-text: #92400e;
+    --color-yellow-light-text: #d97706;
+
+    --color-blue-bg: rgba(224, 242, 254, 0.96);
+    --color-blue-bg-hover: rgba(186, 230, 253, 0.98);
+    --color-blue-border: rgba(2, 132, 199, 0.34);
+    --color-blue-fill: #38bdf8;
+    --color-blue-text: #0c4a6e;
+    --color-blue-light-text: #0284c7;
+
+    --color-green-bg: rgba(220, 252, 231, 0.96);
+    --color-green-bg-hover: rgba(187, 247, 208, 0.98);
+    --color-green-border: rgba(5, 150, 105, 0.34);
+    --color-green-fill: #34d399;
+    --color-green-text: #166534;
+    --color-green-light-text: #059669;
+
+    --color-purple-bg: rgba(243, 232, 255, 0.96);
+    --color-purple-bg-hover: rgba(233, 213, 255, 0.98);
+    --color-purple-border: rgba(147, 51, 234, 0.3);
+    --color-purple-fill: #a78bfa;
+    --color-purple-text: #6b21a8;
+    --color-purple-light-text: #8b5cf6;
+
+    --color-red-bg: rgba(255, 228, 230, 0.96);
+    --color-red-bg-hover: rgba(254, 205, 211, 0.98);
+    --color-red-border: rgba(225, 29, 72, 0.3);
+    --color-red-fill: #fb7185;
+    --color-red-text: #9f1239;
+    --color-red-light-text: #e11d48;
+
     --shadow-soft: 0 24px 70px -36px rgba(15, 23, 42, 0.28);
     --shadow-card: 0 10px 30px -20px rgba(15, 23, 42, 0.18);
   }
@@ -80,6 +122,48 @@
     --pill-muted-text: #dbe7f6;
     --pill-accent-bg: rgba(120, 53, 15, 0.5);
     --pill-accent-text: #fed7aa;
+
+    --color-gray-bg: rgba(43, 57, 82, 0.94);
+    --color-gray-bg-hover: rgba(54, 70, 98, 0.98);
+    --color-gray-border: rgba(148, 163, 184, 0.26);
+    --color-gray-fill: #9fb2ce;
+    --color-gray-text: #dbe7f6;
+    --color-gray-light-text: #9fb2ce;
+
+    --color-yellow-bg: rgba(120, 53, 15, 0.5);
+    --color-yellow-bg-hover: rgba(146, 64, 14, 0.62);
+    --color-yellow-border: rgba(251, 191, 36, 0.34);
+    --color-yellow-fill: #fbbf24;
+    --color-yellow-text: #fde68a;
+    --color-yellow-light-text: #fbbf24;
+
+    --color-blue-bg: rgba(12, 74, 110, 0.42);
+    --color-blue-bg-hover: rgba(14, 116, 144, 0.5);
+    --color-blue-border: rgba(56, 189, 248, 0.28);
+    --color-blue-fill: #38bdf8;
+    --color-blue-text: #d7f0ff;
+    --color-blue-light-text: #7dd3fc;
+
+    --color-green-bg: rgba(20, 83, 45, 0.42);
+    --color-green-bg-hover: rgba(22, 101, 52, 0.52);
+    --color-green-border: rgba(74, 222, 128, 0.28);
+    --color-green-fill: #4ade80;
+    --color-green-text: #dcfce7;
+    --color-green-light-text: #86efac;
+
+    --color-purple-bg: rgba(88, 28, 135, 0.4);
+    --color-purple-bg-hover: rgba(107, 33, 168, 0.5);
+    --color-purple-border: rgba(196, 181, 253, 0.24);
+    --color-purple-fill: #a78bfa;
+    --color-purple-text: #f3e8ff;
+    --color-purple-light-text: #c4b5fd;
+
+    --color-red-bg: rgba(136, 19, 55, 0.42);
+    --color-red-bg-hover: rgba(159, 18, 57, 0.52);
+    --color-red-border: rgba(251, 113, 133, 0.24);
+    --color-red-fill: #fb7185;
+    --color-red-text: #ffe4e6;
+    --color-red-light-text: #fda4af;
 
     --shadow-soft: 0 28px 80px -44px rgba(2, 6, 23, 0.72);
     --shadow-card: 0 18px 38px -24px rgba(2, 6, 23, 0.5);

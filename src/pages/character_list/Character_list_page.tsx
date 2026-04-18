@@ -70,7 +70,7 @@ const CharacterCard: React.FC<{
             <Eyebrow eyebrow="Adventurer" />
             <H2>{character.name}</H2>
           </div>
-          <Badge color="blue" label={`Lv. ${character.level}`} />
+          <Badge color="blue" label={`Level ${character.level}`} />
         </div>
 
         <div className="rounded-[1.25rem] border border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 text-sm font-semibold text-amber-900">

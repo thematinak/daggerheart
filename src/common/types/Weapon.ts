@@ -1,3 +1,4 @@
+import { Tier } from "./Character";
 import { StatModifiers } from "./StatModifiers";
 
 export type SelectedWeapons = {
@@ -15,7 +16,7 @@ export type WeaponItem = {
   damage: Record<number, number> & { flat?: number };
   burden: "one-handed" | "two-handed";
 
-  tier: 1 | 2 | 3 | 4;
+  tier: Tier;
   slot: "primary" | "secondary";
 
   ability?: string;

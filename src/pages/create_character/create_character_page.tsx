@@ -5,7 +5,6 @@ import AncestriesCard from "./components/AncestriesCard";
 import CommunityCard from "./components/CommunityCard";
 import InfoCard from "./components/InfoCard";
 import ExperienceCard from "./components/ExperiencesCard";
-import DomainCard from "./components/DomainCard";
 import GearCard from "./components/GearCard";
 import { GridSelector } from "../../common/components/GridSelector";
 import { AttributeItem, AttributesGrid } from "./components/AttributeGrid";
@@ -23,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
+import DomainCard from "../../common/components/DomainCard";
 
 /* ---------- TYPES ---------- */
 
@@ -288,7 +288,7 @@ const CharacterCreatorPage: React.FC = () => {
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
                 key={domain.id}
-                item={domain}
+                domain={domain}
                 selected={character.domainCards.some((c) => c.id === domain.id)}
                 onSelect={() => toggleDomain(domain)}
               />}

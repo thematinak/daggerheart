@@ -1,4 +1,5 @@
-import { CurrentStats, Stats } from "../types/Character";
+import { CurrentStats, Level, Stats } from "../types/Character";
+import { getTierFromLevel } from "./funks";
 
 export type CharacterStatCommandTarget = "health" | "stress" | "armor" | "hope";
 
@@ -51,7 +52,7 @@ export type LongRestResolution = {
 };
 
 type ResolveShortRestOptions = {
-  level: number;
+  level: Level;
   currentStats: CurrentStats;
   stats: Stats;
   selections: ShortRestSelection[];
@@ -59,7 +60,7 @@ type ResolveShortRestOptions = {
 };
 
 type ResolveLongRestOptions = {
-  level: number;
+  level: Level;
   currentStats: CurrentStats;
   stats: Stats;
   selections: LongRestSelection[];
@@ -78,22 +79,6 @@ const LONG_REST_MOVE_LABELS: Record<LongRestMove, string> = {
   repairAllArmor: "Repair All Armor",
   prepare: "Prepare",
   workOnProject: "Work on a Project",
-};
-
-export const getTierFromLevel = (level: number) => {
-  if (level <= 1) {
-    return 1;
-  }
-
-  if (level <= 4) {
-    return 2;
-  }
-
-  if (level <= 7) {
-    return 3;
-  }
-
-  return 4;
 };
 
 const defaultRollD4 = () => Math.floor(Math.random() * 4) + 1;

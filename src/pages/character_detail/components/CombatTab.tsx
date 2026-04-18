@@ -3,11 +3,13 @@ import { ScrollText, Shield, Sparkles, Swords } from "lucide-react";
 import StatsBar, { buildStatsFromCharacter } from "../../../common/components/StatsBar";
 import WeaponCard from "../../../common/components/WeaponCard";
 import ArmorCard from "../../../common/components/ArmorCard";
+import DomainCard from "../../../common/components/DomainCard";
 import { Character } from "../../../common/types/Character";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import H2 from "../../../common/components/H2";
 import SplitBar from "../../../common/components/SplitBar";
+import HopeFeatureCard from "./HopeFeatureCard";
 
 type CombatTabProps = {
   character: Character;
@@ -120,24 +122,11 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
             <h3 className="text-xl font-bold">Hope Feature</h3>
           </div>
 
-          {character.class?.hopeFeature ? (
-            <div>
-              <h4 className="mt-2 text-xl font-black">{character.class.hopeFeature}</h4>
-              <p className="mt-3 text-sm leading-6 text-amber-900/85">
-                {character.class.hopeFeatureDescription || "No hope feature description available."}
-              </p>
-              <div className="mt-4">
-                <button
-                  type="button"
-                  className={`${styles.tokens.button.base} ${styles.tokens.button.primary}`}
-                >
-                  Use Hope Feature
-                </button>
-              </div>
-            </div>
-          ) : (
-            <EmptyState text="No hope feature available." />
-          )}
+          <HopeFeatureCard
+            feature={character.class?.hopeFeature}
+            description={character.class?.hopeFeatureDescription}
+            usable={true}
+          />
         </div>
 
         <div className="p-5 sm:p-6">
@@ -149,23 +138,11 @@ const CombatTab: React.FC<CombatTabProps> = ({ character, stats, onAdjustCurrent
           <div className="grid gap-3">
             {character.domainCards.length > 0 ? (
               character.domainCards.map((domainCard) => (
-                <div
+                <DomainCard
                   key={domainCard.id}
-                  className={styles.tokens.panel.base}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className={styles.tokens.text.label}>
-                        Domain Card
-                      </div>
-                      <h4 className="mt-1 text-lg font-bold text-[var(--text-primary)]">{domainCard.name}</h4>
-                    </div>
-                    <span className={`${styles.tokens.pill.base} ${styles.tokens.pill.accent}`}>
-                      Level {domainCard.level}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{domainCard.description}</p>
-                </div>
+                  domain={domainCard}
+                  interactive={false}
+                />
               ))
             ) : (
               <EmptyState text="No domain cards equipped." />

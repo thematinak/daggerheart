@@ -8,9 +8,9 @@ import {
   SHORT_REST_MOVE_OPTIONS,
   ShortRestMove,
   resolveShortRest,
-  getTierFromLevel,
 } from "../../../common/utils/shortRest";
 import { useNotifications } from "../../../common/contexts/CommonDataProvider";
+import { getTierFromLevel } from "../../../common/utils/funks";
 
 type ShortRestModalProps = {
   isOpen: boolean;

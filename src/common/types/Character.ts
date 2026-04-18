@@ -15,7 +15,7 @@ import { SelectedWeapons, WeaponItem } from "./Weapon";
 export type Character = {
   id: string;
   user_id: number;
-  level: number;
+  level: Level;
   proficiency: number;
   bank: number;
   name: string;
@@ -64,3 +64,7 @@ export type CurrentStats = {
   armor: number;
   hope: number;
 };
+
+export type Level = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
+export type Tier = 1 | 2 | 3 | 4;

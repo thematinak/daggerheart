@@ -3,7 +3,7 @@ import ModalCard from "../../../common/components/ModalCard";
 import { useCommonData, useNotifications } from "../../../common/contexts/CommonDataProvider";
 import Eyebrow from "../../../common/components/Eyebrow";
 import styles from "../../../common/types/cssColor";
-import { Character } from "../../../common/types/Character";
+import { Character, Level } from "../../../common/types/Character";
 import { CharacterTraitKey, LevelingOptionId, LevelingTier } from "../../../common/types/Leveling";
 import {
   LevelUpSelection,
@@ -46,7 +46,7 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, onClose, character,
     }
   }, [isOpen]);
 
-  const targetLevel = Math.min(character.level + 1, 10);
+  const targetLevel = Math.min(character.level + 1, 10) as Level;
   const automaticAchievement = useMemo(() => getAutomaticAchievementSummary(targetLevel), [targetLevel]);
   const eligibleTiers = useMemo(() => getEligibleOptionTiers(targetLevel), [targetLevel]);
   const baseStats = useMemo(() => buildStatsFromCharacter(character), [character]);
