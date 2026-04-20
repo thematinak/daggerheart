@@ -28,8 +28,8 @@ export type NextPreviousProps = {
   showNext?: boolean;
 };
 
-export const NextPreviousButton: React.FC<NextPreviousProps> = ({onNext, showNext, onBack, showBack}) => 
+export const NextPreviousButton: React.FC<NextPreviousProps> = ({onNext, showNext, onBack, showBack}) => (
           <div className="flex justify-between mt-4">
             {showBack ? <PreviousButton onBack={onBack} />: <div className="w-24" />}
             {showNext ? <NextButton onNext={onNext} /> : <div className="w-24" />}
-        </div>
+        </div>);

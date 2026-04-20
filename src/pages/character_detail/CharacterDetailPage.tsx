@@ -235,7 +235,7 @@ const CharacterDetailPage: React.FC = () => {
   const stats = useMemo(() => (character ? buildStatsFromCharacter(character) : null), [character]);
 
   const handleAdjustCurrentStat = useCallback(
-    async (stat: "health" | "stress" | "armor" | "hope", action: "add" | "remove") => {
+    async (stat:  "health" | "stress" | "armor" | "hope", action: "add" | "remove") => {
       if (!character) {
         return;
       }
@@ -264,30 +264,7 @@ const CharacterDetailPage: React.FC = () => {
 
       try {
         setIsAdjustingStat(true);
-
-        const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            character_id: character.id,
-            commands: [
-              {
-                action,
-                target: stat,
-                value: 1,
-              },
-            ],
-          }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to update current stat");
-        }
-
+        await postCharacterCommands(character.id, [{ action, target: stat, value: 1 }]);
         await loadCharacter();
       } catch (err: any) {
         showError(err.message || "Failed to update current stat");
@@ -306,13 +283,7 @@ const CharacterDetailPage: React.FC = () => {
 
       try {
         setIsUpdatingCondition(true);
-        await postCharacterCommands(character.id, [
-          {
-            action: isActive ? "remove" : "add",
-            target: "condition",
-            id: conditionId,
-          },
-        ]);
+        await postCharacterCommands(character.id, [{ action: isActive ? "remove" : "add", target: "condition", id: conditionId,}]);
         await loadCharacter();
       } catch (err: any) {
         showError(err.message || "Failed to update condition");

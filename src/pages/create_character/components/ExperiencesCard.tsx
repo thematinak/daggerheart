@@ -1,6 +1,6 @@
 import React from "react";
 import { Experience } from "../../../common/types/Experience";
-import { NextPreviousButton } from "./NextButton";
+import { NextPreviousButton } from "./NextPreviousButtons";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import Subtitle from "../../../common/components/Subtitle";

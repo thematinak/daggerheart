@@ -195,7 +195,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ character, onBack, onCreate }
             <div className="grid gap-3">
               {character.experiences.map((experience, index) => (
                 <div key={index} className="border-b border-slate-200 pb-3">
-                  <DetailRow label={(index + 1) + ". Experience"} value={experience.name + (experience.bonus ? ` (+${experience.bonus})` : "")} />
+                  <DetailRow label={(index + 1) + ". Experience"} value={experience.name + (experience.bonus ? ` (+${experience.bonus} Bonus)` : "")} />
                   {experience.description && (
                     <p className="text-sm leading-6 text-[var(--text-secondary)]">
                       {experience.description}

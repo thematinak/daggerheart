@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BackpackItem } from "../../../common/types/BackpackItem";
 import GameCard from "../../../common/components/GameCard";
-import { NextPreviousButton } from "./NextButton";
+import { NextPreviousButton } from "./NextPreviousButtons";
 import styles from "../../../common/types/cssColor";
-import H3 from "../../../common/components/H3";
 import Section from "../../../common/components/Section";
 
 

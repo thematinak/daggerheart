@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Swords, Castle, BadgeCheck, Star } from "lucide-react";
+import { Swords, Castle, Star } from "lucide-react";
 import { GiTrashCan } from "react-icons/gi";
 import { useAuth } from "../../common/contexts/AuthProvider";
 import { CommonData, useCommonData } from "../../common/contexts/CommonDataProvider";
@@ -10,6 +10,10 @@ import GameCard from "../../common/components/GameCard";
 import styles from "../../common/types/cssColor";
 import H2 from "../../common/components/H2";
 import Eyebrow from "../../common/components/Eyebrow";
+import { deleteCharacter } from "../../common/endponts/common";
+import DetailRow from "../../common/components/DetailRow";
+import SplitBar from "../../common/components/SplitBar";
+import Section from "../../common/components/Section";
 
 type CharacterListItem = {
   id: string;
@@ -28,27 +32,18 @@ const CharacterListPage: React.FC = () => {
   const navigate = useNavigate();
   const userId = user.id;
 
-  const handleDelete = async (id: string) => {
-    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?character_id=${id}`, {
-      method: "DELETE",
-    });
-    const resJson = await response.json();
-    if (!resJson.success) {
-      alert("Failed to delete character: " + (resJson.error || "Unknown error"));
-    }
-  };
-
   return (
-    <GridSelector<CharacterListItem>
-      title="Your Characters"
-      eyebrow="Campaign Hub"
-      description="Review your adventurers, jump back into a build, or clear out retired heroes."
-      endpoint={`http://pecen.eu/daggerheart/api1/character.php?user_id=${userId}`}
-      onSelect={(character) => navigate(`/character/${character.id}`)}
-      renderItem={(character) => (
-        <CharacterCard character={character} commonData={byId} onDelete={handleDelete} />
-      )}
-    />
+    <Section eyebrow="Campaign Hub" title="Your Characters">
+      <div className="gap-3">
+        <GridSelector<CharacterListItem>
+        endpoint={`http://pecen.eu/daggerheart/api1/character.php?user_id=${userId}`}
+        onSelect={(character) => navigate(`/character/${character.id}`)}
+        renderItem={(character) => (
+          <CharacterCard character={character} commonData={byId} onDelete={deleteCharacter} />
+        )}
+        />
+      </div>
+    </Section>
   );
 };
 
@@ -64,33 +59,23 @@ const CharacterCard: React.FC<{
 
   return (
     <GameCard>
-      <div className="flex h-full flex-col gap-5">
+      <div className="flex h-full flex-col gap-5 p-5">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <Eyebrow eyebrow="Adventurer" />
-            <H2>{character.name}</H2>
-          </div>
+          <H2>{character.name}</H2>
           <Badge color="blue" label={`Level ${character.level}`} />
         </div>
-
-        <div className="rounded-[1.25rem] border border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 text-sm font-semibold text-amber-900">
-          {className} / {specializationName}
-        </div>
+        <Eyebrow eyebrow={`${className} / ${specializationName}`} />
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <DetailPill icon={<Castle size={14} />} label="Ancestry" value={ancestryName} />
-          <DetailPill icon={<Castle size={14} />} label="Community" value={communityName} />
-          <DetailPill icon={<BadgeCheck size={14} />} label="Class" value={className} />
-          <DetailPill
-            icon={<Swords size={14} />}
-            label="Specialization"
-            value={specializationName}
-          />
-          <DetailPill icon={<Star size={14} />} label="Proficiency" value={String(character.proficiency)} />
+          <DetailRow icon={<Castle size={14} />} label="Ancestry" value={ancestryName} />
+          <DetailRow icon={<Castle size={14} />} label="Community" value={communityName} />
+          <DetailRow icon={<Swords size={14} />} label="Specialization" value={specializationName} />
+          <DetailRow icon={<Star size={14} />} label="Proficiency" value={String(character.proficiency)} />
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-200/80 pt-4">
-          <span className="text-sm text-slate-500">Click card to open character</span>
+        <SplitBar />
+        <div className="mt-auto flex items-center justify-between">
+          <span className="text-sm text-[var(--color-gray-text)]">Click card to open character</span>
           <button
             className={`${styles.tokens.button.base} ${styles.tokens.button.danger} px-3 py-2`}
             onClick={(event) => {
@@ -105,19 +90,5 @@ const CharacterCard: React.FC<{
     </GameCard>
   );
 };
-
-const DetailPill: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({
-  icon,
-  label,
-  value,
-}) => (
-  <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
-    <div className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-      {icon}
-      {label}
-    </div>
-    <div className="text-sm font-semibold text-slate-900">{value}</div>
-  </div>
-);
 
 export default CharacterListPage;

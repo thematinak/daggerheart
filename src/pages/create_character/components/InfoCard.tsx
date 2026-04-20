@@ -1,5 +1,5 @@
 import React from "react";
-import { NextPreviousButton } from "./NextButton";
+import { NextPreviousButton } from "./NextPreviousButtons";
 import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import Section from "../../../common/components/Section";

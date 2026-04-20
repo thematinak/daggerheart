@@ -11,8 +11,8 @@ export type WeaponItem = {
   name: string;
   description?: string;
 
-  attribute: string;
-  range: string;
+  attribute: "agility" | "finesse" | "instinct" | "presence" | "strength" | "knowledge" | "spellcast" ;
+  range: "melee" | "very_close" | "close" | "far" | "very_far";
   damage: Record<number, number> & { flat?: number };
   burden: "one-handed" | "two-handed";
 

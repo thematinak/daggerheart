@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NextPreviousButton } from "../../pages/create_character/components/NextButton";
 import styles from "../types/cssColor";
-import Section from "./Section";
 import { useNotifications } from "../contexts/CommonDataProvider";
 
 type GridSelectorProps<T> = {
@@ -10,13 +8,6 @@ type GridSelectorProps<T> = {
   selectedId?: string | number;
   onSelect: (id: T, pos: number) => void;
   renderItem: (item: T, selected: boolean) => React.ReactNode;
-  title?: string;
-  eyebrow?: string;
-  description?: string;
-  showNext?: boolean;
-  showBack?: boolean;
-  onNext?: () => void;
-  onBack?: () => void;
 };
 
 export function GridSelector<T extends { id: string | number }>({
@@ -25,13 +16,6 @@ export function GridSelector<T extends { id: string | number }>({
   selectedId,
   onSelect,
   renderItem,
-  title,
-  eyebrow,
-  description,
-  showNext = false,
-  showBack = false,
-  onNext,
-  onBack,
 }: GridSelectorProps<T>) {
   const [loadedItems, setLoadedItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,26 +75,12 @@ export function GridSelector<T extends { id: string | number }>({
 
   // --- Render ---
   return (
-    <Section eyebrow={eyebrow} title={title} subtitle={description}>
-      <div className={`flex flex-col gap-6 p-5 sm:p-6 lg:p-8`}>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {loadedItems.map((item, pos) => (
-            <div key={item.id} onClick={() => onSelect(item, pos)}>
-              {renderItem(item, item.id === selectedId)}
-            </div>
-          ))}
-        </div>
-
-        {(showBack || showNext) && (
-          <NextPreviousButton
-            showBack={showBack}
-            showNext={showNext}
-            onBack={onBack}
-            onNext={onNext}
-          />
-        )}
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {loadedItems.map((item, pos) => (
+          <div key={item.id} onClick={() => onSelect(item, pos)}>
+            {renderItem(item, item.id === selectedId)}
+          </div>
+        ))}
       </div>
-    </Section>
   );
 }

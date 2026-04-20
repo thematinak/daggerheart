@@ -1,8 +1,6 @@
 import React from "react";
 import GameCard from "../../../common/components/GameCard";
-import { NextPreviousButton } from "./NextButton";
 import styles from "../../../common/types/cssColor";
-import Section from "../../../common/components/Section";
 
 export type Attributes = {
   agility: { value: number; id: number } | null;
@@ -42,17 +40,12 @@ export const AttributesGrid: React.FC<AttributesGridProps> = ({
   attributes,
   selected,
   onSelect,
-  showBack = false,
-  showNext = false,
-  onBack,
-  onNext,
 }) => {
   const usedIds = Object.values(selected)
     .filter((attribute): attribute is { value: number; id: number } => attribute !== null)
     .map((attribute) => attribute.id);
 
   return (
-    <Section title="Assign Attributes" subtitle="Every modifier can be used only once. Pick the spread that fits your build best.">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {attributes.map((item) => (
           <AttributeCard
@@ -65,16 +58,6 @@ export const AttributesGrid: React.FC<AttributesGridProps> = ({
           />
         ))}
       </div>
-
-      {(showBack || showNext) && (
-        <NextPreviousButton
-          showBack={showBack}
-          showNext={showNext}
-          onBack={onBack}
-          onNext={onNext}
-        />
-      )}
-    </Section>
   );
 };
 
@@ -123,6 +106,27 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
               const isSelected = chosen?.id === option.id;
               const isUsedElsewhere = usedIds.includes(option.id) && !isSelected;
 
+              const cssStyles = [styles.tokens.badge]
+              if (isSelected) {
+                let style = styles.green;
+                cssStyles.push(style.bg);
+                cssStyles.push(style.bgHover);
+                cssStyles.push(style.border);
+                cssStyles.push(style.text);
+              } else if (isUsedElsewhere) {
+                let style = styles.gray;
+                cssStyles.push(style.bg);
+                cssStyles.push(style.bgHover);
+                cssStyles.push(style.border);
+                cssStyles.push(style.text);
+                cssStyles.push("cursor-not-allowed "); 
+              } else {
+                let style = styles.yellow;
+                cssStyles.push(style.bg);
+                cssStyles.push(style.bgHover);
+                cssStyles.push(style.border);
+                cssStyles.push(style.text);
+              }
               return (
                 <button
                   key={`${item.id}-${option.id}`}
@@ -138,14 +142,7 @@ const AttributeCard: React.FC<AttributeCardProps> = ({
                       onSelect(option);
                     }
                   }}
-                  className={[
-                    "rounded-xl border px-3 py-2 text-sm font-bold transition-all duration-200",
-                    isSelected
-                      ? "border-emerald-400 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200"
-                      : isUsedElsewhere
-                        ? "cursor-not-allowed border-[color:var(--border-soft)] bg-[var(--surface-muted)] text-[var(--text-muted)] opacity-60"
-                        : "border-[color:var(--border-strong)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent-text)] hover:-translate-y-0.5 hover:brightness-110",
-                  ].join(" ")}
+                  className={cssStyles.join(" ")}
                 >
                   {option.value > 0 ? `+${option.value}` : `${option.value}`}
                 </button>

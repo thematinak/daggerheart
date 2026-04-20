@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import WeaponCard from "../../../common/components/WeaponCard";
 import ArmorCard from "../../../common/components/ArmorCard";
-import ModalCardPicker, { ModalCardPickerFilter } from "../../../common/components/ModalCardPicker";
+import ModalCardPicker from "../../../common/components/ModalCardPicker";
 import { Character } from "../../../common/types/Character";
 import { BackpackItem } from "../../../common/types/BackpackItem";
 import { WeaponItem } from "../../../common/types/Weapon";
@@ -11,8 +11,7 @@ import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import H2 from "../../../common/components/H2";
 import SplitBar from "../../../common/components/SplitBar";
-import { BURDENS, ITEM_TYPES, RANGES, SLOTS, TIERS, WEIGHTS } from "../../../common/utils/filters";
-import { mapArmorWeight } from "../../../common/utils/funks";
+import { ARMOR_PICKER_FILTERS, ITEM_PICKER_FILTERS, WEAPON_PICKER_FILTERS } from "../../../common/utils/filters";
 import { CharacterCommand, postCharacterCommands } from "../../../common/endponts/common";
 import Bank from "./Bank";
 
@@ -45,105 +44,6 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
   const [pendingSelections, setPendingSelections] = useState<PendingSelectionsState>({ items: [], weapons: [], armor: []});
   const [actionState, setActionState] = useState<ActionState>({ savePending: false, equipEquipment: false, removeEquipment: false});
   const { showError, showInfo, showWarning } = useNotifications();
-
-  const itemPickerFilters = useMemo<Array<ModalCardPickerFilter<BackpackItem>>>(
-    () => [
-      {
-        id: "name",
-        label: "Name",
-        type: "text",
-        placeholder: "Search by name",
-        match: "includes",
-        getValue: (item) => item.name,
-      },
-      {
-        id: "roll",
-        label: "Roll",
-        type: "text",
-        placeholder: "Filter by roll",
-        match: "exact",
-        getValue: (item) => item.roll,
-      },
-      {
-        id: "type",
-        label: "Type",
-        type: "select",
-        options: ITEM_TYPES,
-        getValue: (item) => item.type || "loot",
-      },
-    ],
-    []
-  );
-
-  const weaponPickerFilters = useMemo<Array<ModalCardPickerFilter<WeaponItem>>>(
-    () => [
-      {
-        id: "name",
-        label: "Name",
-        type: "text",
-        placeholder: "Search by name",
-        match: "includes",
-        getValue: (weapon) => weapon.name,
-      },
-      {
-        id: "tier",
-        label: "Tier",
-        type: "select",
-        options: TIERS,
-        getValue: (weapon) => weapon.tier,
-      },
-      {
-        id: "burden",
-        label: "Burden",
-        type: "select",
-        options: BURDENS,
-        getValue: (weapon) => weapon.burden,
-      },
-      {
-        id: "range",
-        label: "Range",
-        type: "select",
-        options: RANGES,
-        getValue: (weapon) => weapon.range,
-      },
-      {
-        id: "slot",
-        label: "Slot",
-        type: "select",
-        options: SLOTS,
-        getValue: (weapon) => weapon.slot,
-      },
-    ],
-    []
-  );
-
-  const armorPickerFilters = useMemo<Array<ModalCardPickerFilter<ArmorItem>>>(
-    () => [
-      {
-        id: "name",
-        label: "Name",
-        type: "text",
-        placeholder: "Search by name",
-        match: "includes",
-        getValue: (armor) => armor.name,
-      },
-      {
-        id: "tier",
-        label: "Tier",
-        type: "select",
-        options: TIERS,
-        getValue: (armor) => armor.tier,
-      },
-      {
-        id: "weight",
-        label: "Weight",
-        type: "select",
-        options: WEIGHTS,
-        getValue: (armor) => mapArmorWeight(armor.baseScore),
-      },
-    ],
-    []
-  );
 
   const addPendingItem = (selectedItem: BackpackItem, quantity: number) => {
     setPendingSelections((current) => ({
@@ -511,7 +411,7 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         eyebrow="Backpack Items"
         title="Select Item"
         items={backpackItems}
-        filters={itemPickerFilters}
+        filters={ITEM_PICKER_FILTERS}
         getItemId={(item) => item.id}
         onClose={() => setPickerState((current) => ({ ...current, item: false }))}
         onConfirm={addPendingItem}
@@ -543,8 +443,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         eyebrow="Weapons"
         title="Select Weapon"
         items={weapons}
-        cardsGridClassName="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
-        filters={weaponPickerFilters}
+        cardsGridClassName="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
+        filters={WEAPON_PICKER_FILTERS}
         getItemId={(weapon) => weapon.id}
         onClose={() => setPickerState((current) => ({ ...current, weapon: false }))}
         onConfirm={(weapon) => addPendingWeapon(weapon)}
@@ -565,8 +465,8 @@ const BackpackTab: React.FC<BackpackTabProps> = ({ character, onCharacterUpdated
         eyebrow="Armor"
         title="Select Armor"
         items={armor}
-        cardsGridClassName="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
-        filters={armorPickerFilters}
+        cardsGridClassName="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(24rem,1fr))]"
+        filters={ARMOR_PICKER_FILTERS}
         getItemId={(armor) => armor.id}
         onClose={() => setPickerState((current) => ({ ...current, armor: false }))}
         onConfirm={(armor) => addPendingArmor(armor)}

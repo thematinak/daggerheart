@@ -15,6 +15,7 @@ import { WeaponItem } from "../types/Weapon";
 
 export type CharacterCommand =
   | { action: "add" | "remove"; target: "bank"; value: number }
+  | { action: "add" | "remove"; target: "health" | "stress" | "armor" | "hope"; value: number }
   | { action: "add"; target: "item"; id: string; quantity: number }
   | { action: "add" | "remove" | "equip"; target: "weapon" | "armor"; id: string }
   | { action: "add" | "remove"; target: "condition"; id: string };
@@ -158,6 +159,17 @@ export const fetchUserCharacters: (userId: string) => Promise<CharacterDetailRes
   const response = await fetch(`http://pecen.eu/daggerheart/api1/character_detail.php?id=${userId}`);
   return response.json();
 }
+
+export const deleteCharacter: (characterId: string) => Promise<{ success: boolean; error?: string }> = async (characterId: string) => {
+    const response = await fetch(`http://pecen.eu/daggerheart/api1/character.php?character_id=${characterId}`, {
+      method: "DELETE",
+    });
+    const resJson = await response.json();
+    if (!resJson.success) {
+      alert("Failed to delete character: " + (resJson.error || "Unknown error"));
+    }
+    return resJson;
+  };
 
 export const loginUser: (username: string) => Promise<{id: number, username: string, error?: string}> = async (username: string) => {
     const response = await fetch(`http://pecen.eu/daggerheart/api1/login_user.php`, {

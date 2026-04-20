@@ -4,13 +4,13 @@ import styles from "../../../common/types/cssColor";
 import Eyebrow from "../../../common/components/Eyebrow";
 import { Character, Stats } from "../../../common/types/Character";
 import {
-  CharacterStatCommand,
   SHORT_REST_MOVE_OPTIONS,
   ShortRestMove,
   resolveShortRest,
 } from "../../../common/utils/shortRest";
 import { useNotifications } from "../../../common/contexts/CommonDataProvider";
 import { getTierFromLevel } from "../../../common/utils/funks";
+import { postCharacterCommands } from "../../../common/endponts/common";
 
 type ShortRestModalProps = {
   isOpen: boolean;
@@ -49,25 +49,6 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
     }
   };
 
-  const postCommands = async (commands: CharacterStatCommand[]) => {
-    const response = await fetch("http://pecen.eu/daggerheart/api1/character.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        character_id: character.id,
-        commands,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Failed to apply short rest.");
-    }
-  };
-
   const handleApplyShortRest = async () => {
     if (!hasValidSelection) {
       showError("Choose two short rest moves.");
@@ -90,7 +71,7 @@ const ShortRestModal: React.FC<ShortRestModalProps> = ({ isOpen, onClose, charac
       setIsApplying(true);
 
       if (resolution.commands.length > 0) {
-        await postCommands(resolution.commands);
+        await postCharacterCommands(character.id, resolution.commands);
         await onCharacterUpdated();
       }
 

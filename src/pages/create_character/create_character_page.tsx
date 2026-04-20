@@ -23,6 +23,7 @@ import { useAuth } from "../../common/contexts/AuthProvider";
 import { useCommonData } from "../../common/contexts/CommonDataProvider";
 import { buildStatsFromCharacter } from "../../common/components/StatsBar";
 import DomainCard from "../../common/components/DomainCard";
+import CreateCharacterSectionBody from "./components/CreateCharacterSectionBody";
 
 /* ---------- TYPES ---------- */
 
@@ -152,75 +153,57 @@ const CharacterCreatorPage: React.FC = () => {
 
       {/* STEP 1 */}
       {step === 1 && (
-        <>
+        <CreateCharacterSectionBody showNext={character.class !== null} onNext={next} title="Select Class" description="Choose a class that defines your character's core identity and abilities. Each class offers unique skills and playstyles, so select one that resonates with your vision for your character.">
           <GridSelector<CharacterClass>
-            title="Select Class"
             items={characterClasses}
             selectedId={character.class?.id}
             onSelect={(selected, pos) => select("class", selected)}
             renderItem={(cls, selected) => <ClassCard item={cls} selected={selected} />}
-            showNext={character.class !== null}
-            onNext={next}
           />
-        </>
+        </CreateCharacterSectionBody>
+        
       )}
 
       {/* STEP 2 */}
       {step === 2 && (
-        <>
+        <CreateCharacterSectionBody showBack={true} showNext={character.specialization !== null} onBack={back} onNext={next} title="Select Specialization" description="Choose a specialization that further defines your character's abilities and role within their class. Specializations provide unique skills and bonuses, allowing you to customize your character's playstyle and strengths.">
           <GridSelector<SpecializationsItem>
-            title="Select Specialization"
             items={specializations.filter((spec) => spec.classId === character.class?.id)}
             selectedId={character.specialization?.id}
             onSelect={(id, pos) => select("specialization", id)}
             renderItem={(spec, selected) => <SpecializationsCard item={spec} selected={selected} />}
-            showBack={true}
-            showNext={character.specialization !== null}
-            onBack={back}
-            onNext={next}
           />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 3 */}
       {step === 3 && (
-        <>
+        <CreateCharacterSectionBody showBack={true} onBack={back} showNext={character.ancestry !== null} onNext={next} title="Select Ancestry" description="Choose an ancestry that represents your character's lineage and background. Ancestries provide unique traits, abilities, and cultural influences that shape your character's identity and role in the world.">
           <GridSelector<Ancestries>
-            title="Select Ancestry"
             items={ancestries}
             selectedId={character.ancestry?.id}
             onSelect={(selected, pos) => select("ancestry", selected)}
             renderItem={(ans, selected) => <AncestriesCard item={ans} selected={selected} />}
-            showBack={true}
-            onBack={back}
-            showNext={character.ancestry !== null}
-            onNext={next}
-            
           />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 4 */}
       {step === 4 && (
-        <>
+        <CreateCharacterSectionBody showBack={true} onBack={back} showNext={character.community !== null} onNext={next} title="Select Community" description="Choose a community that your character belongs to. Communities provide a sense of belonging and identity, offering unique benefits, resources, and connections that can shape your character's journey and interactions within the world.">
           <GridSelector<CommunityItem>
-            title="Select Community"
             items={communities}
             selectedId={character.community?.id}
             onSelect={(selected, pos) => select("community", selected)}
             renderItem={(ans, selected) => <CommunityCard item={ans} selected={selected} />}
-            showBack={true}
-            onBack={back}
-            showNext={character.community !== null}
-            onNext={next}
             
           />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 5 ATTRIBUTES */}
       {step === 5 && (
-        <>
+         <CreateCharacterSectionBody showBack={true} onBack={back} showNext={Object.values(character.attributes).every((v) => v !== null)} onNext={next} title="Assign Attributes" description="Distribute points among your character's attributes to define their strengths and weaknesses. Each attribute influences different aspects of your character's abilities and interactions, so choose wisely to create a well-rounded and effective character.">
           <AttributesGrid 
             attributes={attributes}
             selected={character.attributes}
@@ -230,23 +213,19 @@ const CharacterCreatorPage: React.FC = () => {
             showNext={Object.values(character.attributes).every((v) => v !== null)}
             onNext={next}
           />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 6 */}
       {step === 6 && (
-        <>
+        <CreateCharacterSectionBody showBack={true} onBack={back} showNext={!!character.weapons?.primary && character.armor !== null} onNext={next} title="Choose Your Gear" description="Pick the weapons and armor that define how your character enters the fight." >
           <GearCard 
             proficiency={character.proficiency}
             selected={{weapons: character.weapons, armor: character.armor}}
-            showBack={true}
-            onBack={back}
-            showNext={!!character.weapons?.primary && character.armor !== null}
-            onNext={next}
             onSelect={item => {
               setCharacter({...character, ...item });
             }} />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 7 */}
@@ -281,9 +260,8 @@ const CharacterCreatorPage: React.FC = () => {
 
       {/* STEP 9 */}
       { step === 9 && (
-        <>
+        <CreateCharacterSectionBody showBack={true} onBack={back} showNext={character.domainCards.length === 2} onNext={next} title="Select Domain Cards" description="Choose 2 domain cards that represent your character's areas of expertise and influence. Domain cards provide unique abilities, bonuses, and thematic elements that can enhance your character's capabilities and role within the world. Select cards that complement your character's class, specialization, and playstyle to create a powerful and cohesive character build.">
           <GridSelector<Domain>
-            title="Select 2 Domain Cards"
             items={domainCards.filter(card => card.level === 1 && character.class?.domains.includes(card.domainId))}
             onSelect={(selected, pos) => {}}
             renderItem={(domain, selected) => <DomainCard
@@ -292,12 +270,8 @@ const CharacterCreatorPage: React.FC = () => {
                 selected={character.domainCards.some((c) => c.id === domain.id)}
                 onSelect={() => toggleDomain(domain)}
               />}
-            showBack={true}
-            onBack={back}
-            showNext={character.domainCards.length === 2}
-            onNext={next}
           />
-        </>
+        </CreateCharacterSectionBody>
       )}
 
       {/* STEP 10 BACKPACK */}
